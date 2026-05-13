@@ -283,6 +283,18 @@
       border-top: 1px dashed var(--border); margin-top: 0.5rem;
     }
     .wi-save-row .btn { flex: 1; font-size: 0.85rem; padding: 0.45rem 0.6rem; }
+    .wi-save-confirm {
+      display: none; flex-direction: column; gap: 0.4rem; padding-top: 0.8rem;
+      border-top: 1px dashed var(--border); margin-top: 0.5rem;
+    }
+    .wi-save-confirm input {
+      width: 100%; background: var(--paper2); border: none;
+      border-bottom: 2px solid var(--ocean); padding: 0.4rem 0.6rem;
+      color: var(--navy); font-size: 0.95rem; font-family: var(--hand);
+      font-weight: 600; outline: none;
+    }
+    .wi-save-confirm .confirm-btns { display: flex; gap: 0.4rem; }
+    .wi-save-confirm .confirm-btns .btn { flex: 1; font-size: 0.85rem; padding: 0.45rem 0.6rem; }
 
     /* ── Chart ── */
     .chart-wrap { position: relative; height: 420px; }
@@ -347,7 +359,6 @@
     <h1>Jessica's Creative Freedom Fund Tracker</h1>
     <p>your financial runway, visualized</p>
   </div>
-  <button class="hbtn" onclick="goSave()">Save Snapshot</button>
 </div>
 
 <div class="tabs">
@@ -380,7 +391,7 @@
         <div class="sbox cur-box">
           <div class="sl">Current Runway</div>
           <div class="sv" id="rs-cur">—</div>
-          <div class="ss" id="rs-cur-sub">months</div>
+          <div class="ss" id="rs-cur-sub">vs plan</div>
         </div>
         <div class="sbox wi-box">
           <div class="sl">What If Runway</div>
@@ -518,9 +529,16 @@
           </div>
         </div>
 
-        <div class="wi-save-row">
-          <button class="btn btn-pink"    onclick="saveWiAs('cu')">Save as Current</button>
-          <button class="btn btn-primary" onclick="saveWiAs('wi')">Save as What If</button>
+        <div class="wi-save-row" id="wi-save-btns">
+          <button class="btn btn-pink"    onclick="initiateSave('cu')">Save as Current</button>
+          <button class="btn btn-primary" onclick="initiateSave('wi')">Save as What If</button>
+        </div>
+        <div class="wi-save-confirm" id="wi-save-confirm">
+          <input type="text" id="wi-save-name" placeholder="Name this save…" />
+          <div class="confirm-btns">
+            <button class="btn btn-primary" id="wi-save-do" onclick="confirmSave()">Save</button>
+            <button class="btn btn-ghost"   onclick="cancelSave()">Cancel</button>
+          </div>
         </div>
       </div>
     </div>
@@ -530,13 +548,6 @@
 
 <!-- ═══ HISTORY ═══ -->
 <div id="panel-history" class="panel">
-  <div class="card">
-    <div class="card-title">Save Current State</div>
-    <div class="save-row">
-      <input type="text" id="snap-name" placeholder='e.g. "Before the Acme contract"' />
-      <button class="btn btn-primary" onclick="saveSnapshot()">Save</button>
-    </div>
-  </div>
   <div class="card">
     <div class="card-title">Saved Snapshots</div>
     <div id="snap-list"></div>
@@ -557,7 +568,6 @@
 <div class="toast" id="toast"></div>
 
 <script>
-// ─── DEFAULTS ───────────────────────────────────────────────────────────────────────────────
 const DEFAULTS = {
   planStartDate: '2026-01',
   savings:    { balance: 91883, withdrawals: { vacay:0, gift:400, coaching:0, writingClass:0 } },
@@ -574,7 +584,6 @@ const DEFAULTS = {
   gigs: []
 };
 
-// ─── FIELD MAP ──────────────────────────────────────────────────────────────────────────────
 const FM = {
   'savings-balance':    ['savings','balance'],
   'withdraw-vacay':     ['savings','withdrawals','vacay'],
@@ -615,12 +624,10 @@ const FM = {
   'sg-gifts':           ['savingsGoals','gifts'],
 };
 
-// Updates panel has all fields except withdrawals (those are plan-only)
 const WI_FM = Object.fromEntries(
   Object.entries(FM).filter(([k]) => !k.startsWith('withdraw'))
 );
 
-// ─── UTILS ────────────────────────────────────────────────────────────────────────────────
 const clone  = o  => JSON.parse(JSON.stringify(o));
 const getDeep = (o,p) => p.reduce((x,k) => (x??{})[k], o);
 const setDeep = (o,p,v) => { const k=[...p],l=k.pop(); k.reduce((x,i)=>x[i],o)[l]=v; };
@@ -634,18 +641,16 @@ const fmo = n => {
 };
 const setText = (id,v) => { const e=document.getElementById(id); if(e) e.textContent=v; };
 
-// ─── STORAGE ─────────────────────────────────────────────────────────────────────────────
 const stored = (k,v) => v === undefined
   ? JSON.parse(localStorage.getItem('ff4-'+k)||'null')
   : localStorage.setItem('ff4-'+k, JSON.stringify(v));
 
-// ─── STATE ──────────────────────────────────────────────────────────────────────────────
-let planLocked = stored('plan-locked') !== false; // true by default
+let planLocked = stored('plan-locked') !== false;
 let whatIfState = clone(DEFAULTS);
 let cmpSnap = null;
 let chartInst = null;
 let currentTab = 'plan';
-let chartOffset = 0; // years offset from today for chart window
+let chartOffset = 0;
 let undoStack = [];
 
 function prevYear() { chartOffset--; renderChart(); }
@@ -665,7 +670,6 @@ function undoWhatIf() {
   if (currentTab === 'runway') renderChart();
 }
 
-// ─── CALCULATIONS ─────────────────────────────────────────────────────────────────────────────
 function calc(s) {
   const totalW = Object.values(s.savings.withdrawals||{}).reduce((a,b)=>a+b,0);
   const balance = s.savings.balance - totalW;
@@ -694,8 +698,6 @@ function calc(s) {
            annualNet:net*12, burn, runway };
 }
 
-// Find actual runway by scanning timeline for zero-crossing (includes gig income).
-// lineStartMonth: months from today when this scenario begins (0 = today).
 function runwayMonths(s, c, lineStartMonth = 0) {
   const MAX = 480;
   const pts = buildTimeline(s, c, lineStartMonth, lineStartMonth + MAX, lineStartMonth);
@@ -712,21 +714,15 @@ function gigOffset(dateStr) {
   return (y-now.getFullYear())*12+(m-1-now.getMonth());
 }
 
-// Build timeline from fromMonth to toMonth (months relative to today).
-// lineStartMonth: when the line begins (can be negative = past).
-// Returns array of length (toMonth - fromMonth + 1); null = before line start.
 function buildTimeline(s, c, fromMonth, toMonth, lineStartMonth = 0) {
   const fl = s.freelance, gigs = s.gigs||[];
   let bal = c.balance;
   const pts = {};
-
-  // Compute from lineStartMonth forward, tracking balance
   for (let m = lineStartMonth; m <= toMonth; m++) {
     pts[m] = Math.max(0, bal);
-    // Freelance kicks in monthsBeforeStart months after lineStart
     let inc = m >= (lineStartMonth + fl.monthsBeforeStart) ? c.net : 0;
     for (const g of gigs) {
-      const off = gigOffset(g.startDate); // relative to today
+      const off = gigOffset(g.startDate);
       const dur = g.weeks / 4.333;
       if (m >= off && m < off + dur) {
         inc += g.rate * g.hoursPerWeek * (52/12) * (1 - fl.taxRate/100);
@@ -734,14 +730,12 @@ function buildTimeline(s, c, fromMonth, toMonth, lineStartMonth = 0) {
     }
     bal -= (c.monthlyExp - inc);
   }
-
   return Array.from({length: toMonth - fromMonth + 1}, (_, i) => {
     const m = fromMonth + i;
     return m in pts ? pts[m] : null;
   });
 }
 
-// ─── FORM BUILDER ────────────────────────────────────────────────────────────────────────────
 function buildForm(pfx, hasGigs) {
   const p = pfx+'-', on = `onInput('${pfx}')`;
   const inp = (id,type,step=1) => {
@@ -750,9 +744,9 @@ function buildForm(pfx, hasGigs) {
     if(type==='%') return `<div class="iw s"><span class="sx">%</span><input type="number" id="${fid}" min="0" max="100" step="${step}" oninput="${on}"/></div>`;
     return `<div class="iw"><input type="number" id="${fid}" min="0" step="${step}" oninput="${on}"/></div>`;
   };
-  const f=(id,lbl,type,step=1,note='')─>
+  const f=(id,lbl,type,step=1,note='') =>
     `<div class="field"><label>${lbl}</label>${inp(id,type,step)}${note?`<div class="note">${note}</div>`:''}</div>`;
-  const fr=(cid,fid,lbl,unit='week')─>
+  const fr=(cid,fid,lbl,unit='week') =>
     `<div class="field"><label>${lbl}</label><div class="freq">
       <div><div class="fl">$/each</div>${inp(cid,'$',1)}</div>
       <div><div class="fl">×/${unit}</div><div class="iw"><input type="number" id="${p+fid}" min="0" step="0.5" oninput="${on}"/></div></div>
@@ -856,7 +850,6 @@ function buildForm(pfx, hasGigs) {
     </div>`;
 }
 
-// ─── READ / POPULATE ───────────────────────────────────────────────────────────────────────────
 function readState(pfx) {
   const base = pfx==='pl' ? clone(stored('pl')||DEFAULTS)
              : pfx==='cu' ? clone(stored('cu')||DEFAULTS)
@@ -866,7 +859,6 @@ function readState(pfx) {
     const el = document.getElementById(pfx+'-'+key);
     if (el) setDeep(base, path, parseFloat(el.value)||0);
   }
-  // Plan start date (string field, not numeric)
   const dateEl = document.getElementById(pfx+'-plan-start-date');
   if (dateEl && dateEl.value) base.planStartDate = dateEl.value;
   base.gigs = readGigs(pfx);
@@ -879,7 +871,6 @@ function populateFields(pfx, s) {
     const el = document.getElementById(pfx+'-'+key);
     if (el) el.value = getDeep(s,path)||'';
   }
-  // Plan start date
   const dateEl = document.getElementById(pfx+'-plan-start-date');
   if (dateEl) dateEl.value = s.planStartDate || '';
   if (pfx==='wi') {
@@ -891,7 +882,6 @@ function populateFields(pfx, s) {
 }
 
 function updateComputed(pfx, c) {
-  const s = id => setText(pfx+'-'+id, f$(c[id]||0));
   setText(pfx+'-c-balance', f$(c.balance));
   setText(pfx+'-c-gross',   f$(c.gross));
   setText(pfx+'-c-tax',     f$(c.tax));
@@ -903,14 +893,11 @@ function updateComputed(pfx, c) {
   setText(pfx+'-c-sg',      f$(c.sgTotal));
 }
 
-// ─── INPUT HANDLERS ──────────────────────────────────────────────────────────────────────────
 function onInput(pfx) {
   const s = readState(pfx);
   if (pfx !== 'wi') stored(pfx, s);
   else whatIfState = s;
   updateComputed(pfx, calc(s));
-
-  // Propagate tax rate change from Plan to Current and Updates panel
   if (pfx === 'pl') {
     const rate = s.freelance.taxRate;
     const cu = stored('cu') || clone(DEFAULTS);
@@ -920,7 +907,6 @@ function onInput(pfx) {
     const el = document.getElementById('wi-fl-tax');
     if (el) el.value = rate;
   }
-
   if (currentTab === 'runway') renderChart();
 }
 
@@ -931,7 +917,6 @@ function onWhatIf() {
   onInput('wi');
 }
 
-// ─── GIGS ────────────────────────────────────────────────────────────────────────────────────
 function gigRowHTML(pfx, g) {
   const on = `onInput('${pfx}')`;
   return `<div class="gig-row" data-id="${g.id}">
@@ -985,7 +970,6 @@ function removeGig(btn, pfx) {
   onInput(pfx);
 }
 
-// ─── PLAN LOCK ───────────────────────────────────────────────────────────────────────────────
 function applyLockState() {
   const inputs = document.querySelectorAll('#plan-form input');
   const addGigBtn = document.querySelector('#plan-form .add-btn');
@@ -1019,7 +1003,6 @@ function toggleLock() {
   applyLockState();
 }
 
-// ─── TABS ─────────────────────────────────────────────────────────────────────────────────
 function switchTab(name) {
   currentTab = name;
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
@@ -1029,9 +1012,8 @@ function switchTab(name) {
   if (name==='history') renderSnaps();
 }
 
-// ─── WHAT IF ─────────────────────────────────────────────────────────────────────────────
 function resetWhatIf() {
-  const cu = stored('cu') || clone(DEFAULTS); // always reset to committed Current
+  const cu = stored('cu') || clone(DEFAULTS);
   const c = calc(cu);
   whatIfState = clone(cu);
   whatIfState.savings.balance = Math.round(c.balance);
@@ -1053,33 +1035,68 @@ function updateWiTotals(c) {
   setText('wi-sg-total',    f$(c.sgTotal));
 }
 
-function saveWiAs(pfx) {
+let pendingSaveType = null;
+
+function initiateSave(pfx) {
+  pendingSaveType = pfx;
+  const label = pfx === 'cu' ? 'Current' : 'What If';
+  const date = new Date().toLocaleDateString('en-US', {month:'short', day:'numeric'});
+  const nameEl = document.getElementById('wi-save-name');
+  nameEl.value = label + ' – ' + date;
+  document.getElementById('wi-save-btns').style.display = 'none';
+  const confirmEl = document.getElementById('wi-save-confirm');
+  confirmEl.style.display = 'flex';
+  const doBtn = document.getElementById('wi-save-do');
+  doBtn.className = 'btn ' + (pfx === 'cu' ? 'btn-pink' : 'btn-primary');
+  nameEl.focus();
+  nameEl.select();
+}
+
+function cancelSave() {
+  pendingSaveType = null;
+  document.getElementById('wi-save-confirm').style.display = 'none';
+  document.getElementById('wi-save-btns').style.display = 'flex';
+}
+
+function confirmSave() {
+  const nameEl = document.getElementById('wi-save-name');
+  const name = nameEl.value.trim() || nameEl.placeholder;
+  saveWiAs(pendingSaveType, name);
+  cancelSave();
+}
+
+function saveWiAs(pfx, name) {
   const s = clone(whatIfState);
   s.savings.withdrawals = {vacay:0,gift:0,coaching:0,writingClass:0};
+
+  const snap = clone(s);
+  snap._name = name;
+  snap._date = Date.now();
+  const snaps = getSnaps();
+  snaps.push(snap);
+  saveSnaps(snaps);
+
   if (pfx === 'cu') {
     stored('cu', s);
-    toast('Saved as Current — pink line updated.');
+    toast('“' + name + '” saved — pink line updated.');
   } else {
     stored('wi', s);
-    toast('What If saved — teal line will reload from this.');
+    toast('“' + name + '” saved — teal line updated.');
   }
   renderChart();
 }
 
-// ─── CHART ──────────────────────────────────────────────────────────────────────────────────
 function renderChart() {
   const plS = stored('pl') || clone(DEFAULTS);
   const cuS = stored('cu') || clone(DEFAULTS);
   const wiS = whatIfState;
   const plC = calc(plS), cuC = calc(cuS), wiC = calc(wiS);
 
-  // Plan start offset (months from today)
   const planStartStr = plS.planStartDate || '2026-01';
   const [psy, psm] = planStartStr.split('-').map(Number);
   const now = new Date();
   const planLineStart = (psy - now.getFullYear())*12 + (psm - 1 - now.getMonth());
 
-  // Runway stats — use timeline zero-crossing so gig income is included
   const plRunway = runwayMonths(plS, plC, planLineStart);
   const cuRunway = runwayMonths(cuS, cuC, 0);
   const wiRunway = runwayMonths(wiS, wiC, 0);
@@ -1087,16 +1104,14 @@ function renderChart() {
   setText('rs-plan', fmo(plRunway));
   setText('rs-plan-sub', isFinite(plRunway) ? (plRunway/12).toFixed(1)+' yrs' : 'infinite');
   setText('rs-cur',  fmo(cuRunway));
-  setText('rs-cur-sub',  isFinite(cuRunway) ? (cuRunway/12).toFixed(1)+' yrs'  : 'infinite');
+  const curDelta = isFinite(cuRunway)&&isFinite(plRunway) ? Math.floor(cuRunway-plRunway) : null;
+  setText('rs-cur-sub', curDelta!==null ? (curDelta>=0?'+':'')+curDelta+' mo vs plan' : 'vs plan');
   setText('rs-wi',   fmo(wiRunway));
   const delta = isFinite(wiRunway)&&isFinite(cuRunway) ? Math.floor(wiRunway-cuRunway) : null;
   setText('rs-wi-sub', delta!==null ? (delta>=0?'+':'')+delta+' mo vs current' : 'vs current');
 
-  // Window: 2 years (24 months), shifted by chartOffset years
   const winStart = Math.round(chartOffset * 12);
   const winEnd   = winStart + 24;
-
-  // Build full timelines (enough to cover any window)
   const FULL_END = Math.max(winEnd + 12, 120);
   const FULL_START = Math.min(winStart - 6, planLineStart - 2, -6);
 
@@ -1104,7 +1119,6 @@ function renderChart() {
   const cuData = buildTimeline(cuS, cuC, FULL_START, FULL_END, 0);
   const wiData = buildTimeline(wiS, wiC, FULL_START, FULL_END, 0);
 
-  // Slice to window
   const slice = arr => {
     const offset = winStart - FULL_START;
     return arr.slice(offset, offset + 25);
@@ -1115,7 +1129,6 @@ function renderChart() {
     return d.toLocaleDateString('en-US',{month:'short',year:'numeric'});
   });
 
-  // Update nav label
   setText('chart-window-label', labels[0]+' – '+labels[24]);
 
   const datasets = [
@@ -1146,21 +1159,8 @@ function renderChart() {
   });
 }
 
-// ─── HISTORY ───────────────────────────────────────────────────────────────────────────────
 function getSnaps()    { try { return JSON.parse(localStorage.getItem('ff4-snaps')||'[]'); } catch { return []; } }
 function saveSnaps(s)  { localStorage.setItem('ff4-snaps', JSON.stringify(s)); }
-
-function saveSnapshot() {
-  const name = document.getElementById('snap-name').value.trim()
-    || new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
-  const s = stored('cu') || clone(DEFAULTS);
-  s._name=name; s._date=Date.now();
-  const snaps=getSnaps(); snaps.push(s); saveSnaps(snaps);
-  document.getElementById('snap-name').value='';
-  renderSnaps(); toast('Snapshot saved: "'+name+'"');
-}
-
-function goSave() { switchTab('history'); setTimeout(()=>document.getElementById('snap-name').focus(),80); }
 
 function toggleCmp(idx) {
   const snap=getSnaps()[idx];
@@ -1190,7 +1190,7 @@ function deleteSnap(idx) {
 
 function renderSnaps() {
   const snaps=getSnaps(), el=document.getElementById('snap-list');
-  if (!snaps.length) { el.innerHTML='<div class="empty">No snapshots yet. Save your current state to start.</div>'; return; }
+  if (!snaps.length) { el.innerHTML='<div class="empty">No snapshots yet. Save from the Updates panel on the Runway tab to start.</div>'; return; }
   el.innerHTML='';
   [...snaps].reverse().forEach((snap,ri) => {
     const idx=snaps.length-1-ri, c=calc(snap);
@@ -1213,7 +1213,6 @@ function renderSnaps() {
   });
 }
 
-// ─── EXPORT / IMPORT ────────────────────────────────────────────────────────────────────────────
 function exportData() {
   const keys = ['pl','cu','wi','plan-locked','snaps'];
   const data = { _v: 1, _exported: new Date().toISOString() };
@@ -1239,17 +1238,15 @@ function importData(e) {
       ['pl','cu','wi','plan-locked','snaps'].forEach(k => {
         if (k in data) stored(k, data[k]);
       });
-      // Reload everything
       location.reload();
     } catch(err) {
       alert('Could not import: ' + err.message);
     }
   };
   reader.readAsText(file);
-  e.target.value = ''; // reset so same file can be re-imported
+  e.target.value = '';
 }
 
-// ─── TOAST ──────────────────────────────────────────────────────────────────────────────────
 let _tt;
 function toast(msg) {
   const e=document.getElementById('toast');
@@ -1257,23 +1254,18 @@ function toast(msg) {
   clearTimeout(_tt); _tt=setTimeout(()=>e.classList.remove('show'),3200);
 }
 
-// ─── INIT ──────────────────────────────────────────────────────────────────────────────────
 (function init() {
-  // Build plan form
   document.getElementById('plan-form').innerHTML = buildForm('pl', false);
 
-  // Load plan
   const pl = stored('pl') || clone(DEFAULTS);
   if (!stored('pl')) stored('pl', pl);
   populateFields('pl', pl);
   updateComputed('pl', calc(pl));
   applyLockState();
 
-  // Init Updates panel — use saved What If if present, else seed from Current
   const cu = stored('cu') || clone(DEFAULTS);
   if (!stored('cu')) stored('cu', cu);
 
-  // Tax rate is owned by Plan; sync it everywhere on load
   const planTaxRate = pl.freelance?.taxRate ?? DEFAULTS.freelance.taxRate;
   cu.freelance.taxRate = planTaxRate;
   stored('cu', cu);
