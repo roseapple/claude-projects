@@ -7,6 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -283,6 +284,18 @@
       border-top: 1px dashed var(--border); margin-top: 0.5rem;
     }
     .wi-save-row .btn { flex: 1; font-size: 0.85rem; padding: 0.45rem 0.6rem; }
+    .wi-save-confirm {
+      display: none; flex-direction: column; gap: 0.4rem; padding-top: 0.8rem;
+      border-top: 1px dashed var(--border); margin-top: 0.5rem;
+    }
+    .wi-save-confirm input {
+      width: 100%; background: var(--paper2); border: none;
+      border-bottom: 2px solid var(--ocean); padding: 0.4rem 0.6rem;
+      color: var(--navy); font-size: 0.95rem; font-family: var(--hand);
+      font-weight: 600; outline: none;
+    }
+    .wi-save-confirm .confirm-btns { display: flex; gap: 0.4rem; }
+    .wi-save-confirm .confirm-btns .btn { flex: 1; font-size: 0.85rem; padding: 0.45rem 0.6rem; }
 
     /* ── Chart ── */
     .chart-wrap { position: relative; height: 420px; }
@@ -328,6 +341,12 @@
     .sbtn.del:hover { border-color: var(--red); color: var(--red); }
     .empty { text-align: center; color: var(--dim); font-family: var(--hand); font-size: 1rem; padding: 2.5rem 0; }
 
+    /* ── Background doodles ── */
+    .bg-doodle {
+      position: fixed; pointer-events: none; z-index: 0; opacity: 0.72;
+      transform-origin: center;
+    }
+
     /* ── Toast ── */
     .toast {
       position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%) translateY(20px);
@@ -347,7 +366,6 @@
     <h1>Jessica's Creative Freedom Fund Tracker</h1>
     <p>your financial runway, visualized</p>
   </div>
-  <button class="hbtn" onclick="goSave()">Save Snapshot</button>
 </div>
 
 <div class="tabs">
@@ -380,7 +398,7 @@
         <div class="sbox cur-box">
           <div class="sl">Current Runway</div>
           <div class="sv" id="rs-cur">—</div>
-          <div class="ss" id="rs-cur-sub">months</div>
+          <div class="ss" id="rs-cur-sub">vs plan</div>
         </div>
         <div class="sbox wi-box">
           <div class="sl">What If Runway</div>
@@ -518,9 +536,16 @@
           </div>
         </div>
 
-        <div class="wi-save-row">
-          <button class="btn btn-pink"    onclick="saveWiAs('cu')">Save as Current</button>
-          <button class="btn btn-primary" onclick="saveWiAs('wi')">Save as What If</button>
+        <div class="wi-save-row" id="wi-save-btns">
+          <button class="btn btn-pink"    onclick="initiateSave('cu')">Save as Current</button>
+          <button class="btn btn-primary" onclick="initiateSave('wi')">Save as What If</button>
+        </div>
+        <div class="wi-save-confirm" id="wi-save-confirm">
+          <input type="text" id="wi-save-name" placeholder="Name this save…" />
+          <div class="confirm-btns">
+            <button class="btn btn-primary" id="wi-save-do" onclick="confirmSave()">Save</button>
+            <button class="btn btn-ghost"   onclick="cancelSave()">Cancel</button>
+          </div>
         </div>
       </div>
     </div>
@@ -531,22 +556,26 @@
 <!-- ═══ HISTORY ═══ -->
 <div id="panel-history" class="panel">
   <div class="card">
-    <div class="card-title">Save Current State</div>
-    <div class="save-row">
-      <input type="text" id="snap-name" placeholder='e.g. "Before the Acme contract"' />
-      <button class="btn btn-primary" onclick="saveSnapshot()">Save</button>
-    </div>
-  </div>
-  <div class="card">
     <div class="card-title">Saved Snapshots</div>
     <div id="snap-list"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Backup &amp; Restore</div>
+    <p style="font-family:var(--hand);font-size:1rem;color:var(--muted);margin-bottom:1rem">Export saves everything — your Plan, Current, What If, and all snapshots — to a file you can keep safe. Import restores it all.</p>
+    <div style="display:flex;gap:0.7rem;flex-wrap:wrap">
+      <button class="btn btn-primary" onclick="exportData()">&#8681; Export backup</button>
+      <label class="btn btn-ghost" style="cursor:pointer">
+        &#8679; Import backup
+        <input type="file" accept=".json" onchange="importData(event)" style="display:none" />
+      </label>
+    </div>
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-// ─── DEFAULTS ────────────────────────────────────────────────────────────────
+// ─── DEFAULTS ───────────────────────────────────────────────────────────────────────────────
 const DEFAULTS = {
   planStartDate: '2026-01',
   savings:    { balance: 91883, withdrawals: { vacay:0, gift:400, coaching:0, writingClass:0 } },
@@ -563,7 +592,7 @@ const DEFAULTS = {
   gigs: []
 };
 
-// ─── FIELD MAP ────────────────────────────────────────────────────────────────
+// ─── FIELD MAP ──────────────────────────────────────────────────────────────────────────────
 const FM = {
   'savings-balance':    ['savings','balance'],
   'withdraw-vacay':     ['savings','withdrawals','vacay'],
@@ -609,7 +638,7 @@ const WI_FM = Object.fromEntries(
   Object.entries(FM).filter(([k]) => !k.startsWith('withdraw'))
 );
 
-// ─── UTILS ───────────────────────────────────────────────────────────────────
+// ─── UTILS ────────────────────────────────────────────────────────────────────────────────
 const clone  = o  => JSON.parse(JSON.stringify(o));
 const getDeep = (o,p) => p.reduce((x,k) => (x??{})[k], o);
 const setDeep = (o,p,v) => { const k=[...p],l=k.pop(); k.reduce((x,i)=>x[i],o)[l]=v; };
@@ -623,12 +652,12 @@ const fmo = n => {
 };
 const setText = (id,v) => { const e=document.getElementById(id); if(e) e.textContent=v; };
 
-// ─── STORAGE ─────────────────────────────────────────────────────────────────
+// ─── STORAGE ─────────────────────────────────────────────────────────────────────────────
 const stored = (k,v) => v === undefined
   ? JSON.parse(localStorage.getItem('ff4-'+k)||'null')
   : localStorage.setItem('ff4-'+k, JSON.stringify(v));
 
-// ─── STATE ───────────────────────────────────────────────────────────────────
+// ─── STATE ──────────────────────────────────────────────────────────────────────────────
 let planLocked = stored('plan-locked') !== false; // true by default
 let whatIfState = clone(DEFAULTS);
 let cmpSnap = null;
@@ -636,6 +665,7 @@ let chartInst = null;
 let currentTab = 'plan';
 let chartOffset = 0; // years offset from today for chart window
 let undoStack = [];
+let bestWiRunway = -Infinity;
 
 function prevYear() { chartOffset--; renderChart(); }
 function nextYear() { chartOffset++; renderChart(); }
@@ -654,7 +684,7 @@ function undoWhatIf() {
   if (currentTab === 'runway') renderChart();
 }
 
-// ─── CALCULATIONS ─────────────────────────────────────────────────────────────
+// ─── CALCULATIONS ─────────────────────────────────────────────────────────────────────────────
 function calc(s) {
   const totalW = Object.values(s.savings.withdrawals||{}).reduce((a,b)=>a+b,0);
   const balance = s.savings.balance - totalW;
@@ -730,7 +760,7 @@ function buildTimeline(s, c, fromMonth, toMonth, lineStartMonth = 0) {
   });
 }
 
-// ─── FORM BUILDER ────────────────────────────────────────────────────────────
+// ─── FORM BUILDER ────────────────────────────────────────────────────────────────────────────
 function buildForm(pfx, hasGigs) {
   const p = pfx+'-', on = `onInput('${pfx}')`;
   const inp = (id,type,step=1) => {
@@ -845,7 +875,7 @@ function buildForm(pfx, hasGigs) {
     </div>`;
 }
 
-// ─── READ / POPULATE ─────────────────────────────────────────────────────────
+// ─── READ / POPULATE ───────────────────────────────────────────────────────────────────────────
 function readState(pfx) {
   const base = pfx==='pl' ? clone(stored('pl')||DEFAULTS)
              : pfx==='cu' ? clone(stored('cu')||DEFAULTS)
@@ -892,7 +922,7 @@ function updateComputed(pfx, c) {
   setText(pfx+'-c-sg',      f$(c.sgTotal));
 }
 
-// ─── INPUT HANDLERS ──────────────────────────────────────────────────────────
+// ─── INPUT HANDLERS ──────────────────────────────────────────────────────────────────────────
 function onInput(pfx) {
   const s = readState(pfx);
   if (pfx !== 'wi') stored(pfx, s);
@@ -920,7 +950,7 @@ function onWhatIf() {
   onInput('wi');
 }
 
-// ─── GIGS ────────────────────────────────────────────────────────────────────
+// ─── GIGS ────────────────────────────────────────────────────────────────────────────────────
 function gigRowHTML(pfx, g) {
   const on = `onInput('${pfx}')`;
   return `<div class="gig-row" data-id="${g.id}">
@@ -967,6 +997,7 @@ function addGig(pfx) {
   const now = new Date();
   const startDate = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
   el.insertAdjacentHTML('beforeend', gigRowHTML(pfx, {id, startDate, weeks:'', rate:'', hoursPerWeek:''}));
+  celebrate('gig');
 }
 
 function removeGig(btn, pfx) {
@@ -974,7 +1005,7 @@ function removeGig(btn, pfx) {
   onInput(pfx);
 }
 
-// ─── PLAN LOCK ───────────────────────────────────────────────────────────────
+// ─── PLAN LOCK ───────────────────────────────────────────────────────────────────────────────
 function applyLockState() {
   const inputs = document.querySelectorAll('#plan-form input');
   const addGigBtn = document.querySelector('#plan-form .add-btn');
@@ -1008,7 +1039,7 @@ function toggleLock() {
   applyLockState();
 }
 
-// ─── TABS ────────────────────────────────────────────────────────────────────
+// ─── TABS ─────────────────────────────────────────────────────────────────────────────────
 function switchTab(name) {
   currentTab = name;
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
@@ -1018,7 +1049,7 @@ function switchTab(name) {
   if (name==='history') renderSnaps();
 }
 
-// ─── WHAT IF ─────────────────────────────────────────────────────────────────
+// ─── WHAT IF ─────────────────────────────────────────────────────────────────────────────
 function resetWhatIf() {
   const cu = stored('cu') || clone(DEFAULTS); // always reset to committed Current
   const c = calc(cu);
@@ -1042,20 +1073,60 @@ function updateWiTotals(c) {
   setText('wi-sg-total',    f$(c.sgTotal));
 }
 
-function saveWiAs(pfx) {
+let pendingSaveType = null;
+
+function initiateSave(pfx) {
+  pendingSaveType = pfx;
+  const label = pfx === 'cu' ? 'Current' : 'What If';
+  const date = new Date().toLocaleDateString('en-US', {month:'short', day:'numeric'});
+  const nameEl = document.getElementById('wi-save-name');
+  nameEl.value = label + ' – ' + date;
+  document.getElementById('wi-save-btns').style.display = 'none';
+  const confirm = document.getElementById('wi-save-confirm');
+  confirm.style.display = 'flex';
+  // Style confirm button to match save type
+  const doBtn = document.getElementById('wi-save-do');
+  doBtn.className = 'btn ' + (pfx === 'cu' ? 'btn-pink' : 'btn-primary');
+  nameEl.focus();
+  nameEl.select();
+}
+
+function cancelSave() {
+  pendingSaveType = null;
+  document.getElementById('wi-save-confirm').style.display = 'none';
+  document.getElementById('wi-save-btns').style.display = 'flex';
+}
+
+function confirmSave() {
+  const name = document.getElementById('wi-save-name').value.trim() || document.getElementById('wi-save-name').placeholder;
+  saveWiAs(pendingSaveType, name);
+  cancelSave();
+}
+
+function saveWiAs(pfx, name) {
   const s = clone(whatIfState);
   s.savings.withdrawals = {vacay:0,gift:0,coaching:0,writingClass:0};
+
+  // Save to history
+  const snap = clone(s);
+  snap._name = name;
+  snap._date = Date.now();
+  const snaps = getSnaps();
+  snaps.push(snap);
+  saveSnaps(snaps);
+
   if (pfx === 'cu') {
     stored('cu', s);
-    toast('Saved as Current — pink line updated.');
+    toast('"' + name + '" saved — pink line updated.');
   } else {
     stored('wi', s);
-    toast('What If saved — teal line will reload from this.');
+    toast('"' + name + '" saved — teal line updated.');
   }
+  addDoodle();
   renderChart();
 }
 
-// ─── CHART ───────────────────────────────────────────────────────────────────
+// ─── CHART ──────────────────────────────────────────────────────────────────────────────────
 function renderChart() {
   const plS = stored('pl') || clone(DEFAULTS);
   const cuS = stored('cu') || clone(DEFAULTS);
@@ -1076,10 +1147,17 @@ function renderChart() {
   setText('rs-plan', fmo(plRunway));
   setText('rs-plan-sub', isFinite(plRunway) ? (plRunway/12).toFixed(1)+' yrs' : 'infinite');
   setText('rs-cur',  fmo(cuRunway));
-  setText('rs-cur-sub',  isFinite(cuRunway) ? (cuRunway/12).toFixed(1)+' yrs'  : 'infinite');
+  const curDelta = isFinite(cuRunway)&&isFinite(plRunway) ? Math.floor(cuRunway-plRunway) : null;
+  setText('rs-cur-sub', curDelta!==null ? (curDelta>=0?'+':'')+curDelta+' mo vs plan' : 'vs plan');
   setText('rs-wi',   fmo(wiRunway));
   const delta = isFinite(wiRunway)&&isFinite(cuRunway) ? Math.floor(wiRunway-cuRunway) : null;
   setText('rs-wi-sub', delta!==null ? (delta>=0?'+':'')+delta+' mo vs current' : 'vs current');
+
+  if (isFinite(wiRunway) && wiRunway > bestWiRunway) {
+    const isNewBest = bestWiRunway > -Infinity;
+    bestWiRunway = wiRunway;
+    if (isNewBest) celebrate('runway');
+  }
 
   // Window: 2 years (24 months), shifted by chartOffset years
   const winStart = Math.round(chartOffset * 12);
@@ -1135,21 +1213,10 @@ function renderChart() {
   });
 }
 
-// ─── HISTORY ─────────────────────────────────────────────────────────────────
+// ─── HISTORY ───────────────────────────────────────────────────────────────────────────────
 function getSnaps()    { try { return JSON.parse(localStorage.getItem('ff4-snaps')||'[]'); } catch { return []; } }
 function saveSnaps(s)  { localStorage.setItem('ff4-snaps', JSON.stringify(s)); }
 
-function saveSnapshot() {
-  const name = document.getElementById('snap-name').value.trim()
-    || new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
-  const s = stored('cu') || clone(DEFAULTS);
-  s._name=name; s._date=Date.now();
-  const snaps=getSnaps(); snaps.push(s); saveSnaps(snaps);
-  document.getElementById('snap-name').value='';
-  renderSnaps(); toast('Snapshot saved: "'+name+'"');
-}
-
-function goSave() { switchTab('history'); setTimeout(()=>document.getElementById('snap-name').focus(),80); }
 
 function toggleCmp(idx) {
   const snap=getSnaps()[idx];
@@ -1202,7 +1269,106 @@ function renderSnaps() {
   });
 }
 
-// ─── TOAST ───────────────────────────────────────────────────────────────────
+// ─── EXPORT / IMPORT ────────────────────────────────────────────────────────────────────────────
+function exportData() {
+  const keys = ['pl','cu','wi','plan-locked','snaps'];
+  const data = { _v: 1, _exported: new Date().toISOString() };
+  keys.forEach(k => { const v = stored(k); if (v !== null) data[k] = v; });
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'clarity-backup-' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  toast('Backup exported!');
+}
+
+function importData(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = evt => {
+    try {
+      const data = JSON.parse(evt.target.result);
+      if (!data._v) throw new Error('Unrecognized file format');
+      if (!confirm('Import this backup? It will replace your current Plan, Current, What If, and all snapshots.')) return;
+      ['pl','cu','wi','plan-locked','snaps'].forEach(k => {
+        if (k in data) stored(k, data[k]);
+      });
+      // Reload everything
+      location.reload();
+    } catch(err) {
+      alert('Could not import: ' + err.message);
+    }
+  };
+  reader.readAsText(file);
+  e.target.value = ''; // reset so same file can be re-imported
+}
+
+// ─── CONFETTI ────────────────────────────────────────────────────────────────────────────────
+function celebrate(type) {
+  if (typeof confetti !== 'function') return;
+  const colors = ['#2BBFCF','#E8427A','#1BA878','#F4C94E','#1B2B50'];
+  if (type === 'gig') {
+    confetti({ particleCount: 60, spread: 55, origin: { y: 0.65 }, colors, scalar: 0.9 });
+  } else if (type === 'runway') {
+    confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 }, colors });
+    setTimeout(() => confetti({ particleCount: 60, angle: 60,  spread: 50, origin: { x: 0, y: 0.6 }, colors }), 200);
+    setTimeout(() => confetti({ particleCount: 60, angle: 120, spread: 50, origin: { x: 1, y: 0.6 }, colors }), 400);
+  }
+}
+
+// ─── BACKGROUND DOODLES ───────────────────────────────────────────────────────────────────────
+const DOODLE_SHAPES = {
+  heart: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 38" fill="none"><path d="M20 35 C20 35 3 23 3 13 C3 7 8 3 14 5 C17 6 19 9 20 11 C21 9 23 6 26 5 C32 3 37 7 37 13 C37 23 20 35 20 35Z" stroke="COLOR" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  star:  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" fill="none"><path d="M20 4 L23.5 14.5 L35 14.5 L25.5 21 L29 32 L20 26 L11 32 L14.5 21 L5 14.5 L16.5 14.5 Z" stroke="COLOR" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  sun:   `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 44" fill="none"><circle cx="22" cy="22" r="7" stroke="COLOR" stroke-width="2.2"/><line x1="22" y1="3"  x2="22" y2="9"  stroke="COLOR" stroke-width="2.2" stroke-linecap="round"/><line x1="22" y1="35" x2="22" y2="41" stroke="COLOR" stroke-width="2.2" stroke-linecap="round"/><line x1="3"  y1="22" x2="9"  y2="22" stroke="COLOR" stroke-width="2.2" stroke-linecap="round"/><line x1="35" y1="22" x2="41" y2="22" stroke="COLOR" stroke-width="2.2" stroke-linecap="round"/><line x1="8"  y1="8"  x2="12" y2="12" stroke="COLOR" stroke-width="2.2" stroke-linecap="round"/><line x1="32" y1="32" x2="36" y2="36" stroke="COLOR" stroke-width="2.2" stroke-linecap="round"/><line x1="8"  y1="36" x2="12" y2="32" stroke="COLOR" stroke-width="2.2" stroke-linecap="round"/><line x1="32" y1="12" x2="36" y2="8"  stroke="COLOR" stroke-width="2.2" stroke-linecap="round"/></svg>`,
+  spark: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" fill="none"><path d="M20 3 L21.5 17 L35 20 L21.5 23 L20 37 L18.5 23 L5 20 L18.5 17 Z" stroke="COLOR" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  flower:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 44" fill="none"><circle cx="22" cy="22" r="5" stroke="COLOR" stroke-width="2"/><ellipse cx="22" cy="10" rx="4" ry="6" stroke="COLOR" stroke-width="2"/><ellipse cx="22" cy="34" rx="4" ry="6" stroke="COLOR" stroke-width="2"/><ellipse cx="10" cy="22" rx="6" ry="4" stroke="COLOR" stroke-width="2"/><ellipse cx="34" cy="22" rx="6" ry="4" stroke="COLOR" stroke-width="2"/></svg>`,
+};
+const DOODLE_COLORS = ['#2BBFCF','#E8427A','#1BA878','#F4C94E','#A8D8DE','#C94040'];
+const DOODLE_KEYS = Object.keys(DOODLE_SHAPES);
+
+function randomEdgePos() {
+  const edge = Math.floor(Math.random() * 4); // 0=top,1=right,2=bottom,3=left
+  const pct = 5 + Math.random() * 90;
+  const inset = 1 + Math.random() * 7; // % from edge, keep near border
+  if (edge === 0) return { top: inset+'vh',  left: pct+'vw',  bottom:'auto', right:'auto' };
+  if (edge === 1) return { right: inset+'vw', top: pct+'vh', left:'auto',   bottom:'auto' };
+  if (edge === 2) return { bottom: inset+'vh', left: pct+'vw', top:'auto',  right:'auto' };
+                  return { left: inset+'vw',  top: pct+'vh',  right:'auto', bottom:'auto' };
+}
+
+function renderDoodle(d) {
+  const el = document.createElement('div');
+  el.className = 'bg-doodle';
+  el.style.cssText = `width:${d.size}px;height:${d.size}px;transform:rotate(${d.rot}deg);` +
+    `top:${d.top};right:${d.right};bottom:${d.bottom};left:${d.left};`;
+  el.innerHTML = DOODLE_SHAPES[d.shape].replace(/COLOR/g, d.color);
+  document.body.appendChild(el);
+}
+
+function addDoodle() {
+  const shape = DOODLE_KEYS[Math.floor(Math.random() * DOODLE_KEYS.length)];
+  const color = DOODLE_COLORS[Math.floor(Math.random() * DOODLE_COLORS.length)];
+  const rot   = -15 + Math.random() * 30;
+  const size  = 28 + Math.floor(Math.random() * 18);
+  const pos   = randomEdgePos();
+  const d = { shape, color, rot, size, ...pos };
+  renderDoodle(d);
+  const saved = JSON.parse(localStorage.getItem('ff4-doodles') || '[]');
+  saved.push(d);
+  localStorage.setItem('ff4-doodles', JSON.stringify(saved));
+}
+
+function loadDoodles() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('ff4-doodles') || '[]');
+    saved.forEach(renderDoodle);
+  } catch {}
+}
+
+// ─── TOAST ──────────────────────────────────────────────────────────────────────────────────
 let _tt;
 function toast(msg) {
   const e=document.getElementById('toast');
@@ -1210,7 +1376,7 @@ function toast(msg) {
   clearTimeout(_tt); _tt=setTimeout(()=>e.classList.remove('show'),3200);
 }
 
-// ─── INIT ────────────────────────────────────────────────────────────────────
+// ─── INIT ──────────────────────────────────────────────────────────────────────────────────
 (function init() {
   // Build plan form
   document.getElementById('plan-form').innerHTML = buildForm('pl', false);
@@ -1240,6 +1406,7 @@ function toast(msg) {
   whatIfState.savings.withdrawals = {vacay:0,gift:0,coaching:0,writingClass:0};
   populateFields('wi', whatIfState);
   updateWiTotals(calc(whatIfState));
+  loadDoodles();
 })();
 </script>
 </body>
