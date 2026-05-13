@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Runway Calculator</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #0f1117;
+      color: #e2e8f0;
+      min-height: 100vh;
+      padding: 2rem 1rem;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 1.6rem;
+      font-weight: 600;
+      color: #f8fafc;
+      margin-bottom: 0.4rem;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #94a3b8;
+      font-size: 0.9rem;
+      margin-bottom: 2rem;
+    }
+
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .card {
+      background: #1e2130;
+      border: 1px solid #2d3348;
+      border-radius: 12px;
+      padding: 1.5rem;
+    }
+
+    .card h2 {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #64748b;
+      margin-bottom: 1.2rem;
+    }
+
+    .inputs {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+    }
+
+    .field label {
+      display: block;
+      font-size: 0.82rem;
+      color: #94a3b8;
+      margin-bottom: 0.4rem;
+    }
+
+    .field .input-wrap {
+      position: relative;
+    }
+
+    .field .input-wrap span {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #64748b;
+      font-size: 0.9rem;
+    }
+
+    .field input {
+      width: 100%;
+      background: #0f1117;
+      border: 1px solid #2d3348;
+      border-radius: 8px;
+      padding: 0.55rem 0.75rem 0.55rem 1.6rem;
+      color: #f1f5f9;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .field input:focus {
+      border-color: #6366f1;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 1rem;
+    }
+
+    .stat {
+      background: #0f1117;
+      border: 1px solid #2d3348;
+      border-radius: 10px;
+      padding: 1rem 1.2rem;
+    }
+
+    .stat .label {
+      font-size: 0.75rem;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 0.3rem;
+    }
+
+    .stat .value {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #f1f5f9;
+      line-height: 1.1;
+    }
+
+    .stat .sub {
+      font-size: 0.78rem;
+      color: #94a3b8;
+      margin-top: 0.2rem;
+    }
+
+    .stat.highlight .value {
+      color: #34d399;
+    }
+
+    .chart-wrap {
+      position: relative;
+      height: 320px;
+    }
+
+    .zero-state {
+      text-align: center;
+      color: #475569;
+      font-size: 0.9rem;
+      padding: 3rem 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div>
+      <h1>Runway Calculator</h1>
+      <p class="subtitle">See how long your money lasts — and how much that gig helped.</p>
+    </div>
+
+    <div class="card">
+      <h2>Your Numbers</h2>
+      <div class="inputs">
+        <div class="field">
+          <label>Current savings</label>
+          <div class="input-wrap">
+            <span>$</span>
+            <input type="number" id="savings" placeholder="10000" min="0" step="100" />
+          </div>
+        </div>
+        <div class="field">
+          <label>Monthly expenses</label>
+          <div class="input-wrap">
+            <span>$</span>
+            <input type="number" id="expenses" placeholder="3000" min="1" step="50" />
+          </div>
+        </div>
+        <div class="field">
+          <label>Freelance gig income</label>
+          <div class="input-wrap">
+            <span>$</span>
+            <input type="number" id="gig" placeholder="5000" min="0" step="100" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="results-card" style="display:none">
+      <h2>Summary</h2>
+      <div class="stats">
+        <div class="stat">
+          <div class="label">Without gig</div>
+          <div class="value" id="stat-without">—</div>
+          <div class="sub">months of runway</div>
+        </div>
+        <div class="stat">
+          <div class="label">With gig</div>
+          <div class="value" id="stat-with">—</div>
+          <div class="sub">months of runway</div>
+        </div>
+        <div class="stat highlight">
+          <div class="label">Gig extended runway by</div>
+          <div class="value" id="stat-delta">—</div>
+          <div class="sub" id="stat-delta-sub">extra months</div>
+        </div>
+        <div class="stat">
+          <div class="label">That gig bought you until</div>
+          <div class="value" id="stat-date">—</div>
+          <div class="sub">approx. end date</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Money Over Time</h2>
+      <div class="chart-wrap">
+        <canvas id="chart"></canvas>
+        <div class="zero-state" id="zero-state">Enter your numbers above to see the chart.</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const inputs = ['savings', 'expenses', 'gig'];
+    inputs.forEach(id => {
+      document.getElementById(id).addEventListener('input', update);
+    });
+
+    let chartInstance = null;
+
+    function buildSeries(start, monthlyExpense, months) {
+      const data = [];
+      let balance = start;
+      for (let m = 0; m <= months; m++) {
+        data.push(Math.max(0, balance));
+        balance -= monthlyExpense;
+        if (balance < 0) balance = 0;
+      }
+      return data;
+    }
+
+    function runway(balance, expense) {
+      if (expense <= 0) return Infinity;
+      return Math.floor(balance / expense);
+    }
+
+    function addMonths(date, n) {
+      const d = new Date(date);
+      d.setMonth(d.getMonth() + n);
+      return d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+    }
+
+    function update() {
+      const savings  = parseFloat(document.getElementById('savings').value)  || 0;
+      const expenses = parseFloat(document.getElementById('expenses').value) || 0;
+      const gig      = parseFloat(document.getElementById('gig').value)      || 0;
+
+      const zeroState = document.getElementById('zero-state');
+      const resultsCard = document.getElementById('results-card');
+
+      if (savings <= 0 || expenses <= 0) {
+        zeroState.style.display = 'block';
+        resultsCard.style.display = 'none';
+        if (chartInstance) { chartInstance.destroy(); chartInstance = null; }
+        return;
+      }
+
+      const runWithout = runway(savings, expenses);
+      const runWith    = runway(savings + gig, expenses);
+      const delta      = runWith - runWithout;
+      const totalMonths = Math.min(runWith + 3, 120);
+      const labels = Array.from({ length: totalMonths + 1 }, (_, i) => `Month ${i}`);
+
+      const seriesWithout = buildSeries(savings, expenses, totalMonths);
+      const seriesWith    = buildSeries(savings + gig, expenses, totalMonths);
+
+      // Stats
+      resultsCard.style.display = 'block';
+      document.getElementById('stat-without').textContent =
+        isFinite(runWithout) ? runWithout : '∞';
+      document.getElementById('stat-with').textContent =
+        isFinite(runWith) ? runWith : '∞';
+      document.getElementById('stat-delta').textContent =
+        isFinite(delta) ? `+${delta}` : '∞';
+      document.getElementById('stat-delta-sub').textContent =
+        delta === 1 ? 'extra month' : 'extra months';
+      document.getElementById('stat-date').textContent =
+        isFinite(runWith) ? addMonths(new Date(), runWith) : 'Indefinite';
+
+      // Chart
+      zeroState.style.display = 'none';
+      if (chartInstance) chartInstance.destroy();
+
+      const ctx = document.getElementById('chart').getContext('2d');
+
+      const fillPlugin = {
+        id: 'betweenFill',
+        beforeDatasetsDraw(chart) {
+          const { ctx, scales: { x, y } } = chart;
+          const ds0 = chart.getDatasetMeta(0);
+          const ds1 = chart.getDatasetMeta(1);
+          if (!ds0.data.length || !ds1.data.length) return;
+          ctx.save();
+          ctx.beginPath();
+          ds1.data.forEach((pt, i) => {
+            i === 0 ? ctx.moveTo(pt.x, pt.y) : ctx.lineTo(pt.x, pt.y);
+          });
+          for (let i = ds0.data.length - 1; i >= 0; i--) {
+            ctx.lineTo(ds0.data[i].x, ds0.data[i].y);
+          }
+          ctx.closePath();
+          ctx.fillStyle = 'rgba(99,102,241,0.10)';
+          ctx.fill();
+          ctx.restore();
+        }
+      };
+
+      chartInstance = new Chart(ctx, {
+        type: 'line',
+        plugins: [fillPlugin],
+        data: {
+          labels,
+          datasets: [
+            {
+              label: 'Without gig',
+              data: seriesWithout,
+              borderColor: '#f87171',
+              borderWidth: 2,
+              borderDash: [5, 4],
+              pointRadius: 0,
+              tension: 0.1,
+            },
+            {
+              label: 'With gig',
+              data: seriesWith,
+              borderColor: '#6366f1',
+              borderWidth: 2.5,
+              pointRadius: 0,
+              tension: 0.1,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: { mode: 'index', intersect: false },
+          plugins: {
+            legend: {
+              labels: { color: '#94a3b8', font: { size: 12 }, boxWidth: 20 }
+            },
+            tooltip: {
+              backgroundColor: '#1e2130',
+              borderColor: '#2d3348',
+              borderWidth: 1,
+              titleColor: '#f1f5f9',
+              bodyColor: '#94a3b8',
+              callbacks: {
+                label: ctx => ` ${ctx.dataset.label}: $${ctx.parsed.y.toLocaleString()}`
+              }
+            }
+          },
+          scales: {
+            x: {
+              ticks: {
+                color: '#475569',
+                maxTicksLimit: 10,
+                font: { size: 11 }
+              },
+              grid: { color: '#1e2535' }
+            },
+            y: {
+              ticks: {
+                color: '#475569',
+                font: { size: 11 },
+                callback: v => '$' + v.toLocaleString()
+              },
+              grid: { color: '#1e2535' }
+            }
+          }
+        }
+      });
+    }
+  </script>
+</body>
+</html>
