@@ -966,7 +966,11 @@ function renderChart() {
   if (c.monthlyExp === 0) return;
 
   const maxMo = isFinite(c.runway) ? Math.min(240, Math.max(60, Math.ceil(c.runway)+18)) : 120;
-  const labels = Array.from({length:maxMo+1}, (_,i) => 'M'+i);
+  const now = new Date();
+  const labels = Array.from({length:maxMo+1}, (_,i) => {
+    const d = new Date(now.getFullYear(), now.getMonth()+i, 1);
+    return d.toLocaleDateString('en-US', {month:'short', year:'numeric'});
+  });
   const datasets = [];
 
   if (cmpSnap) {
