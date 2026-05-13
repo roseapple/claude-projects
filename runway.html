@@ -514,8 +514,8 @@
         </div>
 
         <div class="wi-save-row">
-          <button class="btn btn-pink"  onclick="saveWiAs('cu')">Save as Current</button>
-          <button class="btn btn-ghost" onclick="saveWiAs('pl')">Save as Plan</button>
+          <button class="btn btn-pink"    onclick="saveWiAs('cu')">Save as Current</button>
+          <button class="btn btn-primary" onclick="saveWiAs('wi')">Save as What If</button>
         </div>
       </div>
     </div>
@@ -983,7 +983,7 @@ function switchTab(name) {
 
 // ─── WHAT IF ─────────────────────────────────────────────────────────────────
 function resetWhatIf() {
-  const cu = stored('cu') || clone(DEFAULTS);
+  const cu = stored('cu') || clone(DEFAULTS); // always reset to committed Current
   const c = calc(cu);
   whatIfState = clone(cu);
   whatIfState.savings.balance = Math.round(c.balance);
@@ -1005,19 +1005,13 @@ function updateWiTotals(c) {
 
 function saveWiAs(pfx) {
   const s = clone(whatIfState);
-  if (pfx==='pl') {
-    if (!confirm('Save What If as your Plan? This replaces your original vision.')) return;
-    s.savings.withdrawals = {vacay:0,gift:0,coaching:0,writingClass:0};
-    stored('pl', s);
-    populateFields('pl', s);
-    updateComputed('pl', calc(s));
-    toast('Saved as Plan.');
-  } else {
-    s.savings.withdrawals = {vacay:0,gift:0,coaching:0,writingClass:0};
+  s.savings.withdrawals = {vacay:0,gift:0,coaching:0,writingClass:0};
+  if (pfx === 'cu') {
     stored('cu', s);
-    populateFields('cu', s);
-    updateComputed('cu', calc(s));
-    toast('Saved as Current.');
+    toast('Saved as Current — pink line updated.');
+  } else {
+    stored('wi', s);
+    toast('What If saved — teal line will reload from this.');
   }
   renderChart();
 }
@@ -1189,12 +1183,13 @@ function toast(msg) {
   updateComputed('pl', calc(pl));
   applyLockState();
 
-  // Init Updates panel from current state
+  // Init Updates panel — use saved What If if present, else seed from Current
   const cu = stored('cu') || clone(DEFAULTS);
   if (!stored('cu')) stored('cu', cu);
-  const cuC = calc(cu);
-  whatIfState = clone(cu);
-  whatIfState.savings.balance = Math.round(cuC.balance);
+  const wiSeed = stored('wi') || cu;
+  const wiC = calc(wiSeed);
+  whatIfState = clone(wiSeed);
+  whatIfState.savings.balance = Math.round(wiC.balance);
   whatIfState.savings.withdrawals = {vacay:0,gift:0,coaching:0,writingClass:0};
   populateFields('wi', whatIfState);
   updateWiTotals(calc(whatIfState));
