@@ -19,7 +19,7 @@
       --ocean3:  #0E6E7E;
       --navy:    #1B2B50;
       --muted:   #4A6070;
-      --dim:     #8A9BAA;
+      --dim:     #556070;
       --green:   #1BA878;
       --red:     #C94040;
       --pink:    #E8427A;
@@ -107,7 +107,7 @@
     .fg2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
     .fg1 { display: grid; grid-template-columns: 1fr; gap: 0.6rem; }
     .field label { display: block; font-family: var(--hand); font-size: 1rem; color: var(--muted); margin-bottom: 0.25rem; }
-    .field .note { font-size: 0.72rem; color: var(--dim); margin-top: 0.2rem; font-style: italic; }
+    .field .note { font-size: 0.82rem; color: var(--dim); margin-top: 0.2rem; font-style: italic; }
     .iw { position: relative; }
     .iw .px, .iw .sx {
       position: absolute; top: 50%; transform: translateY(-50%);
@@ -126,18 +126,18 @@
     .iw:not(.p):not(.s) input { padding: 0.5rem 0.6rem; }
     .freq { display: flex; gap: 0.4rem; }
     .freq > div { flex: 1; }
-    .freq .fl { font-size: 0.65rem; color: var(--dim); margin-bottom: 0.2rem; font-style: italic; }
+    .freq .fl { font-size: 0.78rem; color: var(--dim); margin-bottom: 0.2rem; font-style: italic; }
 
     /* ── Compact (for what-if panel) ── */
-    .compact .field label { font-size: 0.82rem; margin-bottom: 0.18rem; }
-    .compact .iw input { font-size: 0.88rem; }
+    .compact .field label { font-size: 0.9rem; margin-bottom: 0.18rem; }
+    .compact .iw input { font-size: 0.92rem; }
     .compact .iw.p input { padding: 0.32rem 0.5rem 0.32rem 1.3rem; }
     .compact .iw.s input { padding: 0.32rem 1.4rem 0.32rem 0.5rem; }
     .compact .iw:not(.p):not(.s) input { padding: 0.32rem 0.5rem; }
-    .compact .iw .px { left: 7px; font-size: 0.72rem; }
-    .compact .iw .sx { right: 7px; font-size: 0.72rem; }
-    .compact .section-label { font-size: 0.85rem; margin: 0.7rem 0 0.4rem; }
-    .compact .freq .fl { font-size: 0.58rem; }
+    .compact .iw .px { left: 7px; font-size: 0.78rem; }
+    .compact .iw .sx { right: 7px; font-size: 0.78rem; }
+    .compact .section-label { font-size: 0.95rem; margin: 0.7rem 0 0.4rem; }
+    .compact .freq .fl { font-size: 0.72rem; }
 
     /* ── Computed row ── */
     .computed {
@@ -146,7 +146,7 @@
       background: linear-gradient(135deg, rgba(43,191,207,0.08), rgba(43,191,207,0.04));
       border: 1px dashed rgba(43,191,207,0.3); border-radius: 3px; margin-top: 0.8rem;
     }
-    .cv .cl { font-family: var(--hand); font-size: 0.82rem; color: var(--dim); }
+    .cv .cl { font-family: var(--hand); font-size: 0.9rem; color: var(--dim); }
     .cv .vl { font-size: 1rem; font-weight: 700; color: var(--muted); }
     .cv .vl.g { color: var(--green); } .cv .vl.r { color: var(--red); }
 
@@ -174,8 +174,8 @@
       background: var(--paper2); border: 1px solid var(--border); border-radius: 4px;
       padding: 0.7rem 0.8rem; display: flex; gap: 0.5rem; align-items: flex-end;
     }
-    .gig-fields { display: grid; grid-template-columns: 1.4fr 0.7fr 0.8fr 0.8fr; gap: 0.5rem; flex: 1; }
-    .gig-row .field label { font-size: 0.72rem; margin-bottom: 0.18rem; }
+    .gig-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem 0.6rem; flex: 1; }
+    .gig-row .field label { font-size: 0.82rem; margin-bottom: 0.18rem; }
     .gig-row input {
       width: 100%; background: #fff; border: none;
       border-bottom: 1.5px solid var(--border); color: var(--navy);
@@ -198,11 +198,13 @@
     .add-btn:hover { background: rgba(43,191,207,0.08); }
 
     /* ── Runway grid ── */
+    #panel-runway { max-width: none; }
     .runway-grid {
-      display: grid; grid-template-columns: minmax(0,1fr) 370px;
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(300px, 1fr);
       gap: 1.5rem; align-items: start;
     }
-    @media (max-width: 960px) { .runway-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 840px) { .runway-grid { grid-template-columns: 1fr; } }
 
     /* ── Stat trio ── */
     .stat-trio { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.8rem; margin-bottom: 1rem; }
@@ -217,12 +219,12 @@
     .sbox.plan-box::after   { background: #999; }
     .sbox.cur-box::after    { background: var(--pink); opacity: 0.8; }
     .sbox.wi-box::after     { background: var(--ocean); opacity: 0.8; }
-    .sbox .sl { font-family: var(--hand); font-size: 0.88rem; color: var(--dim); margin-bottom: 0.3rem; }
+    .sbox .sl { font-family: var(--hand); font-size: 1rem; color: var(--dim); margin-bottom: 0.3rem; }
     .sbox .sv { font-size: 1.45rem; font-weight: 700; line-height: 1.1; }
     .sbox.plan-box .sv { color: #999; }
     .sbox.cur-box  .sv { color: var(--pink); }
     .sbox.wi-box   .sv { color: var(--ocean2); }
-    .sbox .ss { font-family: var(--hand); font-size: 0.78rem; color: var(--dim); margin-top: 0.18rem; }
+    .sbox .ss { font-family: var(--hand); font-size: 0.9rem; color: var(--dim); margin-top: 0.18rem; }
 
     /* ── What If panel ── */
     .whatif-panel {
@@ -238,13 +240,15 @@
       position: sticky; top: 0; z-index: 2;
     }
     .wi-header-title { font-family: var(--hand); font-size: 1.1rem; font-weight: 700; }
-    .wi-reset {
+    .wi-reset, .wi-undo {
       background: transparent; border: none; color: rgba(255,255,255,0.8);
       font-family: var(--hand); font-size: 0.85rem; cursor: pointer;
       text-decoration: underline dotted; padding: 0;
     }
-    .wi-reset:hover { color: #fff; }
+    .wi-reset:hover, .wi-undo:hover { color: #fff; }
+    .wi-undo:disabled { opacity: 0.35; cursor: default; text-decoration: none; }
     .wi-body { padding: 1rem; }
+    .locked-note { font-size: 0.78rem; color: var(--dim); font-style: italic; margin-top: 0.2rem; }
 
     /* ── Accordion ── */
     .wi-acc { border: 1px dashed var(--border); border-radius: 4px; margin-bottom: 0.6rem; }
@@ -282,8 +286,16 @@
 
     /* ── Chart ── */
     .chart-wrap { position: relative; height: 420px; }
-    .chart-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.9rem; }
+    .chart-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.9rem; flex-wrap: wrap; gap: 0.5rem; }
     .chart-legend { display: flex; gap: 1rem; font-family: var(--hand); font-size: 0.9rem; }
+    .chart-nav {
+      padding: 0.28rem 0.75rem; background: transparent;
+      border: 1px solid var(--border); border-radius: 12px;
+      color: var(--muted); font-family: var(--hand); font-size: 0.9rem;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .chart-nav:hover { border-color: var(--ocean2); color: var(--ocean3); }
+    .chart-window-label { font-family: var(--hand); font-size: 0.88rem; color: var(--dim); min-width: 180px; text-align: center; }
 
     /* ── History ── */
     .save-row { display: flex; gap: 0.7rem; align-items: center; }
@@ -302,8 +314,8 @@
     .snap-card:nth-child(even) { transform: rotate(0.3deg); }
     .snap-card.cmp { border-color: var(--ocean); }
     .snap-name { font-family: var(--hand); font-size: 1.05rem; font-weight: 600; color: var(--navy); }
-    .snap-date { font-size: 0.72rem; color: var(--dim); margin-top: 0.1rem; font-style: italic; }
-    .snap-stats { display: flex; gap: 0.8rem; font-family: var(--hand); font-size: 0.88rem; color: var(--dim); margin-top: 0.3rem; flex-wrap: wrap; }
+    .snap-date { font-size: 0.85rem; color: var(--dim); margin-top: 0.1rem; font-style: italic; }
+    .snap-stats { display: flex; gap: 0.8rem; font-family: var(--hand); font-size: 0.95rem; color: var(--dim); margin-top: 0.3rem; flex-wrap: wrap; }
     .snap-stats span { color: var(--ocean3); font-weight: 600; }
     .snap-actions { display: flex; gap: 0.4rem; flex-shrink: 0; }
     .sbtn {
@@ -340,7 +352,6 @@
 
 <div class="tabs">
   <button class="tab active" data-tab="plan"    onclick="switchTab('plan')">Plan</button>
-  <button class="tab"        data-tab="current" onclick="switchTab('current')">Current</button>
   <button class="tab"        data-tab="runway"  onclick="switchTab('runway')">Runway</button>
   <button class="tab"        data-tab="history" onclick="switchTab('history')">History</button>
 </div>
@@ -352,11 +363,6 @@
     <button class="lock-btn" id="lock-btn" onclick="toggleLock()">🔒 Unlock to Edit</button>
   </div>
   <div id="plan-form"></div>
-</div>
-
-<!-- ═══ CURRENT ═══ -->
-<div id="panel-current" class="panel">
-  <div id="current-form"></div>
 </div>
 
 <!-- ═══ RUNWAY ═══ -->
@@ -385,10 +391,15 @@
       <div class="card">
         <div class="chart-header">
           <div class="card-title" style="margin-bottom:0">Money Over Time</div>
+          <div style="display:flex;align-items:center;gap:0.5rem">
+            <button class="chart-nav" onclick="prevYear()">&#8592; Prev Year</button>
+            <span class="chart-window-label" id="chart-window-label"></span>
+            <button class="chart-nav" onclick="nextYear()">Next Year &#8594;</button>
+          </div>
           <div class="chart-legend">
-            <span style="color:#AAAAAA">— plan</span>
-            <span style="color:#E8427A">— current</span>
-            <span style="color:#2BBFCF">— what if</span>
+            <span style="color:#AAAAAA">&#8212; plan</span>
+            <span style="color:#E8427A">&#8212; current</span>
+            <span style="color:#2BBFCF">&#8212; what if</span>
           </div>
         </div>
         <div class="chart-wrap"><canvas id="chart"></canvas></div>
@@ -398,8 +409,11 @@
     <!-- What If panel -->
     <div class="whatif-panel">
       <div class="wi-header">
-        <span class="wi-header-title">What If?</span>
-        <button class="wi-reset" onclick="resetWhatIf()">Reset to current</button>
+        <span class="wi-header-title">Updates</span>
+        <div style="display:flex;gap:0.9rem;align-items:center">
+          <button class="wi-undo" id="wi-undo-btn" onclick="undoWhatIf()" disabled>&#8617; Undo</button>
+          <button class="wi-reset" onclick="resetWhatIf()">Reset to saved</button>
+        </div>
       </div>
       <div class="wi-body compact">
 
@@ -420,7 +434,7 @@
             <div class="field"><label>$/hr</label><div class="iw p"><span class="px">$</span><input type="number" id="wi-fl-rate" min="0" step="5" oninput="onWhatIf()" /></div></div>
             <div class="field"><label>Hrs/week</label><div class="iw"><input type="number" id="wi-fl-hours" min="0" step="1" oninput="onWhatIf()" /></div></div>
             <div class="field"><label>Weeks off/yr</label><div class="iw"><input type="number" id="wi-fl-weeks-off" min="0" step="1" oninput="onWhatIf()" /></div></div>
-            <div class="field"><label>Tax %</label><div class="iw s"><span class="sx">%</span><input type="number" id="wi-fl-tax" min="0" max="100" step="1" oninput="onWhatIf()" /></div></div>
+            <div class="field"><label>Tax %</label><div class="iw s"><span class="sx">%</span><input type="number" id="wi-fl-tax" min="0" max="100" step="1" disabled title="Change tax rate on the Plan tab" /></div><div class="locked-note">&#128274; Set on Plan tab</div></div>
             <div class="field" style="grid-column:span 2"><label>Months before starting</label><div class="iw"><input type="number" id="wi-fl-months-before" min="0" step="1" oninput="onWhatIf()" /></div></div>
           </div>
         </div>
@@ -505,8 +519,8 @@
         </div>
 
         <div class="wi-save-row">
-          <button class="btn btn-pink"  onclick="saveWiAs('cu')">Save as Current</button>
-          <button class="btn btn-ghost" onclick="saveWiAs('pl')">Save as Plan</button>
+          <button class="btn btn-pink"    onclick="saveWiAs('cu')">Save as Current</button>
+          <button class="btn btn-primary" onclick="saveWiAs('wi')">Save as What If</button>
         </div>
       </div>
     </div>
@@ -534,6 +548,7 @@
 <script>
 // ─── DEFAULTS ────────────────────────────────────────────────────────────────
 const DEFAULTS = {
+  planStartDate: '2026-01',
   savings:    { balance: 91883, withdrawals: { vacay:0, gift:400, coaching:0, writingClass:0 } },
   freelance:  { monthsBeforeStart:0, weeksOffPerYear:0, hourlyRate:162, hoursPerWeek:8, taxRate:32 },
   fixedCosts: { rent:2650, utilities:100, insurance:420, transportation:350, debt:0,
@@ -589,7 +604,7 @@ const FM = {
   'sg-gifts':           ['savingsGoals','gifts'],
 };
 
-// What If has a subset of fields (balance + all expense/income fields, no withdrawals)
+// Updates panel has all fields except withdrawals (those are plan-only)
 const WI_FM = Object.fromEntries(
   Object.entries(FM).filter(([k]) => !k.startsWith('withdraw'))
 );
@@ -599,7 +614,13 @@ const clone  = o  => JSON.parse(JSON.stringify(o));
 const getDeep = (o,p) => p.reduce((x,k) => (x??{})[k], o);
 const setDeep = (o,p,v) => { const k=[...p],l=k.pop(); k.reduce((x,i)=>x[i],o)[l]=v; };
 const f$  = n => '$' + Math.round(n??0).toLocaleString();
-const fmo = n => isFinite(n) ? Math.floor(n)+'mo' : '∞';
+const fmo = n => {
+  if (!isFinite(n)) return '∞';
+  const m = Math.floor(n);
+  if (m < 12) return m + 'mo';
+  const y = Math.floor(m / 12), mo = m % 12;
+  return mo > 0 ? y + 'y ' + mo + 'm' : y + 'y';
+};
 const setText = (id,v) => { const e=document.getElementById(id); if(e) e.textContent=v; };
 
 // ─── STORAGE ─────────────────────────────────────────────────────────────────
@@ -613,6 +634,25 @@ let whatIfState = clone(DEFAULTS);
 let cmpSnap = null;
 let chartInst = null;
 let currentTab = 'plan';
+let chartOffset = 0; // years offset from today for chart window
+let undoStack = [];
+
+function prevYear() { chartOffset--; renderChart(); }
+function nextYear() { chartOffset++; renderChart(); }
+
+function updateUndoBtn() {
+  const btn = document.getElementById('wi-undo-btn');
+  if (btn) btn.disabled = undoStack.length === 0;
+}
+
+function undoWhatIf() {
+  if (!undoStack.length) return;
+  whatIfState = undoStack.pop();
+  populateFields('wi', whatIfState);
+  updateWiTotals(calc(whatIfState));
+  updateUndoBtn();
+  if (currentTab === 'runway') renderChart();
+}
 
 // ─── CALCULATIONS ─────────────────────────────────────────────────────────────
 function calc(s) {
@@ -643,6 +683,17 @@ function calc(s) {
            annualNet:net*12, burn, runway };
 }
 
+// Find actual runway by scanning timeline for zero-crossing (includes gig income).
+// lineStartMonth: months from today when this scenario begins (0 = today).
+function runwayMonths(s, c, lineStartMonth = 0) {
+  const MAX = 480;
+  const pts = buildTimeline(s, c, lineStartMonth, lineStartMonth + MAX, lineStartMonth);
+  for (let i = 0; i < pts.length; i++) {
+    if (pts[i] !== null && pts[i] <= 0) return i;
+  }
+  return Infinity;
+}
+
 function gigOffset(dateStr) {
   if (!dateStr) return 9999;
   const [y,m] = dateStr.split('-').map(Number);
@@ -650,22 +701,33 @@ function gigOffset(dateStr) {
   return (y-now.getFullYear())*12+(m-1-now.getMonth());
 }
 
-function buildTimeline(s, c, months) {
+// Build timeline from fromMonth to toMonth (months relative to today).
+// lineStartMonth: when the line begins (can be negative = past).
+// Returns array of length (toMonth - fromMonth + 1); null = before line start.
+function buildTimeline(s, c, fromMonth, toMonth, lineStartMonth = 0) {
   const fl = s.freelance, gigs = s.gigs||[];
-  const pts=[]; let bal=c.balance;
-  for (let m=0; m<=months; m++) {
-    pts.push(Math.max(0,bal));
-    let inc = m>=fl.monthsBeforeStart ? c.net : 0;
+  let bal = c.balance;
+  const pts = {};
+
+  // Compute from lineStartMonth forward, tracking balance
+  for (let m = lineStartMonth; m <= toMonth; m++) {
+    pts[m] = Math.max(0, bal);
+    // Freelance kicks in monthsBeforeStart months after lineStart
+    let inc = m >= (lineStartMonth + fl.monthsBeforeStart) ? c.net : 0;
     for (const g of gigs) {
-      const off = gigOffset(g.startDate);
-      const dur = g.weeks/4.333;
-      if (m>=off && m<off+dur) {
-        inc += g.rate*g.hoursPerWeek*(52/12)*(1-fl.taxRate/100);
+      const off = gigOffset(g.startDate); // relative to today
+      const dur = g.weeks / 4.333;
+      if (m >= off && m < off + dur) {
+        inc += g.rate * g.hoursPerWeek * (52/12) * (1 - fl.taxRate/100);
       }
     }
-    bal -= (c.monthlyExp-inc);
+    bal -= (c.monthlyExp - inc);
   }
-  return pts;
+
+  return Array.from({length: toMonth - fromMonth + 1}, (_, i) => {
+    const m = fromMonth + i;
+    return m in pts ? pts[m] : null;
+  });
 }
 
 // ─── FORM BUILDER ────────────────────────────────────────────────────────────
@@ -685,10 +747,16 @@ function buildForm(pfx, hasGigs) {
       <div><div class="fl">×/${unit}</div><div class="iw"><input type="number" id="${p+fid}" min="0" step="0.5" oninput="${on}"/></div></div>
     </div></div>`;
 
+  const planDateField = pfx==='pl' ? `
+    <div class="field"><label>Plan Start Date</label>
+      <div class="iw"><input type="month" id="${p}plan-start-date" oninput="${on}" style="font-family:inherit;padding:0.5rem 0.6rem;font-size:1rem;" /></div>
+      <div class="note">When you first set this plan</div>
+    </div>` : '';
+
   return `
     <div class="card">
       <div class="card-title">Savings Balance</div>
-      <div class="fg">${f('savings-balance','Original Balance','$',100)}</div>
+      <div class="fg">${planDateField}${f('savings-balance','Original Balance','$',100)}</div>
       <div class="section-label">Initial Withdrawals</div>
       <div class="fg">
         ${f('withdraw-vacay','Vacay Account','$',50)}
@@ -787,6 +855,9 @@ function readState(pfx) {
     const el = document.getElementById(pfx+'-'+key);
     if (el) setDeep(base, path, parseFloat(el.value)||0);
   }
+  // Plan start date (string field, not numeric)
+  const dateEl = document.getElementById(pfx+'-plan-start-date');
+  if (dateEl && dateEl.value) base.planStartDate = dateEl.value;
   base.gigs = readGigs(pfx);
   return base;
 }
@@ -797,8 +868,10 @@ function populateFields(pfx, s) {
     const el = document.getElementById(pfx+'-'+key);
     if (el) el.value = getDeep(s,path)||'';
   }
+  // Plan start date
+  const dateEl = document.getElementById(pfx+'-plan-start-date');
+  if (dateEl) dateEl.value = s.planStartDate || '';
   if (pfx==='wi') {
-    // balance field shows computed balance (after withdrawals)
     const c = calc(s);
     const el = document.getElementById('wi-savings-balance');
     if (el) el.value = Math.round(c.balance)||'';
@@ -822,13 +895,30 @@ function updateComputed(pfx, c) {
 // ─── INPUT HANDLERS ──────────────────────────────────────────────────────────
 function onInput(pfx) {
   const s = readState(pfx);
-  if (pfx!=='wi') stored(pfx, s);
+  if (pfx !== 'wi') stored(pfx, s);
   else whatIfState = s;
   updateComputed(pfx, calc(s));
-  if (currentTab==='runway') renderChart();
+
+  // Propagate tax rate change from Plan to Current and Updates panel
+  if (pfx === 'pl') {
+    const rate = s.freelance.taxRate;
+    const cu = stored('cu') || clone(DEFAULTS);
+    cu.freelance.taxRate = rate;
+    stored('cu', cu);
+    whatIfState.freelance.taxRate = rate;
+    const el = document.getElementById('wi-fl-tax');
+    if (el) el.value = rate;
+  }
+
+  if (currentTab === 'runway') renderChart();
 }
 
-function onWhatIf() { onInput('wi'); }
+function onWhatIf() {
+  undoStack.push(clone(whatIfState));
+  if (undoStack.length > 30) undoStack.shift();
+  updateUndoBtn();
+  onInput('wi');
+}
 
 // ─── GIGS ────────────────────────────────────────────────────────────────────
 function gigRowHTML(pfx, g) {
@@ -930,11 +1020,13 @@ function switchTab(name) {
 
 // ─── WHAT IF ─────────────────────────────────────────────────────────────────
 function resetWhatIf() {
-  const cu = stored('cu') || clone(DEFAULTS);
+  const cu = stored('cu') || clone(DEFAULTS); // always reset to committed Current
   const c = calc(cu);
   whatIfState = clone(cu);
   whatIfState.savings.balance = Math.round(c.balance);
   whatIfState.savings.withdrawals = {vacay:0,gift:0,coaching:0,writingClass:0};
+  undoStack = [];
+  updateUndoBtn();
   populateFields('wi', whatIfState);
   updateWiTotals(calc(whatIfState));
   renderChart();
@@ -952,19 +1044,13 @@ function updateWiTotals(c) {
 
 function saveWiAs(pfx) {
   const s = clone(whatIfState);
-  if (pfx==='pl') {
-    if (!confirm('Save What If as your Plan? This replaces your original vision.')) return;
-    s.savings.withdrawals = {vacay:0,gift:0,coaching:0,writingClass:0};
-    stored('pl', s);
-    populateFields('pl', s);
-    updateComputed('pl', calc(s));
-    toast('Saved as Plan.');
-  } else {
-    s.savings.withdrawals = {vacay:0,gift:0,coaching:0,writingClass:0};
+  s.savings.withdrawals = {vacay:0,gift:0,coaching:0,writingClass:0};
+  if (pfx === 'cu') {
     stored('cu', s);
-    populateFields('cu', s);
-    updateComputed('cu', calc(s));
-    toast('Saved as Current.');
+    toast('Saved as Current — pink line updated.');
+  } else {
+    stored('wi', s);
+    toast('What If saved — teal line will reload from this.');
   }
   renderChart();
 }
@@ -976,27 +1062,55 @@ function renderChart() {
   const wiS = whatIfState;
   const plC = calc(plS), cuC = calc(cuS), wiC = calc(wiS);
 
-  // Stats
-  setText('rs-plan', fmo(plC.runway));
-  setText('rs-plan-sub', isFinite(plC.runway) ? (plC.runway/12).toFixed(1)+' yrs' : 'infinite');
-  setText('rs-cur',  fmo(cuC.runway));
-  setText('rs-cur-sub',  isFinite(cuC.runway)  ? (cuC.runway/12).toFixed(1)+' yrs'  : 'infinite');
-  setText('rs-wi',   fmo(wiC.runway));
-  const delta = isFinite(wiC.runway)&&isFinite(cuC.runway) ? Math.floor(wiC.runway-cuC.runway) : null;
+  // Plan start offset (months from today)
+  const planStartStr = plS.planStartDate || '2026-01';
+  const [psy, psm] = planStartStr.split('-').map(Number);
+  const now = new Date();
+  const planLineStart = (psy - now.getFullYear())*12 + (psm - 1 - now.getMonth());
+
+  // Runway stats — use timeline zero-crossing so gig income is included
+  const plRunway = runwayMonths(plS, plC, planLineStart);
+  const cuRunway = runwayMonths(cuS, cuC, 0);
+  const wiRunway = runwayMonths(wiS, wiC, 0);
+
+  setText('rs-plan', fmo(plRunway));
+  setText('rs-plan-sub', isFinite(plRunway) ? (plRunway/12).toFixed(1)+' yrs' : 'infinite');
+  setText('rs-cur',  fmo(cuRunway));
+  setText('rs-cur-sub',  isFinite(cuRunway) ? (cuRunway/12).toFixed(1)+' yrs'  : 'infinite');
+  setText('rs-wi',   fmo(wiRunway));
+  const delta = isFinite(wiRunway)&&isFinite(cuRunway) ? Math.floor(wiRunway-cuRunway) : null;
   setText('rs-wi-sub', delta!==null ? (delta>=0?'+':'')+delta+' mo vs current' : 'vs current');
 
-  const runways = [plC.runway, cuC.runway, wiC.runway].filter(isFinite);
-  const maxMo = Math.min(240, Math.max(60, runways.length ? Math.ceil(Math.max(...runways))+18 : 60));
-  const now = new Date();
-  const labels = Array.from({length:maxMo+1}, (_,i) => {
-    const d = new Date(now.getFullYear(), now.getMonth()+i, 1);
+  // Window: 2 years (24 months), shifted by chartOffset years
+  const winStart = Math.round(chartOffset * 12);
+  const winEnd   = winStart + 24;
+
+  // Build full timelines (enough to cover any window)
+  const FULL_END = Math.max(winEnd + 12, 120);
+  const FULL_START = Math.min(winStart - 6, planLineStart - 2, -6);
+
+  const plData = buildTimeline(plS, plC, FULL_START, FULL_END, planLineStart);
+  const cuData = buildTimeline(cuS, cuC, FULL_START, FULL_END, 0);
+  const wiData = buildTimeline(wiS, wiC, FULL_START, FULL_END, 0);
+
+  // Slice to window
+  const slice = arr => {
+    const offset = winStart - FULL_START;
+    return arr.slice(offset, offset + 25);
+  };
+
+  const labels = Array.from({length:25}, (_,i) => {
+    const d = new Date(now.getFullYear(), now.getMonth() + winStart + i, 1);
     return d.toLocaleDateString('en-US',{month:'short',year:'numeric'});
   });
 
+  // Update nav label
+  setText('chart-window-label', labels[0]+' – '+labels[24]);
+
   const datasets = [
-    { label:'Plan',    data:buildTimeline(plS,plC,maxMo), borderColor:'#BBBBBB', borderWidth:1.5, borderDash:[4,3], pointRadius:0, tension:0.3 },
-    { label:'Current', data:buildTimeline(cuS,cuC,maxMo), borderColor:'#E8427A', borderWidth:2.5, pointRadius:0, tension:0.3 },
-    { label:'What If', data:buildTimeline(wiS,wiC,maxMo), borderColor:'#2BBFCF', borderWidth:2,   pointRadius:0, tension:0.3 },
+    { label:'Plan',    data:slice(plData), borderColor:'#BBBBBB', borderWidth:1.5, borderDash:[4,3], pointRadius:0, tension:0.3, spanGaps:false },
+    { label:'Current', data:slice(cuData), borderColor:'#E8427A', borderWidth:2.5, pointRadius:0, tension:0.3, spanGaps:false },
+    { label:'What If', data:slice(wiData), borderColor:'#2BBFCF', borderWidth:2,   pointRadius:0, tension:0.3, spanGaps:false },
   ];
 
   if (chartInst) chartInst.destroy();
@@ -1010,12 +1124,12 @@ function renderChart() {
         tooltip:{
           backgroundColor:'#FDFAF3',borderColor:'#D0C8B4',borderWidth:1,
           titleColor:'#1B2B50',bodyColor:'#4A6070',
-          callbacks:{label:ctx=>` ${ctx.dataset.label}: ${f$(ctx.parsed.y)}`}
+          callbacks:{label:ctx=>ctx.parsed.y!=null?` ${ctx.dataset.label}: ${f$(ctx.parsed.y)}`:''}
         }
       },
       scales:{
-        x:{ticks:{color:'#8A9BAA',maxTicksLimit:10,font:{size:11}},grid:{color:'rgba(208,200,180,0.4)'}},
-        y:{ticks:{color:'#8A9BAA',font:{size:11},callback:v=>'$'+(v>=1000?(v/1000).toFixed(0)+'k':v)},grid:{color:'rgba(208,200,180,0.4)'}}
+        x:{ticks:{color:'#556070',maxTicksLimit:13,font:{size:11}},grid:{color:'rgba(208,200,180,0.4)'}},
+        y:{ticks:{color:'#556070',font:{size:11},callback:v=>'$'+(v>=1000?(v/1000).toFixed(0)+'k':v)},grid:{color:'rgba(208,200,180,0.4)'}}
       }
     }
   });
@@ -1046,8 +1160,15 @@ function toggleCmp(idx) {
 
 function loadSnap(idx) {
   const {_name,_date,...s}=getSnaps()[idx];
-  stored('cu',s); populateFields('cu',s); updateComputed('cu',calc(s));
-  switchTab('current'); toast('Loaded: "'+_name+'"');
+  stored('cu', s);
+  const c = calc(s);
+  whatIfState = clone(s);
+  whatIfState.savings.balance = Math.round(c.balance);
+  whatIfState.savings.withdrawals = {vacay:0,gift:0,coaching:0,writingClass:0};
+  populateFields('wi', whatIfState);
+  updateWiTotals(calc(whatIfState));
+  switchTab('runway');
+  toast('Loaded "'+_name+'" into Updates panel');
 }
 
 function deleteSnap(idx) {
@@ -1070,7 +1191,7 @@ function renderSnaps() {
       <div style="flex:1;min-width:0">
         <div class="snap-name">${snap._name||'Snapshot'}</div>
         <div class="snap-date">${date}</div>
-        <div class="snap-stats">Monthly: <span>${f$(c.monthlyExp)}</span> &nbsp;·&nbsp; Runway: <span>${fmo(c.runway)}</span> &nbsp;·&nbsp; Net: <span>${f$(c.net)}/mo</span></div>
+        <div class="snap-stats">Monthly: <span>${f$(c.monthlyExp)}</span> &nbsp;·&nbsp; Runway: <span>${fmo(runwayMonths(snap, c))}</span> &nbsp;·&nbsp; Net: <span>${f$(c.net)}/mo</span></div>
       </div>
       <div class="snap-actions">
         <button class="sbtn${isCmp?' on':''}" onclick="toggleCmp(${idx})">${isCmp?'On Chart ✓':'Compare'}</button>
@@ -1091,9 +1212,8 @@ function toast(msg) {
 
 // ─── INIT ────────────────────────────────────────────────────────────────────
 (function init() {
-  // Build forms
-  document.getElementById('plan-form').innerHTML    = buildForm('pl', false);
-  document.getElementById('current-form').innerHTML = buildForm('cu', true);
+  // Build plan form
+  document.getElementById('plan-form').innerHTML = buildForm('pl', false);
 
   // Load plan
   const pl = stored('pl') || clone(DEFAULTS);
@@ -1102,16 +1222,21 @@ function toast(msg) {
   updateComputed('pl', calc(pl));
   applyLockState();
 
-  // Load current
+  // Init Updates panel — use saved What If if present, else seed from Current
   const cu = stored('cu') || clone(DEFAULTS);
   if (!stored('cu')) stored('cu', cu);
-  populateFields('cu', cu);
-  updateComputed('cu', calc(cu));
 
-  // Init what-if from current
-  const cuC = calc(cu);
-  whatIfState = clone(cu);
-  whatIfState.savings.balance = Math.round(cuC.balance);
+  // Tax rate is owned by Plan; sync it everywhere on load
+  const planTaxRate = pl.freelance?.taxRate ?? DEFAULTS.freelance.taxRate;
+  cu.freelance.taxRate = planTaxRate;
+  stored('cu', cu);
+
+  const wiSeed = stored('wi') || cu;
+  wiSeed.freelance = wiSeed.freelance || {};
+  wiSeed.freelance.taxRate = planTaxRate;
+  const wiC = calc(wiSeed);
+  whatIfState = clone(wiSeed);
+  whatIfState.savings.balance = Math.round(wiC.balance);
   whatIfState.savings.withdrawals = {vacay:0,gift:0,coaching:0,writingClass:0};
   populateFields('wi', whatIfState);
   updateWiTotals(calc(whatIfState));
