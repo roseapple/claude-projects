@@ -198,12 +198,13 @@
     .add-btn:hover { background: rgba(43,191,207,0.08); }
 
     /* ── Runway grid ── */
+    #panel-runway { max-width: none; }
     .runway-grid {
-      display: grid; grid-template-columns: minmax(0,1fr) 540px;
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(300px, 1fr);
       gap: 1.5rem; align-items: start;
     }
-    @media (max-width: 1100px) { .runway-grid { grid-template-columns: minmax(0,1fr) 420px; } }
-    @media (max-width: 960px)  { .runway-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 840px) { .runway-grid { grid-template-columns: 1fr; } }
 
     /* ── Stat trio ── */
     .stat-trio { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.8rem; margin-bottom: 1rem; }
