@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Freedom Fund</title>
+  <title>Jessica's Creative Freedom Fund Tracker</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -29,6 +29,8 @@
       --hand:    'Caveat', cursive;
     }
 
+    html { font-size: 18px; }
+
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       background: var(--bg);
@@ -41,47 +43,55 @@
 
     /* ── Header ── */
     .header {
-      background: linear-gradient(135deg, var(--ocean3) 0%, var(--ocean2) 50%, var(--ocean) 100%);
-      padding: 1rem 1.5rem 0.9rem;
+      background:
+        linear-gradient(160deg, rgba(10,70,85,0.82) 0%, rgba(20,120,140,0.70) 45%, rgba(43,191,207,0.55) 100%),
+        url('https://images.unsplash.com/photo-1562016600-ece13e8ba570?q=80&w=1338&auto=format&fit=crop') center 40% / cover no-repeat;
+      padding: 2rem 2rem 1.75rem;
       display: flex;
-      align-items: center;
+      align-items: flex-end;
       justify-content: space-between;
       gap: 1rem;
       position: relative;
       overflow: hidden;
+      min-height: 140px;
     }
     .header::after {
       content: '';
       position: absolute;
       bottom: -1px; left: 0; right: 0;
-      height: 8px;
+      height: 18px;
       background: var(--bg);
-      border-radius: 0 0 0 0;
       clip-path: ellipse(52% 100% at 50% 100%);
     }
     .header-left h1 {
       font-family: var(--hand);
-      font-size: 1.7rem;
+      font-size: 2.4rem;
       font-weight: 700;
       color: #fff;
       letter-spacing: 0.01em;
-      text-shadow: 0 1px 4px rgba(0,0,0,0.2);
+      text-shadow: 0 2px 12px rgba(0,0,0,0.35), 0 1px 3px rgba(0,0,0,0.25);
+      line-height: 1.1;
     }
     .header-left p {
-      font-size: 0.75rem;
-      color: rgba(255,255,255,0.75);
-      margin-top: 0.05rem;
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.8);
+      margin-top: 0.25rem;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.3);
     }
     .hbtn {
-      padding: 0.42rem 1rem;
+      padding: 0.55rem 1.2rem;
       background: rgba(255,255,255,0.2);
-      border: 1px solid rgba(255,255,255,0.35);
+      border: 1px solid rgba(255,255,255,0.45);
       border-radius: 20px;
       color: #fff;
-      font-size: 0.78rem;
+      font-family: var(--hand);
+      font-size: 1rem;
+      font-weight: 600;
       cursor: pointer;
       transition: all 0.15s;
-      backdrop-filter: blur(4px);
+      backdrop-filter: blur(6px);
+      white-space: nowrap;
+      flex-shrink: 0;
     }
     .hbtn:hover { background: rgba(255,255,255,0.35); }
 
@@ -89,19 +99,19 @@
     .tabs {
       background: var(--paper);
       border-bottom: 2px solid var(--border);
-      padding: 0 1.5rem;
+      padding: 0 2rem;
       display: flex;
       gap: 0;
       box-shadow: 0 2px 8px rgba(27,43,80,0.06);
     }
     .tab {
-      padding: 0.7rem 1.3rem;
+      padding: 0.85rem 1.5rem;
       background: transparent;
       border: none;
       border-bottom: 3px solid transparent;
       color: var(--dim);
       font-family: var(--hand);
-      font-size: 1rem;
+      font-size: 1.15rem;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.15s;
@@ -111,7 +121,7 @@
     .tab.active { color: var(--ocean3); border-bottom-color: var(--ocean); }
 
     /* ── Panels ── */
-    .panel { display: none; padding: 1.5rem; max-width: 980px; margin: 0 auto; }
+    .panel { display: none; padding: 2rem; max-width: 1040px; margin: 0 auto; }
     .panel.active { display: block; }
 
     /* ── Cards ── */
@@ -119,16 +129,16 @@
       background: var(--paper);
       border: 1px solid var(--border);
       border-radius: 4px;
-      padding: 1.25rem;
-      margin-bottom: 1.1rem;
+      padding: 1.6rem;
+      margin-bottom: 1.25rem;
       box-shadow: 3px 3px 0 rgba(27,43,80,0.06), 0 1px 4px rgba(27,43,80,0.08);
       position: relative;
     }
     .card::before {
       content: '';
       position: absolute;
-      top: -4px; left: 50%; transform: translateX(-50%);
-      width: 60px; height: 10px;
+      top: -5px; left: 50%; transform: translateX(-50%);
+      width: 70px; height: 12px;
       background: var(--tape);
       border-radius: 2px;
       opacity: 0.7;
@@ -138,43 +148,43 @@
 
     .card-title {
       font-family: var(--hand);
-      font-size: 1.15rem;
+      font-size: 1.4rem;
       font-weight: 700;
       color: var(--ocean3);
-      margin-bottom: 1rem;
+      margin-bottom: 1.1rem;
     }
     .section-label {
       font-family: var(--hand);
-      font-size: 0.95rem;
+      font-size: 1.05rem;
       font-weight: 600;
       color: var(--muted);
-      margin: 1rem 0 0.6rem;
-      padding-bottom: 0.3rem;
+      margin: 1.2rem 0 0.7rem;
+      padding-bottom: 0.35rem;
       border-bottom: 1px dashed var(--border);
     }
 
     /* ── Form grid ── */
-    .fg { display: grid; grid-template-columns: repeat(auto-fill, minmax(155px, 1fr)); gap: 0.7rem; }
-    .fg.wide { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+    .fg { display: grid; grid-template-columns: repeat(auto-fill, minmax(185px, 1fr)); gap: 0.9rem; }
+    .fg.wide { grid-template-columns: repeat(auto-fill, minmax(235px, 1fr)); }
 
     .field label {
       display: block;
       font-family: var(--hand);
-      font-size: 0.9rem;
+      font-size: 1.05rem;
       color: var(--muted);
-      margin-bottom: 0.25rem;
+      margin-bottom: 0.3rem;
     }
-    .field .note { font-size: 0.67rem; color: var(--dim); margin-top: 0.2rem; font-style: italic; }
+    .field .note { font-size: 0.78rem; color: var(--dim); margin-top: 0.2rem; font-style: italic; }
 
     .iw { position: relative; }
     .iw .px, .iw .sx {
       position: absolute;
       top: 50%; transform: translateY(-50%);
-      color: var(--dim); font-size: 0.82rem;
+      color: var(--dim); font-size: 0.95rem;
       pointer-events: none;
     }
-    .iw .px { left: 8px; }
-    .iw .sx { right: 8px; }
+    .iw .px { left: 9px; }
+    .iw .sx { right: 9px; }
     .iw input {
       width: 100%;
       background: var(--paper2);
@@ -182,42 +192,42 @@
       border-bottom: 2px solid var(--border);
       border-radius: 0;
       color: var(--navy);
-      font-size: 0.95rem;
+      font-size: 1.1rem;
       font-weight: 600;
       outline: none;
       transition: border-color 0.15s;
     }
     .iw input:focus { border-bottom-color: var(--ocean); background: #fff; }
-    .iw.p input { padding: 0.42rem 0.6rem 0.42rem 1.4rem; }
-    .iw.s input { padding: 0.42rem 1.5rem 0.42rem 0.6rem; }
-    .iw:not(.p):not(.s) input { padding: 0.42rem 0.6rem; }
+    .iw.p input { padding: 0.55rem 0.7rem 0.55rem 1.6rem; }
+    .iw.s input { padding: 0.55rem 1.8rem 0.55rem 0.7rem; }
+    .iw:not(.p):not(.s) input { padding: 0.55rem 0.7rem; }
 
     /* freq pair */
-    .freq { display: flex; gap: 0.4rem; }
+    .freq { display: flex; gap: 0.5rem; }
     .freq > div { flex: 1; }
-    .freq .fl { font-size: 0.65rem; color: var(--dim); margin-bottom: 0.2rem; font-style: italic; }
+    .freq .fl { font-size: 0.72rem; color: var(--dim); margin-bottom: 0.22rem; font-style: italic; }
 
     /* ── Computed row ── */
     .computed {
-      display: flex; gap: 1.2rem; flex-wrap: wrap;
-      padding: 0.6rem 0.8rem;
+      display: flex; gap: 1.4rem; flex-wrap: wrap;
+      padding: 0.75rem 1rem;
       background: linear-gradient(135deg, rgba(43,191,207,0.08), rgba(43,191,207,0.04));
       border-radius: 3px;
       border: 1px dashed rgba(43,191,207,0.3);
-      margin-top: 0.8rem;
+      margin-top: 0.9rem;
     }
-    .cv .cl { font-family: var(--hand); font-size: 0.8rem; color: var(--dim); }
-    .cv .vl { font-size: 0.92rem; font-weight: 700; color: var(--muted); }
+    .cv .cl { font-family: var(--hand); font-size: 0.9rem; color: var(--dim); }
+    .cv .vl { font-size: 1.05rem; font-weight: 700; color: var(--muted); }
     .cv .vl.g { color: var(--green); }
     .cv .vl.r { color: var(--red); }
 
     /* ── Stats row ── */
-    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0.8rem; margin-bottom: 1.1rem; }
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(155px, 1fr)); gap: 0.9rem; margin-bottom: 1.25rem; }
     .sbox {
       background: var(--paper);
       border: 1px solid var(--border);
       border-radius: 4px;
-      padding: 0.9rem 1rem;
+      padding: 1.1rem 1.2rem;
       box-shadow: 2px 2px 0 rgba(27,43,80,0.07);
       position: relative;
     }
@@ -232,12 +242,12 @@
     }
     .sbox .sl {
       font-family: var(--hand);
-      font-size: 0.85rem;
+      font-size: 1rem;
       color: var(--dim);
-      margin-bottom: 0.3rem;
+      margin-bottom: 0.35rem;
     }
-    .sbox .sv { font-size: 1.35rem; font-weight: 700; color: var(--navy); line-height: 1.1; }
-    .sbox .ss { font-family: var(--hand); font-size: 0.75rem; color: var(--dim); margin-top: 0.15rem; }
+    .sbox .sv { font-size: 1.65rem; font-weight: 700; color: var(--navy); line-height: 1.1; }
+    .sbox .ss { font-family: var(--hand); font-size: 0.88rem; color: var(--dim); margin-top: 0.2rem; }
     .sbox.green::after { background: var(--green); opacity: 0.6; }
     .sbox.green .sv { color: var(--green); }
     .sbox.red::after   { background: var(--red); opacity: 0.6; }
@@ -246,20 +256,20 @@
     /* ── Opportunity ── */
     .opp-toggle {
       width: 100%;
-      padding: 0.72rem 1.1rem;
+      padding: 0.9rem 1.3rem;
       background: var(--paper);
       border: 1.5px dashed var(--ocean2);
       border-radius: 4px;
       color: var(--ocean3);
       font-family: var(--hand);
-      font-size: 1rem;
+      font-size: 1.15rem;
       font-weight: 600;
       cursor: pointer;
       text-align: left;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 0.8rem;
+      margin-bottom: 0.9rem;
       transition: all 0.15s;
       box-shadow: 2px 2px 0 rgba(43,191,207,0.15);
     }
@@ -272,28 +282,28 @@
       background: var(--paper);
       border: 1.5px solid var(--ocean);
       border-radius: 4px;
-      padding: 1.2rem;
-      margin-bottom: 0.8rem;
+      padding: 1.5rem;
+      margin-bottom: 0.9rem;
       box-shadow: 3px 3px 0 rgba(43,191,207,0.18);
       position: relative;
     }
     .opp-panel::before {
       content: '✏️';
       position: absolute;
-      top: -12px; right: 16px;
-      font-size: 1.1rem;
+      top: -14px; right: 18px;
+      font-size: 1.3rem;
     }
     .opp-panel.open { display: block; }
 
-    .type-row { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+    .type-row { display: flex; gap: 0.6rem; margin-bottom: 1.1rem; }
     .tbtn {
-      padding: 0.35rem 0.9rem;
+      padding: 0.45rem 1.1rem;
       border-radius: 20px;
       border: 1.5px solid var(--border);
       background: transparent;
       color: var(--dim);
       font-family: var(--hand);
-      font-size: 0.9rem;
+      font-size: 1rem;
       cursor: pointer;
       transition: all 0.15s;
     }
@@ -302,25 +312,25 @@
     .opp-compare {
       display: none;
       grid-template-columns: 1fr 1fr 1fr;
-      gap: 0.5rem;
-      padding: 0.8rem;
+      gap: 0.6rem;
+      padding: 1rem;
       background: linear-gradient(135deg, rgba(43,191,207,0.08), rgba(43,191,207,0.03));
       border: 1px dashed rgba(43,191,207,0.35);
       border-radius: 3px;
-      margin-top: 0.9rem;
+      margin-top: 1rem;
       text-align: center;
     }
-    .opp-compare .ocl { font-family: var(--hand); font-size: 0.8rem; color: var(--dim); margin-bottom: 0.2rem; }
-    .opp-compare .ocv { font-size: 1rem; font-weight: 700; }
+    .opp-compare .ocl { font-family: var(--hand); font-size: 0.92rem; color: var(--dim); margin-bottom: 0.25rem; }
+    .opp-compare .ocv { font-size: 1.15rem; font-weight: 700; }
 
-    .opp-actions { display: flex; gap: 0.6rem; margin-top: 1rem; }
+    .opp-actions { display: flex; gap: 0.7rem; margin-top: 1.1rem; }
 
     .btn {
-      padding: 0.48rem 1.1rem;
+      padding: 0.6rem 1.4rem;
       border-radius: 20px;
       border: none;
       font-family: var(--hand);
-      font-size: 0.95rem;
+      font-size: 1.05rem;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.15s;
@@ -333,30 +343,30 @@
     .btn-ghost:hover { border-color: var(--muted); color: var(--navy); }
 
     /* ── Chart ── */
-    .chart-wrap { position: relative; height: 380px; }
-    .chart-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.9rem; }
-    .chart-hint { font-family: var(--hand); font-size: 0.85rem; color: var(--dim); }
+    .chart-wrap { position: relative; height: 440px; }
+    .chart-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+    .chart-hint { font-family: var(--hand); font-size: 0.95rem; color: var(--dim); }
 
     /* ── History ── */
-    .save-row { display: flex; gap: 0.6rem; align-items: center; }
+    .save-row { display: flex; gap: 0.7rem; align-items: center; }
     .save-row input {
       flex: 1;
       background: var(--paper2);
       border: none;
       border-bottom: 2px solid var(--border);
-      padding: 0.5rem 0.6rem;
+      padding: 0.6rem 0.7rem;
       color: var(--navy);
-      font-size: 0.9rem;
+      font-size: 1.05rem;
       outline: none;
     }
     .save-row input:focus { border-bottom-color: var(--ocean); }
 
-    .snap-list { display: flex; flex-direction: column; gap: 0.8rem; margin-top: 0.5rem; }
+    .snap-list { display: flex; flex-direction: column; gap: 0.9rem; margin-top: 0.5rem; }
     .snap-card {
       background: var(--paper);
       border: 1px solid var(--border);
       border-radius: 3px;
-      padding: 0.9rem 1rem;
+      padding: 1.1rem 1.25rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -367,19 +377,19 @@
     .snap-card:nth-child(odd)  { transform: rotate(-0.4deg); }
     .snap-card:nth-child(even) { transform: rotate(0.3deg); }
     .snap-card.cmp { border-color: var(--ocean); box-shadow: 3px 3px 0 rgba(43,191,207,0.3); }
-    .snap-name { font-family: var(--hand); font-size: 1rem; font-weight: 600; color: var(--navy); }
-    .snap-date { font-size: 0.68rem; color: var(--dim); margin-top: 0.1rem; font-style: italic; }
-    .snap-stats { display: flex; gap: 0.75rem; font-family: var(--hand); font-size: 0.82rem; color: var(--dim); margin-top: 0.3rem; flex-wrap: wrap; }
+    .snap-name { font-family: var(--hand); font-size: 1.15rem; font-weight: 600; color: var(--navy); }
+    .snap-date { font-size: 0.78rem; color: var(--dim); margin-top: 0.1rem; font-style: italic; }
+    .snap-stats { display: flex; gap: 0.9rem; font-family: var(--hand); font-size: 0.95rem; color: var(--dim); margin-top: 0.35rem; flex-wrap: wrap; }
     .snap-stats span { color: var(--ocean3); font-weight: 600; }
-    .snap-actions { display: flex; gap: 0.4rem; flex-shrink: 0; }
+    .snap-actions { display: flex; gap: 0.5rem; flex-shrink: 0; }
     .sbtn {
-      padding: 0.3rem 0.7rem;
+      padding: 0.38rem 0.85rem;
       border-radius: 12px;
       border: 1px solid var(--border);
       background: transparent;
       color: var(--dim);
       font-family: var(--hand);
-      font-size: 0.82rem;
+      font-size: 0.95rem;
       cursor: pointer;
       transition: all 0.12s;
       white-space: nowrap;
@@ -388,7 +398,7 @@
     .sbtn.on { background: var(--ocean); border-color: var(--ocean); color: #fff; }
     .sbtn.del:hover { border-color: var(--red); color: var(--red); }
 
-    .empty { text-align: center; color: var(--dim); font-family: var(--hand); font-size: 1rem; padding: 2.5rem 0; }
+    .empty { text-align: center; color: var(--dim); font-family: var(--hand); font-size: 1.1rem; padding: 3rem 0; }
 
     /* ── Toast ── */
     .toast {
@@ -397,9 +407,9 @@
       transform: translateX(-50%) translateY(20px);
       background: var(--navy);
       border-radius: 20px;
-      padding: 0.55rem 1.3rem;
+      padding: 0.65rem 1.5rem;
       font-family: var(--hand);
-      font-size: 0.95rem;
+      font-size: 1.05rem;
       color: #fff;
       opacity: 0;
       transition: all 0.25s;
@@ -411,6 +421,7 @@
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
     @media (max-width: 600px) {
+      html { font-size: 16px; }
       .fg  { grid-template-columns: 1fr 1fr; }
       .stats { grid-template-columns: 1fr 1fr; }
       .opp-compare { grid-template-columns: 1fr 1fr 1fr; }
@@ -421,8 +432,8 @@
 
 <div class="header">
   <div class="header-left">
-    <h1>Freedom Fund 🌊</h1>
-    <p>your financial runway tracker</p>
+    <h1>Jessica's Creative Freedom Fund Tracker</h1>
+    <p>your financial runway, visualized</p>
   </div>
   <button class="hbtn" onclick="goSaveSnapshot()">Save Snapshot</button>
 </div>
