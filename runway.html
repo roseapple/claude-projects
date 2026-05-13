@@ -240,13 +240,15 @@
       position: sticky; top: 0; z-index: 2;
     }
     .wi-header-title { font-family: var(--hand); font-size: 1.1rem; font-weight: 700; }
-    .wi-reset {
+    .wi-reset, .wi-undo {
       background: transparent; border: none; color: rgba(255,255,255,0.8);
       font-family: var(--hand); font-size: 0.85rem; cursor: pointer;
       text-decoration: underline dotted; padding: 0;
     }
-    .wi-reset:hover { color: #fff; }
+    .wi-reset:hover, .wi-undo:hover { color: #fff; }
+    .wi-undo:disabled { opacity: 0.35; cursor: default; text-decoration: none; }
     .wi-body { padding: 1rem; }
+    .locked-note { font-size: 0.78rem; color: var(--dim); font-style: italic; margin-top: 0.2rem; }
 
     /* ── Accordion ── */
     .wi-acc { border: 1px dashed var(--border); border-radius: 4px; margin-bottom: 0.6rem; }
@@ -408,7 +410,10 @@
     <div class="whatif-panel">
       <div class="wi-header">
         <span class="wi-header-title">Updates</span>
-        <button class="wi-reset" onclick="resetWhatIf()">Reset to saved</button>
+        <div style="display:flex;gap:0.9rem;align-items:center">
+          <button class="wi-undo" id="wi-undo-btn" onclick="undoWhatIf()" disabled>&#8617; Undo</button>
+          <button class="wi-reset" onclick="resetWhatIf()">Reset to saved</button>
+        </div>
       </div>
       <div class="wi-body compact">
 
@@ -429,7 +434,7 @@
             <div class="field"><label>$/hr</label><div class="iw p"><span class="px">$</span><input type="number" id="wi-fl-rate" min="0" step="5" oninput="onWhatIf()" /></div></div>
             <div class="field"><label>Hrs/week</label><div class="iw"><input type="number" id="wi-fl-hours" min="0" step="1" oninput="onWhatIf()" /></div></div>
             <div class="field"><label>Weeks off/yr</label><div class="iw"><input type="number" id="wi-fl-weeks-off" min="0" step="1" oninput="onWhatIf()" /></div></div>
-            <div class="field"><label>Tax %</label><div class="iw s"><span class="sx">%</span><input type="number" id="wi-fl-tax" min="0" max="100" step="1" oninput="onWhatIf()" /></div></div>
+            <div class="field"><label>Tax %</label><div class="iw s"><span class="sx">%</span><input type="number" id="wi-fl-tax" min="0" max="100" step="1" disabled title="Change tax rate on the Plan tab" /></div><div class="locked-note">&#128274; Set on Plan tab</div></div>
             <div class="field" style="grid-column:span 2"><label>Months before starting</label><div class="iw"><input type="number" id="wi-fl-months-before" min="0" step="1" oninput="onWhatIf()" /></div></div>
           </div>
         </div>
@@ -630,9 +635,24 @@ let cmpSnap = null;
 let chartInst = null;
 let currentTab = 'plan';
 let chartOffset = 0; // years offset from today for chart window
+let undoStack = [];
 
 function prevYear() { chartOffset--; renderChart(); }
 function nextYear() { chartOffset++; renderChart(); }
+
+function updateUndoBtn() {
+  const btn = document.getElementById('wi-undo-btn');
+  if (btn) btn.disabled = undoStack.length === 0;
+}
+
+function undoWhatIf() {
+  if (!undoStack.length) return;
+  whatIfState = undoStack.pop();
+  populateFields('wi', whatIfState);
+  updateWiTotals(calc(whatIfState));
+  updateUndoBtn();
+  if (currentTab === 'runway') renderChart();
+}
 
 // ─── CALCULATIONS ─────────────────────────────────────────────────────────────
 function calc(s) {
@@ -875,13 +895,30 @@ function updateComputed(pfx, c) {
 // ─── INPUT HANDLERS ──────────────────────────────────────────────────────────
 function onInput(pfx) {
   const s = readState(pfx);
-  if (pfx!=='wi') stored(pfx, s);
+  if (pfx !== 'wi') stored(pfx, s);
   else whatIfState = s;
   updateComputed(pfx, calc(s));
-  if (currentTab==='runway') renderChart();
+
+  // Propagate tax rate change from Plan to Current and Updates panel
+  if (pfx === 'pl') {
+    const rate = s.freelance.taxRate;
+    const cu = stored('cu') || clone(DEFAULTS);
+    cu.freelance.taxRate = rate;
+    stored('cu', cu);
+    whatIfState.freelance.taxRate = rate;
+    const el = document.getElementById('wi-fl-tax');
+    if (el) el.value = rate;
+  }
+
+  if (currentTab === 'runway') renderChart();
 }
 
-function onWhatIf() { onInput('wi'); }
+function onWhatIf() {
+  undoStack.push(clone(whatIfState));
+  if (undoStack.length > 30) undoStack.shift();
+  updateUndoBtn();
+  onInput('wi');
+}
 
 // ─── GIGS ────────────────────────────────────────────────────────────────────
 function gigRowHTML(pfx, g) {
@@ -988,6 +1025,8 @@ function resetWhatIf() {
   whatIfState = clone(cu);
   whatIfState.savings.balance = Math.round(c.balance);
   whatIfState.savings.withdrawals = {vacay:0,gift:0,coaching:0,writingClass:0};
+  undoStack = [];
+  updateUndoBtn();
   populateFields('wi', whatIfState);
   updateWiTotals(calc(whatIfState));
   renderChart();
@@ -1186,7 +1225,15 @@ function toast(msg) {
   // Init Updates panel — use saved What If if present, else seed from Current
   const cu = stored('cu') || clone(DEFAULTS);
   if (!stored('cu')) stored('cu', cu);
+
+  // Tax rate is owned by Plan; sync it everywhere on load
+  const planTaxRate = pl.freelance?.taxRate ?? DEFAULTS.freelance.taxRate;
+  cu.freelance.taxRate = planTaxRate;
+  stored('cu', cu);
+
   const wiSeed = stored('wi') || cu;
+  wiSeed.freelance = wiSeed.freelance || {};
+  wiSeed.freelance.taxRate = planTaxRate;
   const wiC = calc(wiSeed);
   whatIfState = clone(wiSeed);
   whatIfState.savings.balance = Math.round(wiC.balance);
