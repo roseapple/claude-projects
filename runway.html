@@ -19,7 +19,7 @@
       --ocean3:  #0E6E7E;
       --navy:    #1B2B50;
       --muted:   #4A6070;
-      --dim:     #8A9BAA;
+      --dim:     #556070;
       --green:   #1BA878;
       --red:     #C94040;
       --pink:    #E8427A;
@@ -107,7 +107,7 @@
     .fg2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
     .fg1 { display: grid; grid-template-columns: 1fr; gap: 0.6rem; }
     .field label { display: block; font-family: var(--hand); font-size: 1rem; color: var(--muted); margin-bottom: 0.25rem; }
-    .field .note { font-size: 0.72rem; color: var(--dim); margin-top: 0.2rem; font-style: italic; }
+    .field .note { font-size: 0.82rem; color: var(--dim); margin-top: 0.2rem; font-style: italic; }
     .iw { position: relative; }
     .iw .px, .iw .sx {
       position: absolute; top: 50%; transform: translateY(-50%);
@@ -126,18 +126,18 @@
     .iw:not(.p):not(.s) input { padding: 0.5rem 0.6rem; }
     .freq { display: flex; gap: 0.4rem; }
     .freq > div { flex: 1; }
-    .freq .fl { font-size: 0.65rem; color: var(--dim); margin-bottom: 0.2rem; font-style: italic; }
+    .freq .fl { font-size: 0.78rem; color: var(--dim); margin-bottom: 0.2rem; font-style: italic; }
 
     /* ── Compact (for what-if panel) ── */
-    .compact .field label { font-size: 0.82rem; margin-bottom: 0.18rem; }
-    .compact .iw input { font-size: 0.88rem; }
+    .compact .field label { font-size: 0.9rem; margin-bottom: 0.18rem; }
+    .compact .iw input { font-size: 0.92rem; }
     .compact .iw.p input { padding: 0.32rem 0.5rem 0.32rem 1.3rem; }
     .compact .iw.s input { padding: 0.32rem 1.4rem 0.32rem 0.5rem; }
     .compact .iw:not(.p):not(.s) input { padding: 0.32rem 0.5rem; }
-    .compact .iw .px { left: 7px; font-size: 0.72rem; }
-    .compact .iw .sx { right: 7px; font-size: 0.72rem; }
-    .compact .section-label { font-size: 0.85rem; margin: 0.7rem 0 0.4rem; }
-    .compact .freq .fl { font-size: 0.58rem; }
+    .compact .iw .px { left: 7px; font-size: 0.78rem; }
+    .compact .iw .sx { right: 7px; font-size: 0.78rem; }
+    .compact .section-label { font-size: 0.95rem; margin: 0.7rem 0 0.4rem; }
+    .compact .freq .fl { font-size: 0.72rem; }
 
     /* ── Computed row ── */
     .computed {
@@ -146,7 +146,7 @@
       background: linear-gradient(135deg, rgba(43,191,207,0.08), rgba(43,191,207,0.04));
       border: 1px dashed rgba(43,191,207,0.3); border-radius: 3px; margin-top: 0.8rem;
     }
-    .cv .cl { font-family: var(--hand); font-size: 0.82rem; color: var(--dim); }
+    .cv .cl { font-family: var(--hand); font-size: 0.9rem; color: var(--dim); }
     .cv .vl { font-size: 1rem; font-weight: 700; color: var(--muted); }
     .cv .vl.g { color: var(--green); } .cv .vl.r { color: var(--red); }
 
@@ -174,8 +174,8 @@
       background: var(--paper2); border: 1px solid var(--border); border-radius: 4px;
       padding: 0.7rem 0.8rem; display: flex; gap: 0.5rem; align-items: flex-end;
     }
-    .gig-fields { display: grid; grid-template-columns: 1.4fr 0.7fr 0.8fr 0.8fr; gap: 0.5rem; flex: 1; }
-    .gig-row .field label { font-size: 0.72rem; margin-bottom: 0.18rem; }
+    .gig-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem 0.6rem; flex: 1; }
+    .gig-row .field label { font-size: 0.82rem; margin-bottom: 0.18rem; }
     .gig-row input {
       width: 100%; background: #fff; border: none;
       border-bottom: 1.5px solid var(--border); color: var(--navy);
@@ -199,10 +199,11 @@
 
     /* ── Runway grid ── */
     .runway-grid {
-      display: grid; grid-template-columns: minmax(0,1fr) 370px;
+      display: grid; grid-template-columns: minmax(0,1fr) 540px;
       gap: 1.5rem; align-items: start;
     }
-    @media (max-width: 960px) { .runway-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 1100px) { .runway-grid { grid-template-columns: minmax(0,1fr) 420px; } }
+    @media (max-width: 960px)  { .runway-grid { grid-template-columns: 1fr; } }
 
     /* ── Stat trio ── */
     .stat-trio { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.8rem; margin-bottom: 1rem; }
@@ -217,12 +218,12 @@
     .sbox.plan-box::after   { background: #999; }
     .sbox.cur-box::after    { background: var(--pink); opacity: 0.8; }
     .sbox.wi-box::after     { background: var(--ocean); opacity: 0.8; }
-    .sbox .sl { font-family: var(--hand); font-size: 0.88rem; color: var(--dim); margin-bottom: 0.3rem; }
+    .sbox .sl { font-family: var(--hand); font-size: 1rem; color: var(--dim); margin-bottom: 0.3rem; }
     .sbox .sv { font-size: 1.45rem; font-weight: 700; line-height: 1.1; }
     .sbox.plan-box .sv { color: #999; }
     .sbox.cur-box  .sv { color: var(--pink); }
     .sbox.wi-box   .sv { color: var(--ocean2); }
-    .sbox .ss { font-family: var(--hand); font-size: 0.78rem; color: var(--dim); margin-top: 0.18rem; }
+    .sbox .ss { font-family: var(--hand); font-size: 0.9rem; color: var(--dim); margin-top: 0.18rem; }
 
     /* ── What If panel ── */
     .whatif-panel {
@@ -282,8 +283,16 @@
 
     /* ── Chart ── */
     .chart-wrap { position: relative; height: 420px; }
-    .chart-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.9rem; }
+    .chart-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.9rem; flex-wrap: wrap; gap: 0.5rem; }
     .chart-legend { display: flex; gap: 1rem; font-family: var(--hand); font-size: 0.9rem; }
+    .chart-nav {
+      padding: 0.28rem 0.75rem; background: transparent;
+      border: 1px solid var(--border); border-radius: 12px;
+      color: var(--muted); font-family: var(--hand); font-size: 0.9rem;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .chart-nav:hover { border-color: var(--ocean2); color: var(--ocean3); }
+    .chart-window-label { font-family: var(--hand); font-size: 0.88rem; color: var(--dim); min-width: 180px; text-align: center; }
 
     /* ── History ── */
     .save-row { display: flex; gap: 0.7rem; align-items: center; }
@@ -302,8 +311,8 @@
     .snap-card:nth-child(even) { transform: rotate(0.3deg); }
     .snap-card.cmp { border-color: var(--ocean); }
     .snap-name { font-family: var(--hand); font-size: 1.05rem; font-weight: 600; color: var(--navy); }
-    .snap-date { font-size: 0.72rem; color: var(--dim); margin-top: 0.1rem; font-style: italic; }
-    .snap-stats { display: flex; gap: 0.8rem; font-family: var(--hand); font-size: 0.88rem; color: var(--dim); margin-top: 0.3rem; flex-wrap: wrap; }
+    .snap-date { font-size: 0.85rem; color: var(--dim); margin-top: 0.1rem; font-style: italic; }
+    .snap-stats { display: flex; gap: 0.8rem; font-family: var(--hand); font-size: 0.95rem; color: var(--dim); margin-top: 0.3rem; flex-wrap: wrap; }
     .snap-stats span { color: var(--ocean3); font-weight: 600; }
     .snap-actions { display: flex; gap: 0.4rem; flex-shrink: 0; }
     .sbtn {
@@ -385,10 +394,15 @@
       <div class="card">
         <div class="chart-header">
           <div class="card-title" style="margin-bottom:0">Money Over Time</div>
+          <div style="display:flex;align-items:center;gap:0.5rem">
+            <button class="chart-nav" onclick="prevYear()">&#8592; Prev Year</button>
+            <span class="chart-window-label" id="chart-window-label"></span>
+            <button class="chart-nav" onclick="nextYear()">Next Year &#8594;</button>
+          </div>
           <div class="chart-legend">
-            <span style="color:#AAAAAA">— plan</span>
-            <span style="color:#E8427A">— current</span>
-            <span style="color:#2BBFCF">— what if</span>
+            <span style="color:#AAAAAA">&#8212; plan</span>
+            <span style="color:#E8427A">&#8212; current</span>
+            <span style="color:#2BBFCF">&#8212; what if</span>
           </div>
         </div>
         <div class="chart-wrap"><canvas id="chart"></canvas></div>
@@ -410,18 +424,6 @@
             <div class="iw p"><span class="px">$</span>
               <input type="number" id="wi-savings-balance" min="0" step="100" oninput="onWhatIf()" />
             </div>
-          </div>
-        </div>
-
-        <!-- Base Freelance -->
-        <div style="margin-bottom:0.9rem">
-          <div class="section-label">Base Freelance Income</div>
-          <div class="fg2">
-            <div class="field"><label>$/hr</label><div class="iw p"><span class="px">$</span><input type="number" id="wi-fl-rate" min="0" step="5" oninput="onWhatIf()" /></div></div>
-            <div class="field"><label>Hrs/week</label><div class="iw"><input type="number" id="wi-fl-hours" min="0" step="1" oninput="onWhatIf()" /></div></div>
-            <div class="field"><label>Weeks off/yr</label><div class="iw"><input type="number" id="wi-fl-weeks-off" min="0" step="1" oninput="onWhatIf()" /></div></div>
-            <div class="field"><label>Tax %</label><div class="iw s"><span class="sx">%</span><input type="number" id="wi-fl-tax" min="0" max="100" step="1" oninput="onWhatIf()" /></div></div>
-            <div class="field" style="grid-column:span 2"><label>Months before starting</label><div class="iw"><input type="number" id="wi-fl-months-before" min="0" step="1" oninput="onWhatIf()" /></div></div>
           </div>
         </div>
 
@@ -534,6 +536,7 @@
 <script>
 // ─── DEFAULTS ────────────────────────────────────────────────────────────────
 const DEFAULTS = {
+  planStartDate: '2026-01',
   savings:    { balance: 91883, withdrawals: { vacay:0, gift:400, coaching:0, writingClass:0 } },
   freelance:  { monthsBeforeStart:0, weeksOffPerYear:0, hourlyRate:162, hoursPerWeek:8, taxRate:32 },
   fixedCosts: { rent:2650, utilities:100, insurance:420, transportation:350, debt:0,
@@ -589,9 +592,9 @@ const FM = {
   'sg-gifts':           ['savingsGoals','gifts'],
 };
 
-// What If has a subset of fields (balance + all expense/income fields, no withdrawals)
+// What If has expense + balance fields only (no withdrawals, no base freelance)
 const WI_FM = Object.fromEntries(
-  Object.entries(FM).filter(([k]) => !k.startsWith('withdraw'))
+  Object.entries(FM).filter(([k]) => !k.startsWith('withdraw') && !k.startsWith('fl-'))
 );
 
 // ─── UTILS ───────────────────────────────────────────────────────────────────
@@ -613,6 +616,10 @@ let whatIfState = clone(DEFAULTS);
 let cmpSnap = null;
 let chartInst = null;
 let currentTab = 'plan';
+let chartOffset = 0; // years offset from today for chart window
+
+function prevYear() { chartOffset--; renderChart(); }
+function nextYear() { chartOffset++; renderChart(); }
 
 // ─── CALCULATIONS ─────────────────────────────────────────────────────────────
 function calc(s) {
@@ -650,22 +657,33 @@ function gigOffset(dateStr) {
   return (y-now.getFullYear())*12+(m-1-now.getMonth());
 }
 
-function buildTimeline(s, c, months) {
+// Build timeline from fromMonth to toMonth (months relative to today).
+// lineStartMonth: when the line begins (can be negative = past).
+// Returns array of length (toMonth - fromMonth + 1); null = before line start.
+function buildTimeline(s, c, fromMonth, toMonth, lineStartMonth = 0) {
   const fl = s.freelance, gigs = s.gigs||[];
-  const pts=[]; let bal=c.balance;
-  for (let m=0; m<=months; m++) {
-    pts.push(Math.max(0,bal));
-    let inc = m>=fl.monthsBeforeStart ? c.net : 0;
+  let bal = c.balance;
+  const pts = {};
+
+  // Compute from lineStartMonth forward, tracking balance
+  for (let m = lineStartMonth; m <= toMonth; m++) {
+    pts[m] = Math.max(0, bal);
+    // Freelance kicks in monthsBeforeStart months after lineStart
+    let inc = m >= (lineStartMonth + fl.monthsBeforeStart) ? c.net : 0;
     for (const g of gigs) {
-      const off = gigOffset(g.startDate);
-      const dur = g.weeks/4.333;
-      if (m>=off && m<off+dur) {
-        inc += g.rate*g.hoursPerWeek*(52/12)*(1-fl.taxRate/100);
+      const off = gigOffset(g.startDate); // relative to today
+      const dur = g.weeks / 4.333;
+      if (m >= off && m < off + dur) {
+        inc += g.rate * g.hoursPerWeek * (52/12) * (1 - fl.taxRate/100);
       }
     }
-    bal -= (c.monthlyExp-inc);
+    bal -= (c.monthlyExp - inc);
   }
-  return pts;
+
+  return Array.from({length: toMonth - fromMonth + 1}, (_, i) => {
+    const m = fromMonth + i;
+    return m in pts ? pts[m] : null;
+  });
 }
 
 // ─── FORM BUILDER ────────────────────────────────────────────────────────────
@@ -685,10 +703,16 @@ function buildForm(pfx, hasGigs) {
       <div><div class="fl">×/${unit}</div><div class="iw"><input type="number" id="${p+fid}" min="0" step="0.5" oninput="${on}"/></div></div>
     </div></div>`;
 
+  const planDateField = pfx==='pl' ? `
+    <div class="field"><label>Plan Start Date</label>
+      <div class="iw"><input type="month" id="${p}plan-start-date" oninput="${on}" style="font-family:inherit;padding:0.5rem 0.6rem;font-size:1rem;" /></div>
+      <div class="note">When you first set this plan</div>
+    </div>` : '';
+
   return `
     <div class="card">
       <div class="card-title">Savings Balance</div>
-      <div class="fg">${f('savings-balance','Original Balance','$',100)}</div>
+      <div class="fg">${planDateField}${f('savings-balance','Original Balance','$',100)}</div>
       <div class="section-label">Initial Withdrawals</div>
       <div class="fg">
         ${f('withdraw-vacay','Vacay Account','$',50)}
@@ -787,6 +811,9 @@ function readState(pfx) {
     const el = document.getElementById(pfx+'-'+key);
     if (el) setDeep(base, path, parseFloat(el.value)||0);
   }
+  // Plan start date (string field, not numeric)
+  const dateEl = document.getElementById(pfx+'-plan-start-date');
+  if (dateEl && dateEl.value) base.planStartDate = dateEl.value;
   base.gigs = readGigs(pfx);
   return base;
 }
@@ -797,8 +824,10 @@ function populateFields(pfx, s) {
     const el = document.getElementById(pfx+'-'+key);
     if (el) el.value = getDeep(s,path)||'';
   }
+  // Plan start date
+  const dateEl = document.getElementById(pfx+'-plan-start-date');
+  if (dateEl) dateEl.value = s.planStartDate || '';
   if (pfx==='wi') {
-    // balance field shows computed balance (after withdrawals)
     const c = calc(s);
     const el = document.getElementById('wi-savings-balance');
     if (el) el.value = Math.round(c.balance)||'';
@@ -985,18 +1014,42 @@ function renderChart() {
   const delta = isFinite(wiC.runway)&&isFinite(cuC.runway) ? Math.floor(wiC.runway-cuC.runway) : null;
   setText('rs-wi-sub', delta!==null ? (delta>=0?'+':'')+delta+' mo vs current' : 'vs current');
 
-  const runways = [plC.runway, cuC.runway, wiC.runway].filter(isFinite);
-  const maxMo = Math.min(240, Math.max(60, runways.length ? Math.ceil(Math.max(...runways))+18 : 60));
+  // Plan start offset (months from today)
+  const planStartStr = plS.planStartDate || '2026-01';
+  const [psy, psm] = planStartStr.split('-').map(Number);
   const now = new Date();
-  const labels = Array.from({length:maxMo+1}, (_,i) => {
-    const d = new Date(now.getFullYear(), now.getMonth()+i, 1);
+  const planLineStart = (psy - now.getFullYear())*12 + (psm - 1 - now.getMonth());
+
+  // Window: 2 years (24 months), shifted by chartOffset years
+  const winStart = Math.round(chartOffset * 12);
+  const winEnd   = winStart + 24;
+
+  // Build full timelines (enough to cover any window)
+  const FULL_END = Math.max(winEnd + 12, 120);
+  const FULL_START = Math.min(winStart - 6, planLineStart - 2, -6);
+
+  const plData = buildTimeline(plS, plC, FULL_START, FULL_END, planLineStart);
+  const cuData = buildTimeline(cuS, cuC, FULL_START, FULL_END, 0);
+  const wiData = buildTimeline(wiS, wiC, FULL_START, FULL_END, 0);
+
+  // Slice to window
+  const slice = arr => {
+    const offset = winStart - FULL_START;
+    return arr.slice(offset, offset + 25);
+  };
+
+  const labels = Array.from({length:25}, (_,i) => {
+    const d = new Date(now.getFullYear(), now.getMonth() + winStart + i, 1);
     return d.toLocaleDateString('en-US',{month:'short',year:'numeric'});
   });
 
+  // Update nav label
+  setText('chart-window-label', labels[0]+' – '+labels[24]);
+
   const datasets = [
-    { label:'Plan',    data:buildTimeline(plS,plC,maxMo), borderColor:'#BBBBBB', borderWidth:1.5, borderDash:[4,3], pointRadius:0, tension:0.3 },
-    { label:'Current', data:buildTimeline(cuS,cuC,maxMo), borderColor:'#E8427A', borderWidth:2.5, pointRadius:0, tension:0.3 },
-    { label:'What If', data:buildTimeline(wiS,wiC,maxMo), borderColor:'#2BBFCF', borderWidth:2,   pointRadius:0, tension:0.3 },
+    { label:'Plan',    data:slice(plData), borderColor:'#BBBBBB', borderWidth:1.5, borderDash:[4,3], pointRadius:0, tension:0.3, spanGaps:false },
+    { label:'Current', data:slice(cuData), borderColor:'#E8427A', borderWidth:2.5, pointRadius:0, tension:0.3, spanGaps:false },
+    { label:'What If', data:slice(wiData), borderColor:'#2BBFCF', borderWidth:2,   pointRadius:0, tension:0.3, spanGaps:false },
   ];
 
   if (chartInst) chartInst.destroy();
@@ -1010,12 +1063,12 @@ function renderChart() {
         tooltip:{
           backgroundColor:'#FDFAF3',borderColor:'#D0C8B4',borderWidth:1,
           titleColor:'#1B2B50',bodyColor:'#4A6070',
-          callbacks:{label:ctx=>` ${ctx.dataset.label}: ${f$(ctx.parsed.y)}`}
+          callbacks:{label:ctx=>ctx.parsed.y!=null?` ${ctx.dataset.label}: ${f$(ctx.parsed.y)}`:''}
         }
       },
       scales:{
-        x:{ticks:{color:'#8A9BAA',maxTicksLimit:10,font:{size:11}},grid:{color:'rgba(208,200,180,0.4)'}},
-        y:{ticks:{color:'#8A9BAA',font:{size:11},callback:v=>'$'+(v>=1000?(v/1000).toFixed(0)+'k':v)},grid:{color:'rgba(208,200,180,0.4)'}}
+        x:{ticks:{color:'#556070',maxTicksLimit:13,font:{size:11}},grid:{color:'rgba(208,200,180,0.4)'}},
+        y:{ticks:{color:'#556070',font:{size:11},callback:v=>'$'+(v>=1000?(v/1000).toFixed(0)+'k':v)},grid:{color:'rgba(208,200,180,0.4)'}}
       }
     }
   });
