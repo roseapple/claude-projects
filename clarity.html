@@ -557,7 +557,7 @@
 <div class="toast" id="toast"></div>
 
 <script>
-// ─── DEFAULTS ────────────────────────────────────────────────────────────────
+// ─── DEFAULTS ───────────────────────────────────────────────────────────────────────────────
 const DEFAULTS = {
   planStartDate: '2026-01',
   savings:    { balance: 91883, withdrawals: { vacay:0, gift:400, coaching:0, writingClass:0 } },
@@ -574,7 +574,7 @@ const DEFAULTS = {
   gigs: []
 };
 
-// ─── FIELD MAP ────────────────────────────────────────────────────────────────
+// ─── FIELD MAP ──────────────────────────────────────────────────────────────────────────────
 const FM = {
   'savings-balance':    ['savings','balance'],
   'withdraw-vacay':     ['savings','withdrawals','vacay'],
@@ -620,7 +620,7 @@ const WI_FM = Object.fromEntries(
   Object.entries(FM).filter(([k]) => !k.startsWith('withdraw'))
 );
 
-// ─── UTILS ───────────────────────────────────────────────────────────────────
+// ─── UTILS ────────────────────────────────────────────────────────────────────────────────
 const clone  = o  => JSON.parse(JSON.stringify(o));
 const getDeep = (o,p) => p.reduce((x,k) => (x??{})[k], o);
 const setDeep = (o,p,v) => { const k=[...p],l=k.pop(); k.reduce((x,i)=>x[i],o)[l]=v; };
@@ -634,12 +634,12 @@ const fmo = n => {
 };
 const setText = (id,v) => { const e=document.getElementById(id); if(e) e.textContent=v; };
 
-// ─── STORAGE ─────────────────────────────────────────────────────────────────
+// ─── STORAGE ─────────────────────────────────────────────────────────────────────────────
 const stored = (k,v) => v === undefined
   ? JSON.parse(localStorage.getItem('ff4-'+k)||'null')
   : localStorage.setItem('ff4-'+k, JSON.stringify(v));
 
-// ─── STATE ───────────────────────────────────────────────────────────────────
+// ─── STATE ──────────────────────────────────────────────────────────────────────────────
 let planLocked = stored('plan-locked') !== false; // true by default
 let whatIfState = clone(DEFAULTS);
 let cmpSnap = null;
@@ -665,7 +665,7 @@ function undoWhatIf() {
   if (currentTab === 'runway') renderChart();
 }
 
-// ─── CALCULATIONS ─────────────────────────────────────────────────────────────
+// ─── CALCULATIONS ─────────────────────────────────────────────────────────────────────────────
 function calc(s) {
   const totalW = Object.values(s.savings.withdrawals||{}).reduce((a,b)=>a+b,0);
   const balance = s.savings.balance - totalW;
@@ -741,7 +741,7 @@ function buildTimeline(s, c, fromMonth, toMonth, lineStartMonth = 0) {
   });
 }
 
-// ─── FORM BUILDER ────────────────────────────────────────────────────────────
+// ─── FORM BUILDER ────────────────────────────────────────────────────────────────────────────
 function buildForm(pfx, hasGigs) {
   const p = pfx+'-', on = `onInput('${pfx}')`;
   const inp = (id,type,step=1) => {
@@ -750,9 +750,9 @@ function buildForm(pfx, hasGigs) {
     if(type==='%') return `<div class="iw s"><span class="sx">%</span><input type="number" id="${fid}" min="0" max="100" step="${step}" oninput="${on}"/></div>`;
     return `<div class="iw"><input type="number" id="${fid}" min="0" step="${step}" oninput="${on}"/></div>`;
   };
-  const f=(id,lbl,type,step=1,note='')=>
+  const f=(id,lbl,type,step=1,note='')─>
     `<div class="field"><label>${lbl}</label>${inp(id,type,step)}${note?`<div class="note">${note}</div>`:''}</div>`;
-  const fr=(cid,fid,lbl,unit='week')=>
+  const fr=(cid,fid,lbl,unit='week')─>
     `<div class="field"><label>${lbl}</label><div class="freq">
       <div><div class="fl">$/each</div>${inp(cid,'$',1)}</div>
       <div><div class="fl">×/${unit}</div><div class="iw"><input type="number" id="${p+fid}" min="0" step="0.5" oninput="${on}"/></div></div>
@@ -856,7 +856,7 @@ function buildForm(pfx, hasGigs) {
     </div>`;
 }
 
-// ─── READ / POPULATE ─────────────────────────────────────────────────────────
+// ─── READ / POPULATE ───────────────────────────────────────────────────────────────────────────
 function readState(pfx) {
   const base = pfx==='pl' ? clone(stored('pl')||DEFAULTS)
              : pfx==='cu' ? clone(stored('cu')||DEFAULTS)
@@ -903,7 +903,7 @@ function updateComputed(pfx, c) {
   setText(pfx+'-c-sg',      f$(c.sgTotal));
 }
 
-// ─── INPUT HANDLERS ──────────────────────────────────────────────────────────
+// ─── INPUT HANDLERS ──────────────────────────────────────────────────────────────────────────
 function onInput(pfx) {
   const s = readState(pfx);
   if (pfx !== 'wi') stored(pfx, s);
@@ -931,7 +931,7 @@ function onWhatIf() {
   onInput('wi');
 }
 
-// ─── GIGS ────────────────────────────────────────────────────────────────────
+// ─── GIGS ────────────────────────────────────────────────────────────────────────────────────
 function gigRowHTML(pfx, g) {
   const on = `onInput('${pfx}')`;
   return `<div class="gig-row" data-id="${g.id}">
@@ -985,7 +985,7 @@ function removeGig(btn, pfx) {
   onInput(pfx);
 }
 
-// ─── PLAN LOCK ───────────────────────────────────────────────────────────────
+// ─── PLAN LOCK ───────────────────────────────────────────────────────────────────────────────
 function applyLockState() {
   const inputs = document.querySelectorAll('#plan-form input');
   const addGigBtn = document.querySelector('#plan-form .add-btn');
@@ -1019,7 +1019,7 @@ function toggleLock() {
   applyLockState();
 }
 
-// ─── TABS ────────────────────────────────────────────────────────────────────
+// ─── TABS ─────────────────────────────────────────────────────────────────────────────────
 function switchTab(name) {
   currentTab = name;
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
@@ -1029,7 +1029,7 @@ function switchTab(name) {
   if (name==='history') renderSnaps();
 }
 
-// ─── WHAT IF ─────────────────────────────────────────────────────────────────
+// ─── WHAT IF ─────────────────────────────────────────────────────────────────────────────
 function resetWhatIf() {
   const cu = stored('cu') || clone(DEFAULTS); // always reset to committed Current
   const c = calc(cu);
@@ -1066,7 +1066,7 @@ function saveWiAs(pfx) {
   renderChart();
 }
 
-// ─── CHART ───────────────────────────────────────────────────────────────────
+// ─── CHART ──────────────────────────────────────────────────────────────────────────────────
 function renderChart() {
   const plS = stored('pl') || clone(DEFAULTS);
   const cuS = stored('cu') || clone(DEFAULTS);
@@ -1146,7 +1146,7 @@ function renderChart() {
   });
 }
 
-// ─── HISTORY ─────────────────────────────────────────────────────────────────
+// ─── HISTORY ───────────────────────────────────────────────────────────────────────────────
 function getSnaps()    { try { return JSON.parse(localStorage.getItem('ff4-snaps')||'[]'); } catch { return []; } }
 function saveSnaps(s)  { localStorage.setItem('ff4-snaps', JSON.stringify(s)); }
 
@@ -1213,7 +1213,7 @@ function renderSnaps() {
   });
 }
 
-// ─── EXPORT / IMPORT ─────────────────────────────────────────────────────────
+// ─── EXPORT / IMPORT ────────────────────────────────────────────────────────────────────────────
 function exportData() {
   const keys = ['pl','cu','wi','plan-locked','snaps'];
   const data = { _v: 1, _exported: new Date().toISOString() };
@@ -1249,7 +1249,7 @@ function importData(e) {
   e.target.value = ''; // reset so same file can be re-imported
 }
 
-// ─── TOAST ───────────────────────────────────────────────────────────────────
+// ─── TOAST ──────────────────────────────────────────────────────────────────────────────────
 let _tt;
 function toast(msg) {
   const e=document.getElementById('toast');
@@ -1257,7 +1257,7 @@ function toast(msg) {
   clearTimeout(_tt); _tt=setTimeout(()=>e.classList.remove('show'),3200);
 }
 
-// ─── INIT ────────────────────────────────────────────────────────────────────
+// ─── INIT ──────────────────────────────────────────────────────────────────────────────────
 (function init() {
   // Build plan form
   document.getElementById('plan-form').innerHTML = buildForm('pl', false);
