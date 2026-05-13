@@ -350,7 +350,6 @@
 
 <div class="tabs">
   <button class="tab active" data-tab="plan"    onclick="switchTab('plan')">Plan</button>
-  <button class="tab"        data-tab="current" onclick="switchTab('current')">Current</button>
   <button class="tab"        data-tab="runway"  onclick="switchTab('runway')">Runway</button>
   <button class="tab"        data-tab="history" onclick="switchTab('history')">History</button>
 </div>
@@ -362,11 +361,6 @@
     <button class="lock-btn" id="lock-btn" onclick="toggleLock()">🔒 Unlock to Edit</button>
   </div>
   <div id="plan-form"></div>
-</div>
-
-<!-- ═══ CURRENT ═══ -->
-<div id="panel-current" class="panel">
-  <div id="current-form"></div>
 </div>
 
 <!-- ═══ RUNWAY ═══ -->
@@ -413,8 +407,8 @@
     <!-- What If panel -->
     <div class="whatif-panel">
       <div class="wi-header">
-        <span class="wi-header-title">What If?</span>
-        <button class="wi-reset" onclick="resetWhatIf()">Reset to current</button>
+        <span class="wi-header-title">Updates</span>
+        <button class="wi-reset" onclick="resetWhatIf()">Reset to saved</button>
       </div>
       <div class="wi-body compact">
 
@@ -425,6 +419,18 @@
             <div class="iw p"><span class="px">$</span>
               <input type="number" id="wi-savings-balance" min="0" step="100" oninput="onWhatIf()" />
             </div>
+          </div>
+        </div>
+
+        <!-- Base Freelance -->
+        <div style="margin-bottom:0.9rem">
+          <div class="section-label">Base Freelance Income</div>
+          <div class="fg2">
+            <div class="field"><label>$/hr</label><div class="iw p"><span class="px">$</span><input type="number" id="wi-fl-rate" min="0" step="5" oninput="onWhatIf()" /></div></div>
+            <div class="field"><label>Hrs/week</label><div class="iw"><input type="number" id="wi-fl-hours" min="0" step="1" oninput="onWhatIf()" /></div></div>
+            <div class="field"><label>Weeks off/yr</label><div class="iw"><input type="number" id="wi-fl-weeks-off" min="0" step="1" oninput="onWhatIf()" /></div></div>
+            <div class="field"><label>Tax %</label><div class="iw s"><span class="sx">%</span><input type="number" id="wi-fl-tax" min="0" max="100" step="1" oninput="onWhatIf()" /></div></div>
+            <div class="field" style="grid-column:span 2"><label>Months before starting</label><div class="iw"><input type="number" id="wi-fl-months-before" min="0" step="1" oninput="onWhatIf()" /></div></div>
           </div>
         </div>
 
@@ -593,9 +599,9 @@ const FM = {
   'sg-gifts':           ['savingsGoals','gifts'],
 };
 
-// What If has expense + balance fields only (no withdrawals, no base freelance)
+// Updates panel has all fields except withdrawals (those are plan-only)
 const WI_FM = Object.fromEntries(
-  Object.entries(FM).filter(([k]) => !k.startsWith('withdraw') && !k.startsWith('fl-'))
+  Object.entries(FM).filter(([k]) => !k.startsWith('withdraw'))
 );
 
 // ─── UTILS ───────────────────────────────────────────────────────────────────
@@ -1121,8 +1127,15 @@ function toggleCmp(idx) {
 
 function loadSnap(idx) {
   const {_name,_date,...s}=getSnaps()[idx];
-  stored('cu',s); populateFields('cu',s); updateComputed('cu',calc(s));
-  switchTab('current'); toast('Loaded: "'+_name+'"');
+  stored('cu', s);
+  const c = calc(s);
+  whatIfState = clone(s);
+  whatIfState.savings.balance = Math.round(c.balance);
+  whatIfState.savings.withdrawals = {vacay:0,gift:0,coaching:0,writingClass:0};
+  populateFields('wi', whatIfState);
+  updateWiTotals(calc(whatIfState));
+  switchTab('runway');
+  toast('Loaded "'+_name+'" into Updates panel');
 }
 
 function deleteSnap(idx) {
@@ -1145,7 +1158,7 @@ function renderSnaps() {
       <div style="flex:1;min-width:0">
         <div class="snap-name">${snap._name||'Snapshot'}</div>
         <div class="snap-date">${date}</div>
-        <div class="snap-stats">Monthly: <span>${f$(c.monthlyExp)}</span> &nbsp;·&nbsp; Runway: <span>${fmo(c.runway)}</span> &nbsp;·&nbsp; Net: <span>${f$(c.net)}/mo</span></div>
+        <div class="snap-stats">Monthly: <span>${f$(c.monthlyExp)}</span> &nbsp;·&nbsp; Runway: <span>${fmo(runwayMonths(snap, c))}</span> &nbsp;·&nbsp; Net: <span>${f$(c.net)}/mo</span></div>
       </div>
       <div class="snap-actions">
         <button class="sbtn${isCmp?' on':''}" onclick="toggleCmp(${idx})">${isCmp?'On Chart ✓':'Compare'}</button>
@@ -1166,9 +1179,8 @@ function toast(msg) {
 
 // ─── INIT ────────────────────────────────────────────────────────────────────
 (function init() {
-  // Build forms
-  document.getElementById('plan-form').innerHTML    = buildForm('pl', false);
-  document.getElementById('current-form').innerHTML = buildForm('cu', true);
+  // Build plan form
+  document.getElementById('plan-form').innerHTML = buildForm('pl', false);
 
   // Load plan
   const pl = stored('pl') || clone(DEFAULTS);
@@ -1177,13 +1189,9 @@ function toast(msg) {
   updateComputed('pl', calc(pl));
   applyLockState();
 
-  // Load current
+  // Init Updates panel from current state
   const cu = stored('cu') || clone(DEFAULTS);
   if (!stored('cu')) stored('cu', cu);
-  populateFields('cu', cu);
-  updateComputed('cu', calc(cu));
-
-  // Init what-if from current
   const cuC = calc(cu);
   whatIfState = clone(cu);
   whatIfState.savings.balance = Math.round(cuC.balance);
