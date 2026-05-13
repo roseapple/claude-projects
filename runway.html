@@ -9,7 +9,6 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
       --bg:      #E8E3D5;
       --paper:   #FDFAF3;
@@ -23,21 +22,15 @@
       --dim:     #8A9BAA;
       --green:   #1BA878;
       --red:     #C94040;
-      --yellow:  #C87A10;
-      --text:    #1B2B50;
+      --pink:    #E8427A;
       --border:  #D0C8B4;
       --hand:    'Caveat', cursive;
     }
-
     html { font-size: 18px; }
-
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       background: var(--bg);
-      background-image:
-        radial-gradient(circle at 20% 80%, rgba(43,191,207,0.08) 0%, transparent 50%),
-        radial-gradient(circle at 80% 20%, rgba(43,191,207,0.06) 0%, transparent 40%);
-      color: var(--text);
+      color: var(--navy);
       min-height: 100vh;
     }
 
@@ -45,716 +38,484 @@
     .header {
       background:
         linear-gradient(160deg, rgba(10,70,85,0.82) 0%, rgba(20,120,140,0.70) 45%, rgba(43,191,207,0.55) 100%),
-        url('https://images.unsplash.com/photo-1562016600-ece13e8ba570?q=80&w=1338&auto=format&fit=crop') center 40% / cover no-repeat;
+        url('https://images.unsplash.com/photo-1562016600-ece13e8ba570?q=80&w=1338&auto=format&fit=crop') center 40%/cover no-repeat;
       padding: 2rem 2rem 1.75rem;
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      gap: 1rem;
-      position: relative;
-      overflow: hidden;
-      min-height: 140px;
+      display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem;
+      position: relative; overflow: hidden; min-height: 140px;
     }
     .header::after {
-      content: '';
-      position: absolute;
-      bottom: -1px; left: 0; right: 0;
-      height: 18px;
-      background: var(--bg);
-      clip-path: ellipse(52% 100% at 50% 100%);
+      content: ''; position: absolute; bottom: -1px; left: 0; right: 0;
+      height: 18px; background: var(--bg); clip-path: ellipse(52% 100% at 50% 100%);
     }
-    .header-left h1 {
-      font-family: var(--hand);
-      font-size: 2.4rem;
-      font-weight: 700;
-      color: #fff;
-      letter-spacing: 0.01em;
-      text-shadow: 0 2px 12px rgba(0,0,0,0.35), 0 1px 3px rgba(0,0,0,0.25);
-      line-height: 1.1;
+    .header h1 {
+      font-family: var(--hand); font-size: 2.2rem; font-weight: 700; color: #fff;
+      text-shadow: 0 2px 12px rgba(0,0,0,0.35); line-height: 1.1;
     }
-    .header-left p {
-      font-size: 0.9rem;
-      color: rgba(255,255,255,0.8);
-      margin-top: 0.25rem;
-      text-shadow: 0 1px 4px rgba(0,0,0,0.3);
-    }
+    .header p { font-size: 0.88rem; color: rgba(255,255,255,0.8); margin-top: 0.2rem; text-shadow: 0 1px 4px rgba(0,0,0,0.3); }
     .hbtn {
-      padding: 0.55rem 1.2rem;
-      background: rgba(255,255,255,0.2);
-      border: 1px solid rgba(255,255,255,0.45);
-      border-radius: 20px;
-      color: #fff;
-      font-family: var(--hand);
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.15s;
-      backdrop-filter: blur(6px);
-      white-space: nowrap;
-      flex-shrink: 0;
+      padding: 0.5rem 1.1rem; background: rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.45); border-radius: 20px;
+      color: #fff; font-family: var(--hand); font-size: 1rem; font-weight: 600;
+      cursor: pointer; backdrop-filter: blur(6px); flex-shrink: 0; transition: all 0.15s;
     }
     .hbtn:hover { background: rgba(255,255,255,0.35); }
 
     /* ── Tabs ── */
     .tabs {
-      background: var(--paper);
-      border-bottom: 2px solid var(--border);
-      padding: 0 2rem;
-      display: flex;
-      gap: 0;
+      background: var(--paper); border-bottom: 2px solid var(--border);
+      padding: 0 2rem; display: flex;
       box-shadow: 0 2px 8px rgba(27,43,80,0.06);
     }
     .tab {
-      padding: 0.85rem 1.5rem;
-      background: transparent;
-      border: none;
-      border-bottom: 3px solid transparent;
-      color: var(--dim);
-      font-family: var(--hand);
-      font-size: 1.15rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.15s;
-      margin-bottom: -2px;
+      padding: 0.8rem 1.4rem; background: transparent; border: none;
+      border-bottom: 3px solid transparent; color: var(--dim);
+      font-family: var(--hand); font-size: 1.1rem; font-weight: 600;
+      cursor: pointer; transition: all 0.15s; margin-bottom: -2px;
     }
     .tab:hover { color: var(--muted); }
     .tab.active { color: var(--ocean3); border-bottom-color: var(--ocean); }
 
     /* ── Panels ── */
-    .panel { display: none; padding: 2rem; max-width: 1040px; margin: 0 auto; }
+    .panel { display: none; padding: 1.75rem 2rem; max-width: 1100px; margin: 0 auto; }
     .panel.active { display: block; }
 
     /* ── Cards ── */
     .card {
-      background: var(--paper);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 1.6rem;
-      margin-bottom: 1.25rem;
+      background: var(--paper); border: 1px solid var(--border); border-radius: 4px;
+      padding: 1.5rem; margin-bottom: 1.1rem;
       box-shadow: 3px 3px 0 rgba(27,43,80,0.06), 0 1px 4px rgba(27,43,80,0.08);
       position: relative;
     }
     .card::before {
-      content: '';
-      position: absolute;
-      top: -5px; left: 50%; transform: translateX(-50%);
-      width: 70px; height: 12px;
-      background: var(--tape);
-      border-radius: 2px;
-      opacity: 0.7;
+      content: ''; position: absolute; top: -5px; width: 65px; height: 11px;
+      background: var(--tape); border-radius: 2px; opacity: 0.7;
     }
-    .card:nth-child(odd)::before  { left: 15%; transform: none; }
-    .card:nth-child(even)::before { left: auto; right: 15%; transform: none; }
-
+    .card:nth-child(odd)::before  { left: 15%; }
+    .card:nth-child(even)::before { right: 15%; }
     .card-title {
-      font-family: var(--hand);
-      font-size: 1.4rem;
-      font-weight: 700;
-      color: var(--ocean3);
-      margin-bottom: 1.1rem;
+      font-family: var(--hand); font-size: 1.35rem; font-weight: 700;
+      color: var(--ocean3); margin-bottom: 1rem;
     }
     .section-label {
-      font-family: var(--hand);
-      font-size: 1.05rem;
-      font-weight: 600;
-      color: var(--muted);
-      margin: 1.2rem 0 0.7rem;
-      padding-bottom: 0.35rem;
-      border-bottom: 1px dashed var(--border);
+      font-family: var(--hand); font-size: 1rem; font-weight: 600;
+      color: var(--muted); margin: 1.1rem 0 0.6rem;
+      padding-bottom: 0.3rem; border-bottom: 1px dashed var(--border);
     }
 
     /* ── Form grid ── */
-    .fg { display: grid; grid-template-columns: repeat(auto-fill, minmax(185px, 1fr)); gap: 0.9rem; }
-    .fg.wide { grid-template-columns: repeat(auto-fill, minmax(235px, 1fr)); }
-
-    .field label {
-      display: block;
-      font-family: var(--hand);
-      font-size: 1.05rem;
-      color: var(--muted);
-      margin-bottom: 0.3rem;
-    }
-    .field .note { font-size: 0.78rem; color: var(--dim); margin-top: 0.2rem; font-style: italic; }
-
+    .fg  { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 0.8rem; }
+    .fg2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+    .fg1 { display: grid; grid-template-columns: 1fr; gap: 0.6rem; }
+    .field label { display: block; font-family: var(--hand); font-size: 1rem; color: var(--muted); margin-bottom: 0.25rem; }
+    .field .note { font-size: 0.72rem; color: var(--dim); margin-top: 0.2rem; font-style: italic; }
     .iw { position: relative; }
     .iw .px, .iw .sx {
-      position: absolute;
-      top: 50%; transform: translateY(-50%);
-      color: var(--dim); font-size: 0.95rem;
-      pointer-events: none;
+      position: absolute; top: 50%; transform: translateY(-50%);
+      color: var(--dim); font-size: 0.88rem; pointer-events: none;
     }
-    .iw .px { left: 9px; }
-    .iw .sx { right: 9px; }
+    .iw .px { left: 9px; } .iw .sx { right: 9px; }
     .iw input {
-      width: 100%;
-      background: var(--paper2);
-      border: none;
-      border-bottom: 2px solid var(--border);
-      border-radius: 0;
-      color: var(--navy);
-      font-size: 1.1rem;
-      font-weight: 600;
-      outline: none;
-      transition: border-color 0.15s;
+      width: 100%; background: var(--paper2); border: none;
+      border-bottom: 2px solid var(--border); color: var(--navy);
+      font-size: 1.05rem; font-weight: 600; outline: none; transition: border-color 0.15s;
     }
     .iw input:focus { border-bottom-color: var(--ocean); background: #fff; }
-    .iw.p input { padding: 0.55rem 0.7rem 0.55rem 1.6rem; }
-    .iw.s input { padding: 0.55rem 1.8rem 0.55rem 0.7rem; }
-    .iw:not(.p):not(.s) input { padding: 0.55rem 0.7rem; }
-
-    /* freq pair */
-    .freq { display: flex; gap: 0.5rem; }
+    .iw input:disabled { opacity: 0.5; cursor: not-allowed; }
+    .iw.p input { padding: 0.5rem 0.6rem 0.5rem 1.5rem; }
+    .iw.s input { padding: 0.5rem 1.6rem 0.5rem 0.6rem; }
+    .iw:not(.p):not(.s) input { padding: 0.5rem 0.6rem; }
+    .freq { display: flex; gap: 0.4rem; }
     .freq > div { flex: 1; }
-    .freq .fl { font-size: 0.72rem; color: var(--dim); margin-bottom: 0.22rem; font-style: italic; }
+    .freq .fl { font-size: 0.65rem; color: var(--dim); margin-bottom: 0.2rem; font-style: italic; }
+
+    /* ── Compact (for what-if panel) ── */
+    .compact .field label { font-size: 0.82rem; margin-bottom: 0.18rem; }
+    .compact .iw input { font-size: 0.88rem; }
+    .compact .iw.p input { padding: 0.32rem 0.5rem 0.32rem 1.3rem; }
+    .compact .iw.s input { padding: 0.32rem 1.4rem 0.32rem 0.5rem; }
+    .compact .iw:not(.p):not(.s) input { padding: 0.32rem 0.5rem; }
+    .compact .iw .px { left: 7px; font-size: 0.72rem; }
+    .compact .iw .sx { right: 7px; font-size: 0.72rem; }
+    .compact .section-label { font-size: 0.85rem; margin: 0.7rem 0 0.4rem; }
+    .compact .freq .fl { font-size: 0.58rem; }
 
     /* ── Computed row ── */
     .computed {
-      display: flex; gap: 1.4rem; flex-wrap: wrap;
-      padding: 0.75rem 1rem;
+      display: flex; gap: 1.2rem; flex-wrap: wrap;
+      padding: 0.65rem 0.9rem;
       background: linear-gradient(135deg, rgba(43,191,207,0.08), rgba(43,191,207,0.04));
-      border-radius: 3px;
-      border: 1px dashed rgba(43,191,207,0.3);
-      margin-top: 0.9rem;
+      border: 1px dashed rgba(43,191,207,0.3); border-radius: 3px; margin-top: 0.8rem;
     }
-    .cv .cl { font-family: var(--hand); font-size: 0.9rem; color: var(--dim); }
-    .cv .vl { font-size: 1.05rem; font-weight: 700; color: var(--muted); }
-    .cv .vl.g { color: var(--green); }
-    .cv .vl.r { color: var(--red); }
+    .cv .cl { font-family: var(--hand); font-size: 0.82rem; color: var(--dim); }
+    .cv .vl { font-size: 1rem; font-weight: 700; color: var(--muted); }
+    .cv .vl.g { color: var(--green); } .cv .vl.r { color: var(--red); }
 
-    /* ── Stats row ── */
-    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(155px, 1fr)); gap: 0.9rem; margin-bottom: 1.25rem; }
+    /* ── Plan lock bar ── */
+    .plan-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      background: var(--paper); border: 1px solid var(--border); border-radius: 4px;
+      padding: 0.8rem 1.1rem; margin-bottom: 1rem;
+      box-shadow: 2px 2px 0 rgba(27,43,80,0.05);
+    }
+    .plan-bar-label { font-family: var(--hand); font-size: 1rem; color: var(--muted); }
+    .lock-btn {
+      display: flex; align-items: center; gap: 0.4rem;
+      padding: 0.38rem 0.9rem; background: transparent;
+      border: 1.5px solid var(--border); border-radius: 8px;
+      font-family: var(--hand); font-size: 0.9rem; color: var(--dim);
+      cursor: pointer; transition: all 0.15s;
+    }
+    .lock-btn:hover { border-color: var(--ocean2); color: var(--ocean3); }
+    .lock-btn.unlocked { border-color: #C87A10; color: #C87A10; }
+
+    /* ── Gigs ── */
+    .gig-list { display: flex; flex-direction: column; gap: 0.6rem; margin-top: 0.5rem; }
+    .gig-row {
+      background: var(--paper2); border: 1px solid var(--border); border-radius: 4px;
+      padding: 0.7rem 0.8rem; display: flex; gap: 0.5rem; align-items: flex-end;
+    }
+    .gig-fields { display: grid; grid-template-columns: 1.4fr 0.7fr 0.8fr 0.8fr; gap: 0.5rem; flex: 1; }
+    .gig-row .field label { font-size: 0.72rem; margin-bottom: 0.18rem; }
+    .gig-row input {
+      width: 100%; background: #fff; border: none;
+      border-bottom: 1.5px solid var(--border); color: var(--navy);
+      font-size: 0.85rem; font-weight: 600; padding: 0.3rem 0.4rem; outline: none;
+    }
+    .gig-row input:focus { border-bottom-color: var(--ocean); }
+    .gig-row input[type="month"] { font-family: inherit; }
+    .gig-remove {
+      background: none; border: none; color: var(--dim);
+      font-size: 1.3rem; cursor: pointer; padding: 0 0.2rem; line-height: 1;
+      align-self: flex-end; padding-bottom: 0.35rem;
+    }
+    .gig-remove:hover { color: var(--red); }
+    .add-btn {
+      padding: 0.3rem 0.85rem; background: transparent;
+      border: 1px dashed var(--ocean2); border-radius: 12px;
+      color: var(--ocean2); font-family: var(--hand); font-size: 0.9rem;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .add-btn:hover { background: rgba(43,191,207,0.08); }
+
+    /* ── Runway grid ── */
+    .runway-grid {
+      display: grid; grid-template-columns: minmax(0,1fr) 370px;
+      gap: 1.5rem; align-items: start;
+    }
+    @media (max-width: 960px) { .runway-grid { grid-template-columns: 1fr; } }
+
+    /* ── Stat trio ── */
+    .stat-trio { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.8rem; margin-bottom: 1rem; }
     .sbox {
-      background: var(--paper);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 1.1rem 1.2rem;
-      box-shadow: 2px 2px 0 rgba(27,43,80,0.07);
-      position: relative;
+      background: var(--paper); border: 1px solid var(--border); border-radius: 4px;
+      padding: 1rem 1.1rem; box-shadow: 2px 2px 0 rgba(27,43,80,0.06); position: relative;
     }
     .sbox::after {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 3px;
-      background: var(--ocean);
-      border-radius: 4px 4px 0 0;
-      opacity: 0.4;
+      content: ''; position: absolute; top: 0; left: 0; right: 0;
+      height: 3px; border-radius: 4px 4px 0 0; opacity: 0.5;
     }
-    .sbox .sl {
-      font-family: var(--hand);
-      font-size: 1rem;
-      color: var(--dim);
-      margin-bottom: 0.35rem;
-    }
-    .sbox .sv { font-size: 1.65rem; font-weight: 700; color: var(--navy); line-height: 1.1; }
-    .sbox .ss { font-family: var(--hand); font-size: 0.88rem; color: var(--dim); margin-top: 0.2rem; }
-    .sbox.green::after { background: var(--green); opacity: 0.6; }
-    .sbox.green .sv { color: var(--green); }
-    .sbox.red::after   { background: var(--red); opacity: 0.6; }
-    .sbox.red   .sv { color: var(--red); }
+    .sbox.plan-box::after   { background: #999; }
+    .sbox.cur-box::after    { background: var(--pink); opacity: 0.8; }
+    .sbox.wi-box::after     { background: var(--ocean); opacity: 0.8; }
+    .sbox .sl { font-family: var(--hand); font-size: 0.88rem; color: var(--dim); margin-bottom: 0.3rem; }
+    .sbox .sv { font-size: 1.45rem; font-weight: 700; line-height: 1.1; }
+    .sbox.plan-box .sv { color: #999; }
+    .sbox.cur-box  .sv { color: var(--pink); }
+    .sbox.wi-box   .sv { color: var(--ocean2); }
+    .sbox .ss { font-family: var(--hand); font-size: 0.78rem; color: var(--dim); margin-top: 0.18rem; }
 
-    /* ── Opportunity ── */
-    .opp-toggle {
-      width: 100%;
-      padding: 0.9rem 1.3rem;
-      background: var(--paper);
-      border: 1.5px dashed var(--ocean2);
-      border-radius: 4px;
-      color: var(--ocean3);
-      font-family: var(--hand);
-      font-size: 1.15rem;
-      font-weight: 600;
-      cursor: pointer;
-      text-align: left;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 0.9rem;
-      transition: all 0.15s;
-      box-shadow: 2px 2px 0 rgba(43,191,207,0.15);
+    /* ── What If panel ── */
+    .whatif-panel {
+      background: var(--paper); border: 1.5px solid var(--ocean);
+      border-radius: 4px; position: sticky; top: 1rem;
+      max-height: calc(100vh - 130px); overflow-y: auto;
+      box-shadow: 3px 3px 0 rgba(43,191,207,0.15);
     }
-    .opp-toggle:hover { background: rgba(43,191,207,0.06); }
-    .opp-toggle .arr { transition: transform 0.2s; }
-    .opp-toggle.open .arr { transform: rotate(180deg); }
-
-    .opp-panel {
-      display: none;
-      background: var(--paper);
-      border: 1.5px solid var(--ocean);
-      border-radius: 4px;
-      padding: 1.5rem;
-      margin-bottom: 0.9rem;
-      box-shadow: 3px 3px 0 rgba(43,191,207,0.18);
-      position: relative;
+    .wi-header {
+      background: linear-gradient(135deg, var(--ocean3), var(--ocean2));
+      color: #fff; padding: 0.8rem 1rem; border-radius: 3px 3px 0 0;
+      display: flex; justify-content: space-between; align-items: center;
+      position: sticky; top: 0; z-index: 2;
     }
-    .opp-panel::before {
-      content: '✏️';
-      position: absolute;
-      top: -14px; right: 18px;
-      font-size: 1.3rem;
+    .wi-header-title { font-family: var(--hand); font-size: 1.1rem; font-weight: 700; }
+    .wi-reset {
+      background: transparent; border: none; color: rgba(255,255,255,0.8);
+      font-family: var(--hand); font-size: 0.85rem; cursor: pointer;
+      text-decoration: underline dotted; padding: 0;
     }
-    .opp-panel.open { display: block; }
+    .wi-reset:hover { color: #fff; }
+    .wi-body { padding: 1rem; }
 
-    .type-row { display: flex; gap: 0.6rem; margin-bottom: 1.1rem; }
-    .tbtn {
-      padding: 0.45rem 1.1rem;
-      border-radius: 20px;
-      border: 1.5px solid var(--border);
-      background: transparent;
-      color: var(--dim);
-      font-family: var(--hand);
-      font-size: 1rem;
-      cursor: pointer;
-      transition: all 0.15s;
+    /* ── Accordion ── */
+    .wi-acc { border: 1px dashed var(--border); border-radius: 4px; margin-bottom: 0.6rem; }
+    .wi-acc-hdr {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 0.55rem 0.8rem; cursor: pointer; user-select: none;
+      font-family: var(--hand); font-size: 0.95rem; font-weight: 600; color: var(--muted);
     }
-    .tbtn.active { background: var(--ocean); border-color: var(--ocean); color: #fff; }
+    .wi-acc-hdr:hover { color: var(--navy); }
+    .wi-acc-hdr .wi-arr { font-size: 0.75rem; transition: transform 0.2s; }
+    .wi-acc.open .wi-acc-hdr .wi-arr { transform: rotate(180deg); }
+    .wi-acc-body { display: none; padding: 0.7rem 0.8rem; border-top: 1px dashed var(--border); }
+    .wi-acc.open .wi-acc-body { display: block; }
+    .wi-acc-total { font-weight: 700; color: var(--navy); font-size: 0.88rem; margin-right: 0.5rem; }
 
-    .opp-compare {
-      display: none;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 0.6rem;
-      padding: 1rem;
-      background: linear-gradient(135deg, rgba(43,191,207,0.08), rgba(43,191,207,0.03));
-      border: 1px dashed rgba(43,191,207,0.35);
-      border-radius: 3px;
-      margin-top: 1rem;
-      text-align: center;
-    }
-    .opp-compare .ocl { font-family: var(--hand); font-size: 0.92rem; color: var(--dim); margin-bottom: 0.25rem; }
-    .opp-compare .ocv { font-size: 1.15rem; font-weight: 700; }
-
-    .opp-actions { display: flex; gap: 0.7rem; margin-top: 1.1rem; }
-
+    /* ── Buttons ── */
     .btn {
-      padding: 0.6rem 1.4rem;
-      border-radius: 20px;
-      border: none;
-      font-family: var(--hand);
-      font-size: 1.05rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.15s;
+      padding: 0.55rem 1.2rem; border-radius: 20px; border: none;
+      font-family: var(--hand); font-size: 1rem; font-weight: 600;
+      cursor: pointer; transition: all 0.15s;
     }
     .btn-primary { background: var(--ocean); color: #fff; box-shadow: 2px 2px 0 var(--ocean3); }
     .btn-primary:hover { background: var(--ocean2); }
-    .btn-green   { background: var(--green); color: #fff; box-shadow: 2px 2px 0 #0f7a56; }
-    .btn-green:hover { background: #17966b; }
-    .btn-ghost   { background: transparent; border: 1.5px dashed var(--border); color: var(--muted); }
+    .btn-pink  { background: var(--pink); color: #fff; box-shadow: 2px 2px 0 #a02050; }
+    .btn-pink:hover { background: #d03060; }
+    .btn-ghost { background: transparent; border: 1.5px dashed var(--border); color: var(--muted); }
     .btn-ghost:hover { border-color: var(--muted); color: var(--navy); }
 
+    /* ── Wi save row ── */
+    .wi-save-row {
+      display: flex; gap: 0.5rem; padding-top: 0.8rem;
+      border-top: 1px dashed var(--border); margin-top: 0.5rem;
+    }
+    .wi-save-row .btn { flex: 1; font-size: 0.85rem; padding: 0.45rem 0.6rem; }
+
     /* ── Chart ── */
-    .chart-wrap { position: relative; height: 440px; }
-    .chart-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
-    .chart-hint { font-family: var(--hand); font-size: 0.95rem; color: var(--dim); }
+    .chart-wrap { position: relative; height: 420px; }
+    .chart-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.9rem; }
+    .chart-legend { display: flex; gap: 1rem; font-family: var(--hand); font-size: 0.9rem; }
 
     /* ── History ── */
     .save-row { display: flex; gap: 0.7rem; align-items: center; }
     .save-row input {
-      flex: 1;
-      background: var(--paper2);
-      border: none;
-      border-bottom: 2px solid var(--border);
-      padding: 0.6rem 0.7rem;
-      color: var(--navy);
-      font-size: 1.05rem;
-      outline: none;
+      flex: 1; background: var(--paper2); border: none;
+      border-bottom: 2px solid var(--border); padding: 0.55rem 0.7rem;
+      color: var(--navy); font-size: 1rem; outline: none;
     }
     .save-row input:focus { border-bottom-color: var(--ocean); }
-
-    .snap-list { display: flex; flex-direction: column; gap: 0.9rem; margin-top: 0.5rem; }
     .snap-card {
-      background: var(--paper);
-      border: 1px solid var(--border);
-      border-radius: 3px;
-      padding: 1.1rem 1.25rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
-      box-shadow: 3px 3px 0 rgba(27,43,80,0.07);
-      position: relative;
+      background: var(--paper); border: 1px solid var(--border); border-radius: 3px;
+      padding: 1rem 1.2rem; display: flex; align-items: center; justify-content: space-between;
+      gap: 1rem; box-shadow: 3px 3px 0 rgba(27,43,80,0.06); margin-bottom: 0.7rem;
     }
     .snap-card:nth-child(odd)  { transform: rotate(-0.4deg); }
     .snap-card:nth-child(even) { transform: rotate(0.3deg); }
-    .snap-card.cmp { border-color: var(--ocean); box-shadow: 3px 3px 0 rgba(43,191,207,0.3); }
-    .snap-name { font-family: var(--hand); font-size: 1.15rem; font-weight: 600; color: var(--navy); }
-    .snap-date { font-size: 0.78rem; color: var(--dim); margin-top: 0.1rem; font-style: italic; }
-    .snap-stats { display: flex; gap: 0.9rem; font-family: var(--hand); font-size: 0.95rem; color: var(--dim); margin-top: 0.35rem; flex-wrap: wrap; }
+    .snap-card.cmp { border-color: var(--ocean); }
+    .snap-name { font-family: var(--hand); font-size: 1.05rem; font-weight: 600; color: var(--navy); }
+    .snap-date { font-size: 0.72rem; color: var(--dim); margin-top: 0.1rem; font-style: italic; }
+    .snap-stats { display: flex; gap: 0.8rem; font-family: var(--hand); font-size: 0.88rem; color: var(--dim); margin-top: 0.3rem; flex-wrap: wrap; }
     .snap-stats span { color: var(--ocean3); font-weight: 600; }
-    .snap-actions { display: flex; gap: 0.5rem; flex-shrink: 0; }
+    .snap-actions { display: flex; gap: 0.4rem; flex-shrink: 0; }
     .sbtn {
-      padding: 0.38rem 0.85rem;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      background: transparent;
-      color: var(--dim);
-      font-family: var(--hand);
-      font-size: 0.95rem;
-      cursor: pointer;
-      transition: all 0.12s;
-      white-space: nowrap;
+      padding: 0.35rem 0.8rem; border-radius: 12px; border: 1px solid var(--border);
+      background: transparent; color: var(--dim); font-family: var(--hand); font-size: 0.88rem;
+      cursor: pointer; transition: all 0.12s; white-space: nowrap;
     }
     .sbtn:hover { border-color: var(--muted); color: var(--navy); }
     .sbtn.on { background: var(--ocean); border-color: var(--ocean); color: #fff; }
     .sbtn.del:hover { border-color: var(--red); color: var(--red); }
-
-    .empty { text-align: center; color: var(--dim); font-family: var(--hand); font-size: 1.1rem; padding: 3rem 0; }
+    .empty { text-align: center; color: var(--dim); font-family: var(--hand); font-size: 1rem; padding: 2.5rem 0; }
 
     /* ── Toast ── */
     .toast {
-      position: fixed;
-      bottom: 1.5rem; left: 50%;
-      transform: translateX(-50%) translateY(20px);
-      background: var(--navy);
-      border-radius: 20px;
-      padding: 0.65rem 1.5rem;
-      font-family: var(--hand);
-      font-size: 1.05rem;
-      color: #fff;
-      opacity: 0;
-      transition: all 0.25s;
-      pointer-events: none;
-      z-index: 100;
-      white-space: nowrap;
-      box-shadow: 0 4px 16px rgba(27,43,80,0.25);
+      position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%) translateY(20px);
+      background: var(--navy); border-radius: 20px; padding: 0.6rem 1.4rem;
+      font-family: var(--hand); font-size: 1rem; color: #fff;
+      opacity: 0; transition: all 0.25s; pointer-events: none; z-index: 100;
+      white-space: nowrap; box-shadow: 0 4px 16px rgba(27,43,80,0.25);
     }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-    @media (max-width: 600px) {
-      html { font-size: 16px; }
-      .fg  { grid-template-columns: 1fr 1fr; }
-      .stats { grid-template-columns: 1fr 1fr; }
-      .opp-compare { grid-template-columns: 1fr 1fr 1fr; }
-    }
+    @media (max-width: 600px) { html { font-size: 16px; } }
   </style>
 </head>
 <body>
 
 <div class="header">
-  <div class="header-left">
+  <div>
     <h1>Jessica's Creative Freedom Fund Tracker</h1>
     <p>your financial runway, visualized</p>
   </div>
-  <button class="hbtn" onclick="goSaveSnapshot()">Save Snapshot</button>
+  <button class="hbtn" onclick="goSave()">Save Snapshot</button>
 </div>
 
 <div class="tabs">
-  <button class="tab active" data-tab="numbers" onclick="switchTab('numbers')">Numbers</button>
-  <button class="tab" data-tab="runway" onclick="switchTab('runway')">Runway</button>
-  <button class="tab" data-tab="history" onclick="switchTab('history')">History</button>
+  <button class="tab active" data-tab="plan"    onclick="switchTab('plan')">Plan</button>
+  <button class="tab"        data-tab="current" onclick="switchTab('current')">Current</button>
+  <button class="tab"        data-tab="runway"  onclick="switchTab('runway')">Runway</button>
+  <button class="tab"        data-tab="history" onclick="switchTab('history')">History</button>
 </div>
 
-<!-- ═══════════════════════════════ NUMBERS ════════════════════════════════ -->
-<div id="panel-numbers" class="panel active">
-
-  <div class="card">
-    <div class="card-title">Savings Balance</div>
-    <div class="fg">
-      <div class="field">
-        <label>Original Balance</label>
-        <div class="iw p"><span class="px">$</span><input type="number" id="savings-balance" min="0" step="100" oninput="onInput()" /></div>
-      </div>
-    </div>
-    <div class="section-label">Initial Withdrawals</div>
-    <div class="fg">
-      <div class="field">
-        <label>Vacay Account</label>
-        <div class="iw p"><span class="px">$</span><input type="number" id="w-vacay" min="0" step="50" oninput="onInput()" /></div>
-      </div>
-      <div class="field">
-        <label>Gift Account</label>
-        <div class="iw p"><span class="px">$</span><input type="number" id="w-gift" min="0" step="50" oninput="onInput()" /></div>
-      </div>
-      <div class="field">
-        <label>Coaching</label>
-        <div class="iw p"><span class="px">$</span><input type="number" id="w-coaching" min="0" step="50" oninput="onInput()" /></div>
-      </div>
-      <div class="field">
-        <label>Writing Class / Residency</label>
-        <div class="iw p"><span class="px">$</span><input type="number" id="w-writing" min="0" step="50" oninput="onInput()" /></div>
-      </div>
-    </div>
-    <div class="computed">
-      <div class="cv"><div class="cl">Current Freedom Fund</div><div class="vl g" id="c-balance">$0</div></div>
-    </div>
+<!-- ═══ PLAN ═══ -->
+<div id="panel-plan" class="panel active">
+  <div class="plan-bar">
+    <div class="plan-lock-label" id="plan-bar-label">🔒 Locked — your original vision. Unlock only to correct it.</div>
+    <button class="lock-btn" id="lock-btn" onclick="toggleLock()">🔒 Unlock to Edit</button>
   </div>
-
-  <div class="card">
-    <div class="card-title">Freelance Income</div>
-    <div class="fg">
-      <div class="field">
-        <label>Months Before Starting</label>
-        <div class="iw"><input type="number" id="fl-months-before" min="0" step="1" oninput="onInput()" /></div>
-      </div>
-      <div class="field">
-        <label>Weeks Off per Year</label>
-        <div class="iw"><input type="number" id="fl-weeks-off" min="0" max="52" step="1" oninput="onInput()" /></div>
-      </div>
-      <div class="field">
-        <label>Hourly Rate</label>
-        <div class="iw p"><span class="px">$</span><input type="number" id="fl-rate" min="0" step="5" oninput="onInput()" /></div>
-      </div>
-      <div class="field">
-        <label>Hours per Week</label>
-        <div class="iw"><input type="number" id="fl-hours" min="0" max="168" step="1" oninput="onInput()" /></div>
-      </div>
-      <div class="field">
-        <label>Est. Tax Rate</label>
-        <div class="iw s"><span class="sx">%</span><input type="number" id="fl-tax" min="0" max="100" step="1" oninput="onInput()" /></div>
-      </div>
-    </div>
-    <div class="computed">
-      <div class="cv"><div class="cl">Monthly Gross</div><div class="vl" id="c-gross">$0</div></div>
-      <div class="cv"><div class="cl">Tax Set-Aside</div><div class="vl r" id="c-tax">$0</div></div>
-      <div class="cv"><div class="cl">Monthly Net</div><div class="vl g" id="c-net">$0</div></div>
-      <div class="cv"><div class="cl">Annual Net</div><div class="vl" id="c-annual-net">$0</div></div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-title">Fixed Costs</div>
-    <div class="fg">
-      <div class="field">
-        <label>Rent</label>
-        <div class="iw p"><span class="px">$</span><input type="number" id="fc-rent" min="0" step="50" oninput="onInput()" /></div>
-      </div>
-      <div class="field">
-        <label>Utilities</label>
-        <div class="iw p"><span class="px">$</span><input type="number" id="fc-utilities" min="0" step="10" oninput="onInput()" /></div>
-      </div>
-      <div class="field">
-        <label>Insurance</label>
-        <div class="iw p"><span class="px">$</span><input type="number" id="fc-insurance" min="0" step="10" oninput="onInput()" /></div>
-        <div class="note">Medical + Renters</div>
-      </div>
-      <div class="field">
-        <label>Transportation</label>
-        <div class="iw p"><span class="px">$</span><input type="number" id="fc-transport" min="0" step="10" oninput="onInput()" /></div>
-        <div class="note">Buses &amp; Lyfts</div>
-      </div>
-      <div class="field">
-        <label>Debt</label>
-        <div class="iw p"><span class="px">$</span><input type="number" id="fc-debt" min="0" step="10" oninput="onInput()" /></div>
-      </div>
-      <div class="field">
-        <label>Groceries</label>
-        <div class="iw p"><span class="px">$</span><input type="number" id="fc-groceries" min="0" step="10" oninput="onInput()" /></div>
-      </div>
-      <div class="field">
-        <label>Clothes</label>
-        <div class="iw p"><span class="px">$</span><input type="number" id="fc-clothes" min="0" step="10" oninput="onInput()" /></div>
-      </div>
-      <div class="field">
-        <label>Phone</label>
-        <div class="iw p"><span class="px">$</span><input type="number" id="fc-phone" min="0" step="5" oninput="onInput()" /></div>
-      </div>
-      <div class="field">
-        <label>Subscriptions</label>
-        <div class="iw p"><span class="px">$</span><input type="number" id="fc-subscriptions" min="0" step="5" oninput="onInput()" /></div>
-        <div class="note">Netflix, Spotify, etc.</div>
-      </div>
-      <div class="field">
-        <label>Misc. Buffer</label>
-        <div class="iw s"><span class="sx">%</span><input type="number" id="fc-misc-pct" min="0" max="100" step="1" oninput="onInput()" /></div>
-        <div class="note">% added to subtotal above</div>
-      </div>
-    </div>
-    <div class="computed">
-      <div class="cv"><div class="cl">Misc. Amount</div><div class="vl" id="c-misc">$0</div></div>
-      <div class="cv"><div class="cl">Total Fixed</div><div class="vl" id="c-fixed-total">$0</div></div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-title">Guilt-Free Spending</div>
-
-    <div class="section-label">Food &amp; Drinks — $ per occasion × times/week</div>
-    <div class="fg wide">
-      <div class="field">
-        <label>Coffee &amp; Pastries</label>
-        <div class="freq">
-          <div><div class="fl">$/each</div><div class="iw p"><span class="px">$</span><input type="number" id="gf-coffee-cost" min="0" step="1" oninput="onInput()" /></div></div>
-          <div><div class="fl">×/week</div><div class="iw"><input type="number" id="gf-coffee-freq" min="0" step="0.5" oninput="onInput()" /></div></div>
-        </div>
-      </div>
-      <div class="field">
-        <label>Doordash</label>
-        <div class="freq">
-          <div><div class="fl">$/each</div><div class="iw p"><span class="px">$</span><input type="number" id="gf-dash-cost" min="0" step="1" oninput="onInput()" /></div></div>
-          <div><div class="fl">×/week</div><div class="iw"><input type="number" id="gf-dash-freq" min="0" step="0.5" oninput="onInput()" /></div></div>
-        </div>
-      </div>
-      <div class="field">
-        <label>Meals Out</label>
-        <div class="freq">
-          <div><div class="fl">$/each</div><div class="iw p"><span class="px">$</span><input type="number" id="gf-meals-cost" min="0" step="5" oninput="onInput()" /></div></div>
-          <div><div class="fl">×/week</div><div class="iw"><input type="number" id="gf-meals-freq" min="0" step="0.5" oninput="onInput()" /></div></div>
-        </div>
-      </div>
-      <div class="field">
-        <label>Drinks Out</label>
-        <div class="freq">
-          <div><div class="fl">$/each</div><div class="iw p"><span class="px">$</span><input type="number" id="gf-drinks-cost" min="0" step="1" oninput="onInput()" /></div></div>
-          <div><div class="fl">×/week</div><div class="iw"><input type="number" id="gf-drinks-freq" min="0" step="0.5" oninput="onInput()" /></div></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="section-label">Beauty &amp; Fashion — $ per occasion × times/year</div>
-    <div class="fg wide">
-      <div class="field">
-        <label>Hair</label>
-        <div class="freq">
-          <div><div class="fl">$/each</div><div class="iw p"><span class="px">$</span><input type="number" id="gf-hair-cost" min="0" step="10" oninput="onInput()" /></div></div>
-          <div><div class="fl">×/year</div><div class="iw"><input type="number" id="gf-hair-freq" min="0" step="1" oninput="onInput()" /></div></div>
-        </div>
-      </div>
-      <div class="field">
-        <label>Other Beauty</label>
-        <div class="freq">
-          <div><div class="fl">$/each</div><div class="iw p"><span class="px">$</span><input type="number" id="gf-beauty-cost" min="0" step="10" oninput="onInput()" /></div></div>
-          <div><div class="fl">×/year</div><div class="iw"><input type="number" id="gf-beauty-freq" min="0" step="1" oninput="onInput()" /></div></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="section-label">Other — monthly amount</div>
-    <div class="fg">
-      <div class="field">
-        <label>Neon / Co-working</label>
-        <div class="iw p"><span class="px">$</span><input type="number" id="gf-cowork" min="0" step="10" oninput="onInput()" /></div>
-      </div>
-      <div class="field">
-        <label>Coaching</label>
-        <div class="iw p"><span class="px">$</span><input type="number" id="gf-coaching" min="0" step="50" oninput="onInput()" /></div>
-      </div>
-      <div class="field">
-        <label>Unplanned</label>
-        <div class="iw p"><span class="px">$</span><input type="number" id="gf-unplanned" min="0" step="10" oninput="onInput()" /></div>
-      </div>
-    </div>
-    <div class="computed">
-      <div class="cv"><div class="cl">Total Guilt-Free</div><div class="vl" id="c-gf-total">$0</div></div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-title">Savings Goals — monthly</div>
-    <div class="fg">
-      <div class="field">
-        <label>Vacation / Travel</label>
-        <div class="iw p"><span class="px">$</span><input type="number" id="sg-vacation" min="0" step="25" oninput="onInput()" /></div>
-        <div class="note">Supplemented by CC points</div>
-      </div>
-      <div class="field">
-        <label>Gifts</label>
-        <div class="iw p"><span class="px">$</span><input type="number" id="sg-gifts" min="0" step="10" oninput="onInput()" /></div>
-      </div>
-    </div>
-    <div class="computed">
-      <div class="cv"><div class="cl">Total Savings Goals</div><div class="vl" id="c-sg-total">$0</div></div>
-    </div>
-  </div>
-
+  <div id="plan-form"></div>
 </div>
 
-<!-- ═══════════════════════════════ RUNWAY ═════════════════════════════════ -->
+<!-- ═══ CURRENT ═══ -->
+<div id="panel-current" class="panel">
+  <div id="current-form"></div>
+</div>
+
+<!-- ═══ RUNWAY ═══ -->
 <div id="panel-runway" class="panel">
+  <div class="runway-grid">
 
-  <div class="stats">
-    <div class="sbox">
-      <div class="sl">Monthly "Pay"</div>
-      <div class="sv" id="s-pay">—</div>
-      <div class="ss">total expenses</div>
+    <!-- Chart column -->
+    <div>
+      <div class="stat-trio">
+        <div class="sbox plan-box">
+          <div class="sl">Plan Runway</div>
+          <div class="sv" id="rs-plan">—</div>
+          <div class="ss" id="rs-plan-sub">months</div>
+        </div>
+        <div class="sbox cur-box">
+          <div class="sl">Current Runway</div>
+          <div class="sv" id="rs-cur">—</div>
+          <div class="ss" id="rs-cur-sub">months</div>
+        </div>
+        <div class="sbox wi-box">
+          <div class="sl">What If Runway</div>
+          <div class="sv" id="rs-wi">—</div>
+          <div class="ss" id="rs-wi-sub">vs current</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="chart-header">
+          <div class="card-title" style="margin-bottom:0">Money Over Time</div>
+          <div class="chart-legend">
+            <span style="color:#AAAAAA">— plan</span>
+            <span style="color:#E8427A">— current</span>
+            <span style="color:#2BBFCF">— what if</span>
+          </div>
+        </div>
+        <div class="chart-wrap"><canvas id="chart"></canvas></div>
+      </div>
     </div>
-    <div class="sbox">
-      <div class="sl">Annual Cost</div>
-      <div class="sv" id="s-annual">—</div>
+
+    <!-- What If panel -->
+    <div class="whatif-panel">
+      <div class="wi-header">
+        <span class="wi-header-title">What If?</span>
+        <button class="wi-reset" onclick="resetWhatIf()">Reset to current</button>
+      </div>
+      <div class="wi-body compact">
+
+        <!-- Balance -->
+        <div style="margin-bottom:0.9rem">
+          <div class="section-label" style="margin-top:0">Freedom Fund Balance</div>
+          <div class="field">
+            <div class="iw p"><span class="px">$</span>
+              <input type="number" id="wi-savings-balance" min="0" step="100" oninput="onWhatIf()" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Base Freelance -->
+        <div style="margin-bottom:0.9rem">
+          <div class="section-label">Base Freelance Income</div>
+          <div class="fg2">
+            <div class="field"><label>$/hr</label><div class="iw p"><span class="px">$</span><input type="number" id="wi-fl-rate" min="0" step="5" oninput="onWhatIf()" /></div></div>
+            <div class="field"><label>Hrs/week</label><div class="iw"><input type="number" id="wi-fl-hours" min="0" step="1" oninput="onWhatIf()" /></div></div>
+            <div class="field"><label>Weeks off/yr</label><div class="iw"><input type="number" id="wi-fl-weeks-off" min="0" step="1" oninput="onWhatIf()" /></div></div>
+            <div class="field"><label>Tax %</label><div class="iw s"><span class="sx">%</span><input type="number" id="wi-fl-tax" min="0" max="100" step="1" oninput="onWhatIf()" /></div></div>
+            <div class="field" style="grid-column:span 2"><label>Months before starting</label><div class="iw"><input type="number" id="wi-fl-months-before" min="0" step="1" oninput="onWhatIf()" /></div></div>
+          </div>
+        </div>
+
+        <!-- Gigs -->
+        <div style="margin-bottom:0.9rem">
+          <div class="section-label" style="display:flex;justify-content:space-between;align-items:center;border:none;padding:0;margin-bottom:0.4rem">
+            <span>Gigs</span>
+            <button class="add-btn" onclick="addGig('wi')">+ Add</button>
+          </div>
+          <div id="wi-gig-list" class="gig-list"></div>
+        </div>
+
+        <!-- Fixed Costs accordion -->
+        <div class="wi-acc" id="wi-acc-fixed">
+          <div class="wi-acc-hdr" onclick="toggleAcc('fixed')">
+            <span>Fixed Costs</span>
+            <span><span class="wi-acc-total" id="wi-fixed-total">$0</span><span class="wi-arr">▾</span></span>
+          </div>
+          <div class="wi-acc-body">
+            <div class="fg2">
+              <div class="field"><label>Rent</label><div class="iw p"><span class="px">$</span><input type="number" id="wi-fc-rent" min="0" step="50" oninput="onWhatIf()" /></div></div>
+              <div class="field"><label>Utilities</label><div class="iw p"><span class="px">$</span><input type="number" id="wi-fc-utilities" min="0" step="10" oninput="onWhatIf()" /></div></div>
+              <div class="field"><label>Insurance</label><div class="iw p"><span class="px">$</span><input type="number" id="wi-fc-insurance" min="0" step="10" oninput="onWhatIf()" /></div></div>
+              <div class="field"><label>Transport</label><div class="iw p"><span class="px">$</span><input type="number" id="wi-fc-transport" min="0" step="10" oninput="onWhatIf()" /></div></div>
+              <div class="field"><label>Debt</label><div class="iw p"><span class="px">$</span><input type="number" id="wi-fc-debt" min="0" step="10" oninput="onWhatIf()" /></div></div>
+              <div class="field"><label>Groceries</label><div class="iw p"><span class="px">$</span><input type="number" id="wi-fc-groceries" min="0" step="10" oninput="onWhatIf()" /></div></div>
+              <div class="field"><label>Clothes</label><div class="iw p"><span class="px">$</span><input type="number" id="wi-fc-clothes" min="0" step="10" oninput="onWhatIf()" /></div></div>
+              <div class="field"><label>Phone</label><div class="iw p"><span class="px">$</span><input type="number" id="wi-fc-phone" min="0" step="5" oninput="onWhatIf()" /></div></div>
+              <div class="field"><label>Subscriptions</label><div class="iw p"><span class="px">$</span><input type="number" id="wi-fc-subscriptions" min="0" step="5" oninput="onWhatIf()" /></div></div>
+              <div class="field"><label>Misc %</label><div class="iw s"><span class="sx">%</span><input type="number" id="wi-fc-misc-pct" min="0" step="1" oninput="onWhatIf()" /></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Guilt-Free accordion -->
+        <div class="wi-acc" id="wi-acc-gf">
+          <div class="wi-acc-hdr" onclick="toggleAcc('gf')">
+            <span>Guilt-Free Spending</span>
+            <span><span class="wi-acc-total" id="wi-gf-total">$0</span><span class="wi-arr">▾</span></span>
+          </div>
+          <div class="wi-acc-body">
+            <div style="font-size:0.72rem;color:var(--dim);margin-bottom:0.4rem;font-style:italic">Food &amp; drinks: $/each × /week</div>
+            <div class="fg2">
+              <div class="field"><label>Coffee $</label><div class="iw p"><span class="px">$</span><input type="number" id="wi-gf-coffee-cost" min="0" step="1" oninput="onWhatIf()" /></div></div>
+              <div class="field"><label>×/week</label><div class="iw"><input type="number" id="wi-gf-coffee-freq" min="0" step="0.5" oninput="onWhatIf()" /></div></div>
+              <div class="field"><label>Doordash $</label><div class="iw p"><span class="px">$</span><input type="number" id="wi-gf-dash-cost" min="0" step="1" oninput="onWhatIf()" /></div></div>
+              <div class="field"><label>×/week</label><div class="iw"><input type="number" id="wi-gf-dash-freq" min="0" step="0.5" oninput="onWhatIf()" /></div></div>
+              <div class="field"><label>Meals $</label><div class="iw p"><span class="px">$</span><input type="number" id="wi-gf-meals-cost" min="0" step="5" oninput="onWhatIf()" /></div></div>
+              <div class="field"><label>×/week</label><div class="iw"><input type="number" id="wi-gf-meals-freq" min="0" step="0.5" oninput="onWhatIf()" /></div></div>
+              <div class="field"><label>Drinks $</label><div class="iw p"><span class="px">$</span><input type="number" id="wi-gf-drinks-cost" min="0" step="1" oninput="onWhatIf()" /></div></div>
+              <div class="field"><label>×/week</label><div class="iw"><input type="number" id="wi-gf-drinks-freq" min="0" step="0.5" oninput="onWhatIf()" /></div></div>
+            </div>
+            <div style="font-size:0.72rem;color:var(--dim);margin:0.5rem 0 0.4rem;font-style:italic">Beauty: $/each × /year</div>
+            <div class="fg2">
+              <div class="field"><label>Hair $</label><div class="iw p"><span class="px">$</span><input type="number" id="wi-gf-hair-cost" min="0" step="10" oninput="onWhatIf()" /></div></div>
+              <div class="field"><label>×/year</label><div class="iw"><input type="number" id="wi-gf-hair-freq" min="0" step="1" oninput="onWhatIf()" /></div></div>
+              <div class="field"><label>Beauty $</label><div class="iw p"><span class="px">$</span><input type="number" id="wi-gf-beauty-cost" min="0" step="10" oninput="onWhatIf()" /></div></div>
+              <div class="field"><label>×/year</label><div class="iw"><input type="number" id="wi-gf-beauty-freq" min="0" step="1" oninput="onWhatIf()" /></div></div>
+            </div>
+            <div style="font-size:0.72rem;color:var(--dim);margin:0.5rem 0 0.4rem;font-style:italic">Monthly amounts</div>
+            <div class="fg2">
+              <div class="field"><label>Co-working</label><div class="iw p"><span class="px">$</span><input type="number" id="wi-gf-cowork" min="0" step="10" oninput="onWhatIf()" /></div></div>
+              <div class="field"><label>Coaching</label><div class="iw p"><span class="px">$</span><input type="number" id="wi-gf-coaching" min="0" step="50" oninput="onWhatIf()" /></div></div>
+              <div class="field" style="grid-column:span 2"><label>Unplanned</label><div class="iw p"><span class="px">$</span><input type="number" id="wi-gf-unplanned" min="0" step="10" oninput="onWhatIf()" /></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Savings Goals accordion -->
+        <div class="wi-acc" id="wi-acc-sg">
+          <div class="wi-acc-hdr" onclick="toggleAcc('sg')">
+            <span>Savings Goals</span>
+            <span><span class="wi-acc-total" id="wi-sg-total">$0</span><span class="wi-arr">▾</span></span>
+          </div>
+          <div class="wi-acc-body">
+            <div class="fg2">
+              <div class="field"><label>Vacation</label><div class="iw p"><span class="px">$</span><input type="number" id="wi-sg-vacation" min="0" step="25" oninput="onWhatIf()" /></div></div>
+              <div class="field"><label>Gifts</label><div class="iw p"><span class="px">$</span><input type="number" id="wi-sg-gifts" min="0" step="10" oninput="onWhatIf()" /></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="wi-save-row">
+          <button class="btn btn-pink"  onclick="saveWiAs('cu')">Save as Current</button>
+          <button class="btn btn-ghost" onclick="saveWiAs('pl')">Save as Plan</button>
+        </div>
+      </div>
     </div>
-    <div class="sbox" id="sb-runway">
-      <div class="sl">Runway</div>
-      <div class="sv" id="s-runway">—</div>
-      <div class="ss" id="s-runway-sub">months</div>
-    </div>
-    <div class="sbox" id="sb-burn">
-      <div class="sl">Monthly Burn</div>
-      <div class="sv" id="s-burn">—</div>
-      <div class="ss">expenses − income</div>
-    </div>
-    <div class="sbox" id="sb-crossover">
-      <div class="sl">To Break Even</div>
-      <div class="sv" id="s-crossover">—</div>
-      <div class="ss" id="s-crossover-sub">more net/mo needed</div>
-    </div>
+
   </div>
-
-  <button class="opp-toggle" id="opp-toggle" onclick="toggleOpp()">
-    <span>⚡ Evaluate a Freelance Opportunity</span>
-    <span class="arr">▾</span>
-  </button>
-
-  <div class="opp-panel" id="opp-panel">
-    <div style="font-family:var(--hand);font-size:0.9rem;color:var(--dim);margin-bottom:0.75rem">
-      Model a gig and compare against your current runway.
-    </div>
-    <div class="type-row">
-      <button class="tbtn active" id="tpay" onclick="setOppType('payment')">One-time Payment</button>
-      <button class="tbtn" id="tcon" onclick="setOppType('contract')">Contract / Ongoing</button>
-    </div>
-
-    <div id="opp-payment" class="fg">
-      <div class="field">
-        <label>Payment Amount</label>
-        <div class="iw p"><span class="px">$</span><input type="number" id="opp-amount" min="0" step="100" oninput="onOpp()" placeholder="0" /></div>
-      </div>
-    </div>
-
-    <div id="opp-contract" class="fg" style="display:none">
-      <div class="field">
-        <label>Hourly Rate</label>
-        <div class="iw p"><span class="px">$</span><input type="number" id="opp-rate" min="0" step="5" oninput="onOpp()" placeholder="0" /></div>
-      </div>
-      <div class="field">
-        <label>Hours / Week</label>
-        <div class="iw"><input type="number" id="opp-hours" min="0" max="168" step="1" oninput="onOpp()" placeholder="0" /></div>
-      </div>
-      <div class="field">
-        <label>Duration</label>
-        <div class="iw s"><span class="sx">mo</span><input type="number" id="opp-duration" min="1" max="120" step="1" oninput="onOpp()" placeholder="3" /></div>
-      </div>
-      <div class="field">
-        <label>Tax Rate</label>
-        <div class="iw s"><span class="sx">%</span><input type="number" id="opp-tax" min="0" max="100" step="1" oninput="onOpp()" placeholder="32" /></div>
-      </div>
-    </div>
-
-    <div class="opp-compare" id="opp-compare">
-      <div><div class="ocl">Current Runway</div><div class="ocv" id="oc-cur" style="color:var(--muted)">—</div></div>
-      <div><div class="ocl">With Opportunity</div><div class="ocv" id="oc-new" style="color:var(--green)">—</div></div>
-      <div><div class="ocl">Extension</div><div class="ocv" id="oc-delta" style="color:var(--ocean2)">—</div></div>
-    </div>
-
-    <div class="opp-actions">
-      <button class="btn btn-green" onclick="applyOpp()">Apply &amp; Save Snapshot</button>
-      <button class="btn btn-ghost" onclick="discardOpp()">Discard</button>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="chart-header">
-      <div class="card-title" style="margin-bottom:0">Money Over Time</div>
-      <div class="chart-hint" id="chart-hint"></div>
-    </div>
-    <div class="chart-wrap">
-      <canvas id="chart"></canvas>
-    </div>
-  </div>
-
 </div>
 
-<!-- ═══════════════════════════════ HISTORY ════════════════════════════════ -->
+<!-- ═══ HISTORY ═══ -->
 <div id="panel-history" class="panel">
-
   <div class="card">
     <div class="card-title">Save Current State</div>
     <div class="save-row">
@@ -762,422 +523,542 @@
       <button class="btn btn-primary" onclick="saveSnapshot()">Save</button>
     </div>
   </div>
-
   <div class="card">
-    <div class="chart-header" style="margin-bottom:0.5rem">
-      <div class="card-title" style="margin-bottom:0">Saved Snapshots</div>
-      <div class="chart-hint" id="cmp-hint"></div>
-    </div>
+    <div class="card-title">Saved Snapshots</div>
     <div id="snap-list"></div>
   </div>
-
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-// ─── FIELD MAP ────────────────────────────────────────────────────────────────
-const FIELDS = {
-  'savings-balance': ['savings','balance'],
-  'w-vacay':         ['savings','withdrawals','vacay'],
-  'w-gift':          ['savings','withdrawals','gift'],
-  'w-coaching':      ['savings','withdrawals','coaching'],
-  'w-writing':       ['savings','withdrawals','writingClass'],
-  'fl-months-before':['freelance','monthsBeforeStart'],
-  'fl-weeks-off':    ['freelance','weeksOffPerYear'],
-  'fl-rate':         ['freelance','hourlyRate'],
-  'fl-hours':        ['freelance','hoursPerWeek'],
-  'fl-tax':          ['freelance','taxRate'],
-  'fc-rent':         ['fixedCosts','rent'],
-  'fc-utilities':    ['fixedCosts','utilities'],
-  'fc-insurance':    ['fixedCosts','insurance'],
-  'fc-transport':    ['fixedCosts','transportation'],
-  'fc-debt':         ['fixedCosts','debt'],
-  'fc-groceries':    ['fixedCosts','groceries'],
-  'fc-clothes':      ['fixedCosts','clothes'],
-  'fc-phone':        ['fixedCosts','phone'],
-  'fc-subscriptions':['fixedCosts','subscriptions'],
-  'fc-misc-pct':     ['fixedCosts','miscPercent'],
-  'gf-coffee-cost':  ['guiltFree','coffee','cost'],
-  'gf-coffee-freq':  ['guiltFree','coffee','freq'],
-  'gf-dash-cost':    ['guiltFree','doordash','cost'],
-  'gf-dash-freq':    ['guiltFree','doordash','freq'],
-  'gf-meals-cost':   ['guiltFree','meals','cost'],
-  'gf-meals-freq':   ['guiltFree','meals','freq'],
-  'gf-drinks-cost':  ['guiltFree','drinks','cost'],
-  'gf-drinks-freq':  ['guiltFree','drinks','freq'],
-  'gf-hair-cost':    ['guiltFree','hair','cost'],
-  'gf-hair-freq':    ['guiltFree','hair','freq'],
-  'gf-beauty-cost':  ['guiltFree','beauty','cost'],
-  'gf-beauty-freq':  ['guiltFree','beauty','freq'],
-  'gf-cowork':       ['guiltFree','coworking'],
-  'gf-coaching':     ['guiltFree','coaching'],
-  'gf-unplanned':    ['guiltFree','unplanned'],
-  'sg-vacation':     ['savingsGoals','vacation'],
-  'sg-gifts':        ['savingsGoals','gifts'],
-};
-
-const BLANK = {
-  savings:    { balance:0, withdrawals:{ vacay:0, gift:0, coaching:0, writingClass:0 } },
-  freelance:  { monthsBeforeStart:0, weeksOffPerYear:0, hourlyRate:0, hoursPerWeek:0, taxRate:32 },
-  fixedCosts: { rent:0, utilities:0, insurance:0, transportation:0, debt:0, groceries:0, clothes:0, phone:0, subscriptions:0, miscPercent:15 },
+// ─── DEFAULTS ────────────────────────────────────────────────────────────────
+const DEFAULTS = {
+  savings:    { balance: 91883, withdrawals: { vacay:0, gift:400, coaching:0, writingClass:0 } },
+  freelance:  { monthsBeforeStart:0, weeksOffPerYear:0, hourlyRate:162, hoursPerWeek:8, taxRate:32 },
+  fixedCosts: { rent:2650, utilities:100, insurance:420, transportation:350, debt:0,
+                groceries:450, clothes:0, phone:45, subscriptions:102, miscPercent:15 },
   guiltFree:  {
-    coffee:{cost:0,freq:0}, doordash:{cost:0,freq:0},
-    meals:{cost:0,freq:0},  drinks:{cost:0,freq:0},
-    hair:{cost:0,freq:0},   beauty:{cost:0,freq:0},
-    coworking:0, coaching:0, unplanned:0
+    coffee:  { cost:15, freq:2 }, doordash: { cost:30, freq:2 },
+    meals:   { cost:100,freq:1 }, drinks:   { cost:25, freq:2 },
+    hair:    { cost:525,freq:2 }, beauty:   { cost:0,  freq:0 },
+    coworking:0, coaching:650, unplanned:50
   },
-  savingsGoals:{ vacation:0, gifts:0 }
+  savingsGoals: { vacation:188, gifts:58 },
+  gigs: []
 };
 
-// ─── PERSISTENCE ──────────────────────────────────────────────────────────────
-const loadState  = () => { try { return JSON.parse(localStorage.getItem('ff3-state')||'null')||clone(BLANK); } catch { return clone(BLANK); } };
-const saveState  = s  => localStorage.setItem('ff3-state', JSON.stringify(s));
-const getSnaps   = () => { try { return JSON.parse(localStorage.getItem('ff3-snaps')||'[]'); } catch { return []; } };
-const saveSnaps  = s  => localStorage.setItem('ff3-snaps', JSON.stringify(s));
-const clone      = o  => JSON.parse(JSON.stringify(o));
+// ─── FIELD MAP ────────────────────────────────────────────────────────────────
+const FM = {
+  'savings-balance':    ['savings','balance'],
+  'withdraw-vacay':     ['savings','withdrawals','vacay'],
+  'withdraw-gift':      ['savings','withdrawals','gift'],
+  'withdraw-coaching':  ['savings','withdrawals','coaching'],
+  'withdraw-writing':   ['savings','withdrawals','writingClass'],
+  'fl-months-before':   ['freelance','monthsBeforeStart'],
+  'fl-weeks-off':       ['freelance','weeksOffPerYear'],
+  'fl-rate':            ['freelance','hourlyRate'],
+  'fl-hours':           ['freelance','hoursPerWeek'],
+  'fl-tax':             ['freelance','taxRate'],
+  'fc-rent':            ['fixedCosts','rent'],
+  'fc-utilities':       ['fixedCosts','utilities'],
+  'fc-insurance':       ['fixedCosts','insurance'],
+  'fc-transport':       ['fixedCosts','transportation'],
+  'fc-debt':            ['fixedCosts','debt'],
+  'fc-groceries':       ['fixedCosts','groceries'],
+  'fc-clothes':         ['fixedCosts','clothes'],
+  'fc-phone':           ['fixedCosts','phone'],
+  'fc-subscriptions':   ['fixedCosts','subscriptions'],
+  'fc-misc-pct':        ['fixedCosts','miscPercent'],
+  'gf-coffee-cost':     ['guiltFree','coffee','cost'],
+  'gf-coffee-freq':     ['guiltFree','coffee','freq'],
+  'gf-dash-cost':       ['guiltFree','doordash','cost'],
+  'gf-dash-freq':       ['guiltFree','doordash','freq'],
+  'gf-meals-cost':      ['guiltFree','meals','cost'],
+  'gf-meals-freq':      ['guiltFree','meals','freq'],
+  'gf-drinks-cost':     ['guiltFree','drinks','cost'],
+  'gf-drinks-freq':     ['guiltFree','drinks','freq'],
+  'gf-hair-cost':       ['guiltFree','hair','cost'],
+  'gf-hair-freq':       ['guiltFree','hair','freq'],
+  'gf-beauty-cost':     ['guiltFree','beauty','cost'],
+  'gf-beauty-freq':     ['guiltFree','beauty','freq'],
+  'gf-cowork':          ['guiltFree','coworking'],
+  'gf-coaching':        ['guiltFree','coaching'],
+  'gf-unplanned':       ['guiltFree','unplanned'],
+  'sg-vacation':        ['savingsGoals','vacation'],
+  'sg-gifts':           ['savingsGoals','gifts'],
+};
 
-const getDeep = (o, p) => p.reduce((x,k) => (x??{})[k], o);
-const setDeep = (o, p, v) => { const k=[...p], l=k.pop(); k.reduce((x,i)=>x[i],o)[l]=v; };
+// What If has a subset of fields (balance + all expense/income fields, no withdrawals)
+const WI_FM = Object.fromEntries(
+  Object.entries(FM).filter(([k]) => !k.startsWith('withdraw'))
+);
+
+// ─── UTILS ───────────────────────────────────────────────────────────────────
+const clone  = o  => JSON.parse(JSON.stringify(o));
+const getDeep = (o,p) => p.reduce((x,k) => (x??{})[k], o);
+const setDeep = (o,p,v) => { const k=[...p],l=k.pop(); k.reduce((x,i)=>x[i],o)[l]=v; };
+const f$  = n => '$' + Math.round(n??0).toLocaleString();
+const fmo = n => isFinite(n) ? Math.floor(n)+'mo' : '∞';
+const setText = (id,v) => { const e=document.getElementById(id); if(e) e.textContent=v; };
+
+// ─── STORAGE ─────────────────────────────────────────────────────────────────
+const stored = (k,v) => v === undefined
+  ? JSON.parse(localStorage.getItem('ff4-'+k)||'null')
+  : localStorage.setItem('ff4-'+k, JSON.stringify(v));
+
+// ─── STATE ───────────────────────────────────────────────────────────────────
+let planLocked = stored('plan-locked') !== false; // true by default
+let whatIfState = clone(DEFAULTS);
+let cmpSnap = null;
+let chartInst = null;
+let currentTab = 'plan';
 
 // ─── CALCULATIONS ─────────────────────────────────────────────────────────────
 function calc(s) {
-  const totalW = Object.values(s.savings.withdrawals).reduce((a,b)=>a+b,0);
+  const totalW = Object.values(s.savings.withdrawals||{}).reduce((a,b)=>a+b,0);
   const balance = s.savings.balance - totalW;
-
   const fc = s.fixedCosts;
-  const fcSub = fc.rent+fc.utilities+fc.insurance+fc.transportation+fc.debt+fc.groceries+fc.clothes+fc.phone+fc.subscriptions;
+  const fcSub = fc.rent+fc.utilities+fc.insurance+fc.transportation+fc.debt+
+                fc.groceries+fc.clothes+fc.phone+fc.subscriptions;
   const misc = fcSub * fc.miscPercent/100;
   const totalFixed = fcSub + misc;
-
   const gf = s.guiltFree;
-  const w2m = (c,f) => c*f*52/12;
-  const y2m = (c,f) => c*f/12;
-  const gfTotal = w2m(gf.coffee.cost,gf.coffee.freq) + w2m(gf.doordash.cost,gf.doordash.freq)
-    + w2m(gf.meals.cost,gf.meals.freq) + w2m(gf.drinks.cost,gf.drinks.freq)
-    + y2m(gf.hair.cost,gf.hair.freq)   + y2m(gf.beauty.cost,gf.beauty.freq)
-    + gf.coworking + gf.coaching + gf.unplanned;
-
+  const w2m=(c,f)=>c*f*52/12, y2m=(c,f)=>c*f/12;
+  const gfTotal = w2m(gf.coffee.cost,gf.coffee.freq)+w2m(gf.doordash.cost,gf.doordash.freq)
+    +w2m(gf.meals.cost,gf.meals.freq)+w2m(gf.drinks.cost,gf.drinks.freq)
+    +y2m(gf.hair.cost,gf.hair.freq)+y2m(gf.beauty.cost,gf.beauty.freq)
+    +gf.coworking+gf.coaching+gf.unplanned;
   const sg = s.savingsGoals;
-  const sgTotal = sg.vacation + sg.gifts;
-  const monthlyExp = totalFixed + gfTotal + sgTotal;
-  const annualCost = monthlyExp * 12;
-
+  const sgTotal = sg.vacation+sg.gifts;
+  const monthlyExp = totalFixed+gfTotal+sgTotal;
   const fl = s.freelance;
-  const gross = fl.hourlyRate * fl.hoursPerWeek * (52 - fl.weeksOffPerYear) / 12;
-  const tax   = gross * fl.taxRate / 100;
-  const net   = gross - tax;
-  const annualNet = net * 12;
-
-  const burn   = monthlyExp - net;
-  const runway = burn > 0 ? balance / burn : Infinity;
-
-  return { balance, totalW, fcSub, misc, totalFixed, gfTotal, sgTotal, monthlyExp, annualCost, gross, tax, net, annualNet, burn, runway };
+  const gross = fl.hourlyRate*fl.hoursPerWeek*(52-fl.weeksOffPerYear)/12;
+  const tax   = gross*fl.taxRate/100;
+  const net   = gross-tax;
+  const burn  = monthlyExp-net;
+  const runway = burn>0 ? balance/burn : Infinity;
+  return { balance, totalW, fcSub, misc, totalFixed, gfTotal, sgTotal,
+           monthlyExp, annualCost:monthlyExp*12, gross, tax, net,
+           annualNet:net*12, burn, runway };
 }
 
-function timeline(s, c, months) {
-  const fl = s.freelance;
-  const pts = []; let bal = c.balance;
-  for (let m=0; m<=months; m++) {
-    pts.push(Math.max(0, bal));
-    const inc = m >= fl.monthsBeforeStart ? c.net : 0;
-    bal -= (c.monthlyExp - inc);
-  }
-  return pts;
-}
-
-function oppTimeline(s, c, opp, months) {
-  const fl = s.freelance;
-  const pts = []; let bal = c.balance + (opp.type==='payment' ? opp.amount : 0);
-  for (let m=0; m<=months; m++) {
-    pts.push(Math.max(0, bal));
-    let inc = m >= fl.monthsBeforeStart ? c.net : 0;
-    if (opp.type==='contract' && m < opp.duration)
-      inc += opp.rate * opp.hours * 52/12 * (1 - opp.taxRate/100);
-    bal -= (c.monthlyExp - inc);
-  }
-  return pts;
-}
-
-function oppRunway(s, c, opp) {
-  const fl = s.freelance;
-  let bal = c.balance + (opp.type==='payment' ? opp.amount : 0);
-  for (let m=0; m<600; m++) {
-    if (bal <= 0) return m;
-    let inc = m >= fl.monthsBeforeStart ? c.net : 0;
-    if (opp.type==='contract' && m < opp.duration)
-      inc += opp.rate * opp.hours * 52/12 * (1 - opp.taxRate/100);
-    bal -= (c.monthlyExp - inc);
-    if (bal > 0 && m===599) return Infinity;
-  }
-  return Infinity;
-}
-
-// ─── FORMAT ───────────────────────────────────────────────────────────────────
-const f$  = n => '$' + Math.round(n??0).toLocaleString();
-const fmo = n => isFinite(n) ? Math.floor(n) + ' mo' : '∞';
-const set = (id,v) => { const e=document.getElementById(id); if(e) e.textContent=v; };
-
-// ─── UI UPDATE ────────────────────────────────────────────────────────────────
-function updateUI(s, c) {
-  set('c-balance',    f$(c.balance));
-  set('c-gross',      f$(c.gross));
-  set('c-tax',        f$(c.tax));
-  set('c-net',        f$(c.net));
-  set('c-annual-net', f$(c.annualNet));
-  set('c-misc',       f$(c.misc));
-  set('c-fixed-total',f$(c.totalFixed));
-  set('c-gf-total',   f$(c.gfTotal));
-  set('c-sg-total',   f$(c.sgTotal));
-  set('s-pay',    f$(c.monthlyExp));
-  set('s-annual', f$(c.annualCost));
-
-  const rb = document.getElementById('sb-runway');
-  if (isFinite(c.runway)) {
-    set('s-runway',     Math.floor(c.runway) + ' mo');
-    set('s-runway-sub', (c.runway/12).toFixed(1) + ' years');
-    rb.className = c.runway < 12 ? 'sbox red' : 'sbox';
-  } else {
-    set('s-runway', '∞'); set('s-runway-sub', 'income covers expenses');
-    rb.className = 'sbox green';
-  }
-
-  const bb = document.getElementById('sb-burn');
-  if (c.burn > 0) { set('s-burn', f$(c.burn)); bb.className='sbox red'; }
-  else            { set('s-burn', '+'+f$(-c.burn)+'/mo'); bb.className='sbox green'; }
-
-  const cb = document.getElementById('sb-crossover');
-  const gap = c.monthlyExp - c.net;
-  if (gap <= 0) {
-    set('s-crossover', 'Reached! 🎉'); set('s-crossover-sub', 'income covers expenses'); cb.className='sbox green';
-  } else {
-    set('s-crossover', f$(gap)+'/mo'); set('s-crossover-sub', 'more net income needed'); cb.className='sbox';
-  }
-}
-
-// ─── CHART ───────────────────────────────────────────────────────────────────
-let chart = null;
-let cmpSnap = null;
-
-function renderChart() {
-  const canvas = document.getElementById('chart');
-  if (!canvas) return;
-  const s = readFields(), c = calc(s);
-  if (c.monthlyExp === 0) return;
-
-  const maxMo = isFinite(c.runway) ? Math.min(240, Math.max(60, Math.ceil(c.runway)+18)) : 120;
+function gigOffset(dateStr) {
+  if (!dateStr) return 9999;
+  const [y,m] = dateStr.split('-').map(Number);
   const now = new Date();
-  const labels = Array.from({length:maxMo+1}, (_,i) => {
-    const d = new Date(now.getFullYear(), now.getMonth()+i, 1);
-    return d.toLocaleDateString('en-US', {month:'short', year:'numeric'});
-  });
-  const datasets = [];
+  return (y-now.getFullYear())*12+(m-1-now.getMonth());
+}
 
-  if (cmpSnap) {
-    const cc = calc(cmpSnap);
-    datasets.push({
-      label: cmpSnap._name || 'Snapshot',
-      data: timeline(cmpSnap, cc, maxMo),
-      borderColor: '#8A9BAA', borderWidth: 1.5,
-      borderDash: [4,3], pointRadius: 0, tension: 0.3,
-    });
-  }
-
-  const hasOpp = !!activeOpp;
-  datasets.push({
-    label: 'Current',
-    data: timeline(s, c, maxMo),
-    borderColor: '#1A95A8',
-    borderWidth: hasOpp ? 1.5 : 2.5,
-    borderDash: hasOpp ? [5,4] : [],
-    pointRadius: 0, tension: 0.3,
-  });
-
-  if (hasOpp) {
-    datasets.push({
-      label: 'With Opportunity',
-      data: oppTimeline(s, c, activeOpp, maxMo),
-      borderColor: '#1BA878', borderWidth: 2.5,
-      pointRadius: 0, tension: 0.3,
-    });
-  }
-
-  if (chart) chart.destroy();
-  chart = new Chart(canvas.getContext('2d'), {
-    type: 'line',
-    data: { labels, datasets },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      interaction: { mode:'index', intersect:false },
-      plugins: {
-        legend: { labels: { color:'#4A6070', font:{size:12, family:"'Caveat', sans-serif"}, boxWidth:20, padding:14 } },
-        tooltip: {
-          backgroundColor:'#FDFAF3', borderColor:'#D0C8B4', borderWidth:1,
-          titleColor:'#1B2B50', bodyColor:'#4A6070',
-          callbacks: { label: ctx => ` ${ctx.dataset.label}: ${f$(ctx.parsed.y)}` }
-        }
-      },
-      scales: {
-        x: { ticks:{color:'#8A9BAA', maxTicksLimit:12, font:{size:11}}, grid:{color:'rgba(208,200,180,0.4)'} },
-        y: {
-          ticks:{ color:'#8A9BAA', font:{size:11}, callback: v => '$'+(v>=1000?(v/1000).toFixed(0)+'k':v) },
-          grid:{ color:'rgba(208,200,180,0.4)' }
-        }
+function buildTimeline(s, c, months) {
+  const fl = s.freelance, gigs = s.gigs||[];
+  const pts=[]; let bal=c.balance;
+  for (let m=0; m<=months; m++) {
+    pts.push(Math.max(0,bal));
+    let inc = m>=fl.monthsBeforeStart ? c.net : 0;
+    for (const g of gigs) {
+      const off = gigOffset(g.startDate);
+      const dur = g.weeks/4.333;
+      if (m>=off && m<off+dur) {
+        inc += g.rate*g.hoursPerWeek*(52/12)*(1-fl.taxRate/100);
       }
     }
-  });
-
-  const hint = document.getElementById('chart-hint');
-  if (hint) hint.textContent = hasOpp ? 'dashed = current · solid green = with opportunity' : cmpSnap ? 'dashed = snapshot · solid = current' : '';
-}
-
-// ─── FIELD READ/WRITE ─────────────────────────────────────────────────────────
-function readFields() {
-  const s = loadState();
-  for (const [id, path] of Object.entries(FIELDS)) {
-    const el = document.getElementById(id);
-    if (el) setDeep(s, path, parseFloat(el.value)||0);
+    bal -= (c.monthlyExp-inc);
   }
-  return s;
+  return pts;
 }
 
-function populateFields(s) {
-  for (const [id, path] of Object.entries(FIELDS)) {
-    const el = document.getElementById(id);
-    if (el) { const v = getDeep(s, path); el.value = v || ''; }
+// ─── FORM BUILDER ────────────────────────────────────────────────────────────
+function buildForm(pfx, hasGigs) {
+  const p = pfx+'-', on = `onInput('${pfx}')`;
+  const inp = (id,type,step=1) => {
+    const fid=p+id;
+    if(type==='$') return `<div class="iw p"><span class="px">$</span><input type="number" id="${fid}" min="0" step="${step}" oninput="${on}"/></div>`;
+    if(type==='%') return `<div class="iw s"><span class="sx">%</span><input type="number" id="${fid}" min="0" max="100" step="${step}" oninput="${on}"/></div>`;
+    return `<div class="iw"><input type="number" id="${fid}" min="0" step="${step}" oninput="${on}"/></div>`;
+  };
+  const f=(id,lbl,type,step=1,note='')=>
+    `<div class="field"><label>${lbl}</label>${inp(id,type,step)}${note?`<div class="note">${note}</div>`:''}</div>`;
+  const fr=(cid,fid,lbl,unit='week')=>
+    `<div class="field"><label>${lbl}</label><div class="freq">
+      <div><div class="fl">$/each</div>${inp(cid,'$',1)}</div>
+      <div><div class="fl">×/${unit}</div><div class="iw"><input type="number" id="${p+fid}" min="0" step="0.5" oninput="${on}"/></div></div>
+    </div></div>`;
+
+  return `
+    <div class="card">
+      <div class="card-title">Savings Balance</div>
+      <div class="fg">${f('savings-balance','Original Balance','$',100)}</div>
+      <div class="section-label">Initial Withdrawals</div>
+      <div class="fg">
+        ${f('withdraw-vacay','Vacay Account','$',50)}
+        ${f('withdraw-gift','Gift Account','$',50)}
+        ${f('withdraw-coaching','Coaching','$',50)}
+        ${f('withdraw-writing','Writing Class / Residency','$',50)}
+      </div>
+      <div class="computed">
+        <div class="cv"><div class="cl">Current Freedom Fund</div><div class="vl g" id="${p}c-balance">$0</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Freelance Income</div>
+      <div class="fg">
+        ${f('fl-months-before','Months Before Starting','plain',1)}
+        ${f('fl-weeks-off','Weeks Off per Year','plain',1)}
+        ${f('fl-rate','Hourly Rate','$',5)}
+        ${f('fl-hours','Hours per Week','plain',1)}
+        ${f('fl-tax','Est. Tax Rate','%',1)}
+      </div>
+      <div class="computed">
+        <div class="cv"><div class="cl">Monthly Gross</div><div class="vl" id="${p}c-gross">$0</div></div>
+        <div class="cv"><div class="cl">Tax Set-Aside</div><div class="vl r" id="${p}c-tax">$0</div></div>
+        <div class="cv"><div class="cl">Monthly Net</div><div class="vl g" id="${p}c-net">$0</div></div>
+        <div class="cv"><div class="cl">Annual Net</div><div class="vl" id="${p}c-annual">$0</div></div>
+      </div>
+    </div>
+    ${hasGigs ? `
+    <div class="card">
+      <div class="card-title" style="display:flex;justify-content:space-between;align-items:center">
+        <span>Freelance Gigs</span>
+        <button class="add-btn" onclick="addGig('${pfx}')">+ Add Gig</button>
+      </div>
+      <div id="${p}gig-list" class="gig-list"></div>
+      <div class="note" style="margin-top:0.6rem">Time-boxed contracts. Income stacks on top of base freelance.</div>
+    </div>` : ''}
+    <div class="card">
+      <div class="card-title">Fixed Costs</div>
+      <div class="fg">
+        ${f('fc-rent','Rent','$',50)}${f('fc-utilities','Utilities','$',10)}
+        ${f('fc-insurance','Insurance','$',10,'Medical + Renters')}
+        ${f('fc-transport','Transportation','$',10,'Buses &amp; Lyfts')}
+        ${f('fc-debt','Debt','$',10)}${f('fc-groceries','Groceries','$',10)}
+        ${f('fc-clothes','Clothes','$',10)}${f('fc-phone','Phone','$',5)}
+        ${f('fc-subscriptions','Subscriptions','$',5,'Netflix, Spotify, etc.')}
+        ${f('fc-misc-pct','Misc. Buffer','%',1,'% added to subtotal')}
+      </div>
+      <div class="computed">
+        <div class="cv"><div class="cl">Misc. Amount</div><div class="vl" id="${p}c-misc">$0</div></div>
+        <div class="cv"><div class="cl">Total Fixed</div><div class="vl" id="${p}c-fixed">$0</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Guilt-Free Spending</div>
+      <div class="section-label">Food &amp; Drinks — $ × times/week</div>
+      <div class="fg" style="grid-template-columns:repeat(auto-fill,minmax(220px,1fr))">
+        ${fr('gf-coffee-cost','gf-coffee-freq','Coffee &amp; Pastries')}
+        ${fr('gf-dash-cost','gf-dash-freq','Doordash')}
+        ${fr('gf-meals-cost','gf-meals-freq','Meals Out')}
+        ${fr('gf-drinks-cost','gf-drinks-freq','Drinks Out')}
+      </div>
+      <div class="section-label">Beauty &amp; Fashion — $ × times/year</div>
+      <div class="fg" style="grid-template-columns:repeat(auto-fill,minmax(220px,1fr))">
+        ${fr('gf-hair-cost','gf-hair-freq','Hair','year')}
+        ${fr('gf-beauty-cost','gf-beauty-freq','Other Beauty','year')}
+      </div>
+      <div class="section-label">Other — monthly</div>
+      <div class="fg">
+        ${f('gf-cowork','Neon / Co-working','$',10)}
+        ${f('gf-coaching','Coaching','$',50)}
+        ${f('gf-unplanned','Unplanned','$',10)}
+      </div>
+      <div class="computed">
+        <div class="cv"><div class="cl">Total Guilt-Free</div><div class="vl" id="${p}c-gf">$0</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Savings Goals — monthly</div>
+      <div class="fg">
+        ${f('sg-vacation','Vacation / Travel','$',25,'Supplemented by CC points')}
+        ${f('sg-gifts','Gifts','$',10)}
+      </div>
+      <div class="computed">
+        <div class="cv"><div class="cl">Total Savings Goals</div><div class="vl" id="${p}c-sg">$0</div></div>
+      </div>
+    </div>`;
+}
+
+// ─── READ / POPULATE ─────────────────────────────────────────────────────────
+function readState(pfx) {
+  const base = pfx==='pl' ? clone(stored('pl')||DEFAULTS)
+             : pfx==='cu' ? clone(stored('cu')||DEFAULTS)
+             : clone(whatIfState);
+  const fieldMap = pfx==='wi' ? WI_FM : FM;
+  for (const [key,path] of Object.entries(fieldMap)) {
+    const el = document.getElementById(pfx+'-'+key);
+    if (el) setDeep(base, path, parseFloat(el.value)||0);
+  }
+  base.gigs = readGigs(pfx);
+  return base;
+}
+
+function populateFields(pfx, s) {
+  const fieldMap = pfx==='wi' ? WI_FM : FM;
+  for (const [key,path] of Object.entries(fieldMap)) {
+    const el = document.getElementById(pfx+'-'+key);
+    if (el) el.value = getDeep(s,path)||'';
+  }
+  if (pfx==='wi') {
+    // balance field shows computed balance (after withdrawals)
+    const c = calc(s);
+    const el = document.getElementById('wi-savings-balance');
+    if (el) el.value = Math.round(c.balance)||'';
+  }
+  renderGigList(pfx, s.gigs||[]);
+}
+
+function updateComputed(pfx, c) {
+  const s = id => setText(pfx+'-'+id, f$(c[id]||0));
+  setText(pfx+'-c-balance', f$(c.balance));
+  setText(pfx+'-c-gross',   f$(c.gross));
+  setText(pfx+'-c-tax',     f$(c.tax));
+  setText(pfx+'-c-net',     f$(c.net));
+  setText(pfx+'-c-annual',  f$(c.annualNet));
+  setText(pfx+'-c-misc',    f$(c.misc));
+  setText(pfx+'-c-fixed',   f$(c.totalFixed));
+  setText(pfx+'-c-gf',      f$(c.gfTotal));
+  setText(pfx+'-c-sg',      f$(c.sgTotal));
+}
+
+// ─── INPUT HANDLERS ──────────────────────────────────────────────────────────
+function onInput(pfx) {
+  const s = readState(pfx);
+  if (pfx!=='wi') stored(pfx, s);
+  else whatIfState = s;
+  updateComputed(pfx, calc(s));
+  if (currentTab==='runway') renderChart();
+}
+
+function onWhatIf() { onInput('wi'); }
+
+// ─── GIGS ────────────────────────────────────────────────────────────────────
+function gigRowHTML(pfx, g) {
+  const on = `onInput('${pfx}')`;
+  return `<div class="gig-row" data-id="${g.id}">
+    <div class="gig-fields">
+      <div class="field"><label>Start month</label>
+        <input type="month" class="gig-start" value="${g.startDate||''}" oninput="${on}">
+      </div>
+      <div class="field"><label>Weeks</label>
+        <input type="number" class="gig-weeks" value="${g.weeks||''}" min="1" step="1" oninput="${on}">
+      </div>
+      <div class="field"><label>$/hr</label>
+        <input type="number" class="gig-rate" value="${g.rate||''}" min="0" step="5" oninput="${on}">
+      </div>
+      <div class="field"><label>hrs/wk</label>
+        <input type="number" class="gig-hours" value="${g.hoursPerWeek||''}" min="0" step="1" oninput="${on}">
+      </div>
+    </div>
+    <button class="gig-remove" onclick="removeGig(this,'${pfx}')">×</button>
+  </div>`;
+}
+
+function renderGigList(pfx, gigs) {
+  const el = document.getElementById(pfx+'-gig-list');
+  if (!el) return;
+  el.innerHTML = gigs.map(g => gigRowHTML(pfx, g)).join('');
+}
+
+function readGigs(pfx) {
+  const el = document.getElementById(pfx+'-gig-list');
+  if (!el) return [];
+  return Array.from(el.querySelectorAll('.gig-row')).map(row => ({
+    id: row.dataset.id,
+    startDate: row.querySelector('.gig-start').value,
+    weeks: parseFloat(row.querySelector('.gig-weeks').value)||0,
+    rate:  parseFloat(row.querySelector('.gig-rate').value)||0,
+    hoursPerWeek: parseFloat(row.querySelector('.gig-hours').value)||0,
+  }));
+}
+
+function addGig(pfx) {
+  const el = document.getElementById(pfx+'-gig-list');
+  if (!el) return;
+  const id = 'gig_'+Date.now();
+  const now = new Date();
+  const startDate = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  el.insertAdjacentHTML('beforeend', gigRowHTML(pfx, {id, startDate, weeks:'', rate:'', hoursPerWeek:''}));
+}
+
+function removeGig(btn, pfx) {
+  btn.closest('.gig-row').remove();
+  onInput(pfx);
+}
+
+// ─── PLAN LOCK ───────────────────────────────────────────────────────────────
+function applyLockState() {
+  const inputs = document.querySelectorAll('#plan-form input');
+  const addGigBtn = document.querySelector('#plan-form .add-btn');
+  inputs.forEach(el => el.disabled = planLocked);
+  if (addGigBtn) addGigBtn.disabled = planLocked;
+  document.querySelectorAll('#plan-form .gig-remove').forEach(b => b.disabled = planLocked);
+  const btn = document.getElementById('lock-btn');
+  const lbl = document.getElementById('plan-bar-label');
+  if (planLocked) {
+    btn.textContent = '🔒 Unlock to Edit';
+    btn.classList.remove('unlocked');
+    lbl.textContent = '🔒 Locked — your original vision. Unlock only to correct it.';
+  } else {
+    btn.textContent = '🔓 Lock Plan';
+    btn.classList.add('unlocked');
+    lbl.textContent = '🔓 Unlocked — editing your original plan.';
   }
 }
 
-function onInput() {
-  const s = readFields(); saveState(s);
-  const c = calc(s); updateUI(s, c);
-  if (document.getElementById('panel-runway').classList.contains('active')) renderChart();
+function toggleLock() {
+  if (planLocked) {
+    if (!confirm('Unlock your Plan? This is your original vision — only change it to correct a mistake, not to reflect new decisions.')) return;
+    planLocked = false;
+  } else {
+    planLocked = true;
+    const s = readState('pl');
+    stored('pl', s);
+    toast('Plan saved and locked.');
+  }
+  stored('plan-locked', planLocked);
+  applyLockState();
 }
 
-// ─── TABS ─────────────────────────────────────────────────────────────────────
+// ─── TABS ────────────────────────────────────────────────────────────────────
 function switchTab(name) {
+  currentTab = name;
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab===name));
   document.getElementById('panel-'+name).classList.add('active');
-  if (name==='runway')  renderChart();
+  if (name==='runway') renderChart();
   if (name==='history') renderSnaps();
 }
 
-// ─── OPPORTUNITY ──────────────────────────────────────────────────────────────
-let activeOpp = null, oppType = 'payment';
-
-function toggleOpp() {
-  const panel=document.getElementById('opp-panel'), btn=document.getElementById('opp-toggle');
-  const open = panel.classList.toggle('open');
-  btn.classList.toggle('open', open);
-  if (!open) { activeOpp=null; renderChart(); }
-}
-
-function setOppType(type) {
-  oppType = type;
-  document.getElementById('tpay').classList.toggle('active', type==='payment');
-  document.getElementById('tcon').classList.toggle('active', type==='contract');
-  document.getElementById('opp-payment').style.display  = type==='payment'  ? '' : 'none';
-  document.getElementById('opp-contract').style.display = type==='contract' ? '' : 'none';
-  onOpp();
-}
-
-function onOpp() {
-  const s=readFields(), c=calc(s);
-  if (oppType==='payment') {
-    const amt = parseFloat(document.getElementById('opp-amount').value)||0;
-    activeOpp = amt>0 ? {type:'payment', amount:amt} : null;
-  } else {
-    const rate=parseFloat(document.getElementById('opp-rate').value)||0;
-    const hrs =parseFloat(document.getElementById('opp-hours').value)||0;
-    const dur =parseInt(document.getElementById('opp-duration').value)||3;
-    const tax =parseFloat(document.getElementById('opp-tax').value)||(c.gross>0 ? c.tax/c.gross*100 : 32);
-    activeOpp = (rate>0&&hrs>0) ? {type:'contract', rate, hours:hrs, duration:dur, taxRate:tax} : null;
-  }
-
-  const cmp = document.getElementById('opp-compare');
-  if (activeOpp) {
-    cmp.style.display = 'grid';
-    const or = oppRunway(s, c, activeOpp);
-    set('oc-cur',   fmo(c.runway));
-    set('oc-new',   fmo(or));
-    const delta = isFinite(or)&&isFinite(c.runway) ? or-c.runway : (isFinite(or)?or:Infinity);
-    set('oc-delta', isFinite(delta) ? '+'+Math.floor(delta)+' mo' : '+∞');
-  } else { cmp.style.display='none'; }
+// ─── WHAT IF ─────────────────────────────────────────────────────────────────
+function resetWhatIf() {
+  const cu = stored('cu') || clone(DEFAULTS);
+  const c = calc(cu);
+  whatIfState = clone(cu);
+  whatIfState.savings.balance = Math.round(c.balance);
+  whatIfState.savings.withdrawals = {vacay:0,gift:0,coaching:0,writingClass:0};
+  populateFields('wi', whatIfState);
+  updateWiTotals(calc(whatIfState));
   renderChart();
 }
 
-function applyOpp() {
-  if (!activeOpp) return;
-  const oppCopy = clone(activeOpp);
-  const s = readFields();
-  const snap = clone(s);
-  snap._name = 'Before: '+new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
-  snap._date = Date.now();
-  const snaps = getSnaps(); snaps.push(snap); saveSnaps(snaps);
-
-  if (oppCopy.type==='payment') {
-    s.savings.balance += oppCopy.amount;
-    saveState(s); populateFields(s); updateUI(s, calc(s));
-  }
-
-  closeOpp(); renderChart();
-  toast(oppCopy.type==='payment'
-    ? 'Payment applied! Previous state saved to History.'
-    : 'Snapshot saved to History. Update Freelance Numbers if you take this contract.');
+function toggleAcc(name) {
+  document.getElementById('wi-acc-'+name).classList.toggle('open');
 }
 
-function discardOpp() { closeOpp(); renderChart(); }
+function updateWiTotals(c) {
+  setText('wi-fixed-total', f$(c.totalFixed));
+  setText('wi-gf-total',    f$(c.gfTotal));
+  setText('wi-sg-total',    f$(c.sgTotal));
+}
 
-function closeOpp() {
-  activeOpp=null;
-  document.getElementById('opp-panel').classList.remove('open');
-  document.getElementById('opp-toggle').classList.remove('open');
-  document.getElementById('opp-compare').style.display='none';
-  ['opp-amount','opp-rate','opp-hours','opp-duration','opp-tax'].forEach(id => {
-    const e=document.getElementById(id); if(e) e.value='';
+function saveWiAs(pfx) {
+  const s = clone(whatIfState);
+  if (pfx==='pl') {
+    if (!confirm('Save What If as your Plan? This replaces your original vision.')) return;
+    s.savings.withdrawals = {vacay:0,gift:0,coaching:0,writingClass:0};
+    stored('pl', s);
+    populateFields('pl', s);
+    updateComputed('pl', calc(s));
+    toast('Saved as Plan.');
+  } else {
+    s.savings.withdrawals = {vacay:0,gift:0,coaching:0,writingClass:0};
+    stored('cu', s);
+    populateFields('cu', s);
+    updateComputed('cu', calc(s));
+    toast('Saved as Current.');
+  }
+  renderChart();
+}
+
+// ─── CHART ───────────────────────────────────────────────────────────────────
+function renderChart() {
+  const plS = stored('pl') || clone(DEFAULTS);
+  const cuS = stored('cu') || clone(DEFAULTS);
+  const wiS = whatIfState;
+  const plC = calc(plS), cuC = calc(cuS), wiC = calc(wiS);
+
+  // Stats
+  setText('rs-plan', fmo(plC.runway));
+  setText('rs-plan-sub', isFinite(plC.runway) ? (plC.runway/12).toFixed(1)+' yrs' : 'infinite');
+  setText('rs-cur',  fmo(cuC.runway));
+  setText('rs-cur-sub',  isFinite(cuC.runway)  ? (cuC.runway/12).toFixed(1)+' yrs'  : 'infinite');
+  setText('rs-wi',   fmo(wiC.runway));
+  const delta = isFinite(wiC.runway)&&isFinite(cuC.runway) ? Math.floor(wiC.runway-cuC.runway) : null;
+  setText('rs-wi-sub', delta!==null ? (delta>=0?'+':'')+delta+' mo vs current' : 'vs current');
+
+  const runways = [plC.runway, cuC.runway, wiC.runway].filter(isFinite);
+  const maxMo = Math.min(240, Math.max(60, runways.length ? Math.ceil(Math.max(...runways))+18 : 60));
+  const now = new Date();
+  const labels = Array.from({length:maxMo+1}, (_,i) => {
+    const d = new Date(now.getFullYear(), now.getMonth()+i, 1);
+    return d.toLocaleDateString('en-US',{month:'short',year:'numeric'});
+  });
+
+  const datasets = [
+    { label:'Plan',    data:buildTimeline(plS,plC,maxMo), borderColor:'#BBBBBB', borderWidth:1.5, borderDash:[4,3], pointRadius:0, tension:0.3 },
+    { label:'Current', data:buildTimeline(cuS,cuC,maxMo), borderColor:'#E8427A', borderWidth:2.5, pointRadius:0, tension:0.3 },
+    { label:'What If', data:buildTimeline(wiS,wiC,maxMo), borderColor:'#2BBFCF', borderWidth:2,   pointRadius:0, tension:0.3 },
+  ];
+
+  if (chartInst) chartInst.destroy();
+  chartInst = new Chart(document.getElementById('chart').getContext('2d'), {
+    type:'line', data:{labels,datasets},
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      interaction:{mode:'index',intersect:false},
+      plugins:{
+        legend:{labels:{color:'#4A6070',font:{size:12,family:"'Caveat',sans-serif"},boxWidth:18,padding:12}},
+        tooltip:{
+          backgroundColor:'#FDFAF3',borderColor:'#D0C8B4',borderWidth:1,
+          titleColor:'#1B2B50',bodyColor:'#4A6070',
+          callbacks:{label:ctx=>` ${ctx.dataset.label}: ${f$(ctx.parsed.y)}`}
+        }
+      },
+      scales:{
+        x:{ticks:{color:'#8A9BAA',maxTicksLimit:10,font:{size:11}},grid:{color:'rgba(208,200,180,0.4)'}},
+        y:{ticks:{color:'#8A9BAA',font:{size:11},callback:v=>'$'+(v>=1000?(v/1000).toFixed(0)+'k':v)},grid:{color:'rgba(208,200,180,0.4)'}}
+      }
+    }
   });
 }
 
-// ─── HISTORY ──────────────────────────────────────────────────────────────────
+// ─── HISTORY ─────────────────────────────────────────────────────────────────
+function getSnaps()    { try { return JSON.parse(localStorage.getItem('ff4-snaps')||'[]'); } catch { return []; } }
+function saveSnaps(s)  { localStorage.setItem('ff4-snaps', JSON.stringify(s)); }
+
 function saveSnapshot() {
   const name = document.getElementById('snap-name').value.trim()
     || new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
-  const s = readFields(); s._name=name; s._date=Date.now();
+  const s = stored('cu') || clone(DEFAULTS);
+  s._name=name; s._date=Date.now();
   const snaps=getSnaps(); snaps.push(s); saveSnaps(snaps);
   document.getElementById('snap-name').value='';
   renderSnaps(); toast('Snapshot saved: "'+name+'"');
 }
 
-function goSaveSnapshot() {
-  switchTab('history');
-  setTimeout(()=>document.getElementById('snap-name').focus(), 80);
-}
+function goSave() { switchTab('history'); setTimeout(()=>document.getElementById('snap-name').focus(),80); }
 
 function toggleCmp(idx) {
-  const snap = getSnaps()[idx];
-  cmpSnap = (cmpSnap && cmpSnap._date===snap._date) ? null : snap;
-  renderSnaps(); switchTab('runway');
+  const snap=getSnaps()[idx];
+  cmpSnap = (cmpSnap&&cmpSnap._date===snap._date) ? null : snap;
+  renderSnaps();
+  if (currentTab==='runway') renderChart();
 }
 
 function loadSnap(idx) {
-  const snaps=getSnaps(); const {_name,_date,...s}=snaps[idx];
-  saveState(s); populateFields(s); updateUI(s,calc(s));
-  switchTab('numbers'); toast('Loaded: "'+_name+'"');
+  const {_name,_date,...s}=getSnaps()[idx];
+  stored('cu',s); populateFields('cu',s); updateComputed('cu',calc(s));
+  switchTab('current'); toast('Loaded: "'+_name+'"');
 }
 
 function deleteSnap(idx) {
   const snaps=getSnaps();
-  if (cmpSnap && cmpSnap._date===snaps[idx]._date) cmpSnap=null;
+  if(cmpSnap&&cmpSnap._date===snaps[idx]._date) cmpSnap=null;
   snaps.splice(idx,1); saveSnaps(snaps); renderSnaps();
 }
 
 function renderSnaps() {
-  const snaps=getSnaps(), el=document.getElementById('snap-list'), hint=document.getElementById('cmp-hint');
-  if (!snaps.length) {
-    el.innerHTML='<div class="empty">No snapshots yet.<br>Save your current state to start tracking history.</div>';
-    if(hint) hint.textContent=''; return;
-  }
+  const snaps=getSnaps(), el=document.getElementById('snap-list');
+  if (!snaps.length) { el.innerHTML='<div class="empty">No snapshots yet. Save your current state to start.</div>'; return; }
   el.innerHTML='';
   [...snaps].reverse().forEach((snap,ri) => {
     const idx=snaps.length-1-ri, c=calc(snap);
@@ -1189,11 +1070,7 @@ function renderSnaps() {
       <div style="flex:1;min-width:0">
         <div class="snap-name">${snap._name||'Snapshot'}</div>
         <div class="snap-date">${date}</div>
-        <div class="snap-stats">
-          Monthly: <span>${f$(c.monthlyExp)}</span>
-          &nbsp;·&nbsp; Runway: <span>${fmo(c.runway)}</span>
-          &nbsp;·&nbsp; Net income: <span>${f$(c.net)}/mo</span>
-        </div>
+        <div class="snap-stats">Monthly: <span>${f$(c.monthlyExp)}</span> &nbsp;·&nbsp; Runway: <span>${fmo(c.runway)}</span> &nbsp;·&nbsp; Net: <span>${f$(c.net)}/mo</span></div>
       </div>
       <div class="snap-actions">
         <button class="sbtn${isCmp?' on':''}" onclick="toggleCmp(${idx})">${isCmp?'On Chart ✓':'Compare'}</button>
@@ -1202,7 +1079,6 @@ function renderSnaps() {
       </div>`;
     el.appendChild(div);
   });
-  if(hint) hint.textContent = cmpSnap ? `comparing "${cmpSnap._name}" on chart` : 'click Compare to overlay on the Runway chart';
 }
 
 // ─── TOAST ───────────────────────────────────────────────────────────────────
@@ -1210,12 +1086,35 @@ let _tt;
 function toast(msg) {
   const e=document.getElementById('toast');
   e.textContent=msg; e.classList.add('show');
-  clearTimeout(_tt); _tt=setTimeout(()=>e.classList.remove('show'), 3200);
+  clearTimeout(_tt); _tt=setTimeout(()=>e.classList.remove('show'),3200);
 }
 
 // ─── INIT ────────────────────────────────────────────────────────────────────
-(function(){
-  const s=loadState(); populateFields(s); updateUI(s,calc(s));
+(function init() {
+  // Build forms
+  document.getElementById('plan-form').innerHTML    = buildForm('pl', false);
+  document.getElementById('current-form').innerHTML = buildForm('cu', true);
+
+  // Load plan
+  const pl = stored('pl') || clone(DEFAULTS);
+  if (!stored('pl')) stored('pl', pl);
+  populateFields('pl', pl);
+  updateComputed('pl', calc(pl));
+  applyLockState();
+
+  // Load current
+  const cu = stored('cu') || clone(DEFAULTS);
+  if (!stored('cu')) stored('cu', cu);
+  populateFields('cu', cu);
+  updateComputed('cu', calc(cu));
+
+  // Init what-if from current
+  const cuC = calc(cu);
+  whatIfState = clone(cu);
+  whatIfState.savings.balance = Math.round(cuC.balance);
+  whatIfState.savings.withdrawals = {vacay:0,gift:0,coaching:0,writingClass:0};
+  populateFields('wi', whatIfState);
+  updateWiTotals(calc(whatIfState));
 })();
 </script>
 </body>
