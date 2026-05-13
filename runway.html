@@ -651,6 +651,17 @@ function calc(s) {
            annualNet:net*12, burn, runway };
 }
 
+// Find actual runway by scanning timeline for zero-crossing (includes gig income).
+// lineStartMonth: months from today when this scenario begins (0 = today).
+function runwayMonths(s, c, lineStartMonth = 0) {
+  const MAX = 480;
+  const pts = buildTimeline(s, c, lineStartMonth, lineStartMonth + MAX, lineStartMonth);
+  for (let i = 0; i < pts.length; i++) {
+    if (pts[i] !== null && pts[i] <= 0) return i;
+  }
+  return Infinity;
+}
+
 function gigOffset(dateStr) {
   if (!dateStr) return 9999;
   const [y,m] = dateStr.split('-').map(Number);
@@ -1006,20 +1017,24 @@ function renderChart() {
   const wiS = whatIfState;
   const plC = calc(plS), cuC = calc(cuS), wiC = calc(wiS);
 
-  // Stats
-  setText('rs-plan', fmo(plC.runway));
-  setText('rs-plan-sub', isFinite(plC.runway) ? (plC.runway/12).toFixed(1)+' yrs' : 'infinite');
-  setText('rs-cur',  fmo(cuC.runway));
-  setText('rs-cur-sub',  isFinite(cuC.runway)  ? (cuC.runway/12).toFixed(1)+' yrs'  : 'infinite');
-  setText('rs-wi',   fmo(wiC.runway));
-  const delta = isFinite(wiC.runway)&&isFinite(cuC.runway) ? Math.floor(wiC.runway-cuC.runway) : null;
-  setText('rs-wi-sub', delta!==null ? (delta>=0?'+':'')+delta+' mo vs current' : 'vs current');
-
   // Plan start offset (months from today)
   const planStartStr = plS.planStartDate || '2026-01';
   const [psy, psm] = planStartStr.split('-').map(Number);
   const now = new Date();
   const planLineStart = (psy - now.getFullYear())*12 + (psm - 1 - now.getMonth());
+
+  // Runway stats — use timeline zero-crossing so gig income is included
+  const plRunway = runwayMonths(plS, plC, planLineStart);
+  const cuRunway = runwayMonths(cuS, cuC, 0);
+  const wiRunway = runwayMonths(wiS, wiC, 0);
+
+  setText('rs-plan', fmo(plRunway));
+  setText('rs-plan-sub', isFinite(plRunway) ? (plRunway/12).toFixed(1)+' yrs' : 'infinite');
+  setText('rs-cur',  fmo(cuRunway));
+  setText('rs-cur-sub',  isFinite(cuRunway) ? (cuRunway/12).toFixed(1)+' yrs'  : 'infinite');
+  setText('rs-wi',   fmo(wiRunway));
+  const delta = isFinite(wiRunway)&&isFinite(cuRunway) ? Math.floor(wiRunway-cuRunway) : null;
+  setText('rs-wi-sub', delta!==null ? (delta>=0?'+':'')+delta+' mo vs current' : 'vs current');
 
   // Window: 2 years (24 months), shifted by chartOffset years
   const winStart = Math.round(chartOffset * 12);
