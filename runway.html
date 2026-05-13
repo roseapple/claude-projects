@@ -603,7 +603,13 @@ const clone  = o  => JSON.parse(JSON.stringify(o));
 const getDeep = (o,p) => p.reduce((x,k) => (x??{})[k], o);
 const setDeep = (o,p,v) => { const k=[...p],l=k.pop(); k.reduce((x,i)=>x[i],o)[l]=v; };
 const f$  = n => '$' + Math.round(n??0).toLocaleString();
-const fmo = n => isFinite(n) ? Math.floor(n)+'mo' : '∞';
+const fmo = n => {
+  if (!isFinite(n)) return '∞';
+  const m = Math.floor(n);
+  if (m < 12) return m + 'mo';
+  const y = Math.floor(m / 12), mo = m % 12;
+  return mo > 0 ? y + 'y ' + mo + 'm' : y + 'y';
+};
 const setText = (id,v) => { const e=document.getElementById(id); if(e) e.textContent=v; };
 
 // ─── STORAGE ─────────────────────────────────────────────────────────────────
