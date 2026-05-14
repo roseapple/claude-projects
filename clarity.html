@@ -1529,6 +1529,7 @@ function saveWiAs(pfx, name, notes) {
 // ─── CHART ──────────────────────────────────────────────────────────────────────────────────
 const CHART_OPTIONS = {
   responsive: true, maintainAspectRatio: false,
+  animation: { duration: 220, easing: 'easeOutCubic' },
   interaction: { mode:'index', intersect:false },
   plugins: {
     legend: { display: false }, // using HTML legend instead
@@ -1663,7 +1664,7 @@ function renderChartPreview() {
 
   const ds = chartInst.data.datasets;
   if (ds[3]) { ds[3].data = slice(prevData); ds[3].borderColor = prevColor; }
-  chartInst.update('none');
+  chartInst.update();
 
   // Update only the stat matching the current editing mode
   const prevRunway = runwayFromToday(whatIfState, prevC, 0);
