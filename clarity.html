@@ -33,7 +33,7 @@
       background-color: var(--bg);
       background-image: url('https://www.tilingtextures.com/wp-content/uploads/2024/10/231-subtle-white-paper.webp');
       background-repeat: repeat;
-      background-size: auto;
+      background-size: 50%;
       color: var(--navy);
       min-height: 100vh;
     }
@@ -1657,6 +1657,32 @@ function toast(msg) {
   e.textContent=msg; e.classList.add('show');
   clearTimeout(_tt); _tt=setTimeout(()=>e.classList.remove('show'),3200);
 }
+
+// ─── MIRRORED BACKGROUND TILE ─────────────────────────────────────────────────────────────
+(function setupMirroredBg() {
+  const url = 'https://www.tilingtextures.com/wp-content/uploads/2024/10/231-subtle-white-paper.webp';
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.onload = () => {
+    const w = img.naturalWidth, h = img.naturalHeight;
+    try {
+      // 2×2 mirror tile: normal | flip-X / flip-Y | flip-XY
+      const c = document.createElement('canvas');
+      c.width = w * 2; c.height = h * 2;
+      const ctx = c.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+      ctx.save(); ctx.translate(w * 2, 0);     ctx.scale(-1,  1); ctx.drawImage(img, 0, 0); ctx.restore();
+      ctx.save(); ctx.translate(0, h * 2);     ctx.scale( 1, -1); ctx.drawImage(img, 0, 0); ctx.restore();
+      ctx.save(); ctx.translate(w * 2, h * 2); ctx.scale(-1, -1); ctx.drawImage(img, 0, 0); ctx.restore();
+      // canvas is 2w×2h, displayed at w×h → each quadrant appears at natural/2 size
+      document.body.style.backgroundImage = `url(${c.toDataURL()})`;
+      document.body.style.backgroundSize  = `${w}px ${h}px`;
+    } catch(e) {
+      // CORS blocked — fall back to plain half-size tiling (already set in CSS)
+    }
+  };
+  img.src = url;
+})();
 
 // ─── INIT ──────────────────────────────────────────────────────────────────────────────────
 (function init() {
