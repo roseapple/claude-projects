@@ -212,9 +212,10 @@
     .gig-runway-badge { font-family: var(--hand); font-size: 0.8rem; font-weight: 700; padding: 0.1rem 0.45rem; border-radius: 20px; }
     .gig-runway-badge.pos { color: var(--green); background: rgba(87,175,90,0.12); }
     .gig-runway-badge.neg { color: #c0392b; background: rgba(192,57,43,0.1); }
-    .intentions-wrap { margin: 0.8rem 0 0.2rem; }
+    .intentions-wrap { margin: 0.8rem 0 0.2rem; display: flex; justify-content: flex-end; }
+    .intentions-inner { width: 220px; text-align: right; }
     .intentions-label { font-family: var(--hand); font-size: 0.9rem; color: var(--dim); margin-bottom: 0.25rem; }
-    .intentions-input { width: 100%; box-sizing: border-box; font-family: var(--hand); font-size: 1rem; color: var(--navy); border: none; border-bottom: 1.5px dashed var(--border); background: transparent; resize: none; outline: none; padding: 0.2rem 0; line-height: 1.5; }
+    .intentions-input { width: 100%; box-sizing: border-box; font-family: var(--hand); font-size: 1rem; color: var(--navy); border: none; border-bottom: 1.5px dashed var(--border); background: transparent; resize: none; outline: none; padding: 0.2rem 0; line-height: 1.5; text-align: right; }
     .intentions-input:focus { border-bottom-color: var(--ocean); }
     .snap-notes-input { width: 100%; box-sizing: border-box; font-family: var(--hand); font-size: 0.88rem; color: var(--navy); border: 1px solid var(--border); border-radius: 6px; background: #fff; resize: none; outline: none; padding: 0.3rem 0.5rem; margin-top: 0.3rem; }
     .snap-notes-input:focus { border-color: var(--ocean); }
@@ -451,8 +452,10 @@
 <div id="panel-plan" class="panel active">
   <p class="explainer">This is your original vision — the scenario you set when you first decided to take the leap. Lock it in and only touch it to correct a genuine mistake. Your real-life decisions live in Updates on the Runway tab.</p>
   <div class="intentions-wrap">
-    <div class="intentions-label">✨ What is this runway for?</div>
-    <textarea id="intentions-input" class="intentions-input" placeholder="e.g. Take a year off to write my book, explore consulting, and figure out what's next." oninput="saveIntentions()" rows="2"></textarea>
+    <div class="intentions-inner">
+      <div class="intentions-label">✨ What is this runway for?</div>
+      <textarea id="intentions-input" class="intentions-input" placeholder="write, rest, explore…" oninput="saveIntentions()" rows="2"></textarea>
+    </div>
   </div>
   <div class="plan-bar">
     <div class="plan-lock-label" id="plan-bar-label">🔒 Locked — your original vision. Unlock only to correct it.</div>
