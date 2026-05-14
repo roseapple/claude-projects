@@ -341,6 +341,21 @@
     .sbtn.del:hover { border-color: var(--red); color: var(--red); }
     .empty { text-align: center; color: var(--dim); font-family: var(--hand); font-size: 1rem; padding: 2.5rem 0; }
 
+    /* ── Plan totals bar ── */
+    .plan-totals-bar {
+      display: flex; align-items: center; flex-wrap: wrap; gap: 0.4rem 0.8rem;
+      background: var(--paper); border: 1px solid var(--border); border-radius: 4px;
+      padding: 0.75rem 1.2rem; margin-bottom: 1rem;
+      box-shadow: 2px 2px 0 rgba(27,43,80,0.05);
+    }
+    .ptb-item { display: flex; flex-direction: column; align-items: center; min-width: 80px; }
+    .ptb-label { font-family: var(--hand); font-size: 0.82rem; color: var(--dim); margin-bottom: 0.1rem; white-space: nowrap; }
+    .ptb-value { font-size: 1.05rem; font-weight: 700; color: var(--navy); }
+    .ptb-value.green { color: var(--green); }
+    .ptb-value.muted { color: var(--muted); }
+    .ptb-sep { font-family: var(--hand); font-size: 1rem; color: var(--dim); padding: 0 0.2rem; margin-top: 1rem; }
+    .ptb-plus { font-family: var(--hand); font-size: 1rem; color: var(--border); margin-top: 1rem; }
+
     /* ── Explainer copy ── */
     .explainer {
       font-family: var(--hand); font-size: 1rem; color: var(--muted);
@@ -406,6 +421,32 @@
   <div class="plan-bar">
     <div class="plan-lock-label" id="plan-bar-label">🔒 Locked — your original vision. Unlock only to correct it.</div>
     <button class="lock-btn" id="lock-btn" onclick="toggleLock()">🔒 Unlock to Edit</button>
+  </div>
+  <div class="plan-totals-bar">
+    <div class="ptb-item">
+      <div class="ptb-label">Monthly Net</div>
+      <div class="ptb-value green" id="pl-sum-net">—</div>
+    </div>
+    <div class="ptb-sep">vs</div>
+    <div class="ptb-item">
+      <div class="ptb-label">Fixed Costs</div>
+      <div class="ptb-value" id="pl-sum-fixed">—</div>
+    </div>
+    <div class="ptb-plus">+</div>
+    <div class="ptb-item">
+      <div class="ptb-label">Guilt-Free</div>
+      <div class="ptb-value" id="pl-sum-gf">—</div>
+    </div>
+    <div class="ptb-plus">+</div>
+    <div class="ptb-item">
+      <div class="ptb-label">Savings Goals</div>
+      <div class="ptb-value" id="pl-sum-sg">—</div>
+    </div>
+    <div class="ptb-sep">=</div>
+    <div class="ptb-item">
+      <div class="ptb-label">Total Monthly Pay</div>
+      <div class="ptb-value muted" id="pl-sum-out">—</div>
+    </div>
   </div>
   <div id="plan-form"></div>
 </div>
@@ -979,6 +1020,11 @@ function updateComputed(pfx, c) {
   setText(pfx+'-c-fixed',   f$(c.totalFixed));
   setText(pfx+'-c-gf',      f$(c.gfTotal));
   setText(pfx+'-c-sg',      f$(c.sgTotal));
+  setText(pfx+'-sum-net',   f$(c.net));
+  setText(pfx+'-sum-fixed', f$(c.totalFixed));
+  setText(pfx+'-sum-gf',    f$(c.gfTotal));
+  setText(pfx+'-sum-sg',    f$(c.sgTotal));
+  setText(pfx+'-sum-out',   f$(c.monthlyExp));
   // Update tax label with current rate
   const taxRateEl = document.getElementById(pfx+'-tax-rate-label');
   if (taxRateEl) {
