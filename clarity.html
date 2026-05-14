@@ -472,7 +472,7 @@
 
     /* ── Background doodles ── */
     .bg-doodle {
-      position: fixed; pointer-events: none; z-index: 0; opacity: 0.45;
+      position: absolute; pointer-events: none; z-index: 2; opacity: 0.45;
       transform-origin: center;
     }
 
@@ -1877,24 +1877,22 @@ const DOODLE_COLORS = ['#2BBFCF','#E8427A','#1BA878','#F4C94E','#A8D8DE','#C9404
 const DOODLE_KEYS = Object.keys(DOODLE_SHAPES);
 
 function randomEdgePos() {
-  // 0=right, 1=bottom, 2=left — skip top to avoid the water header
-  const edge   = Math.floor(Math.random() * 3);
-  const inset  = 1 + Math.random() * 8;
-  // For left/right keep vertical position below the header (~22vh) and away from very top
-  const safeV  = 22 + Math.random() * 70; // 22–92vh
-  const safeH  = 5  + Math.random() * 90;
-  if (edge === 0) return { right: inset+'vw', top: safeV+'vh', left:'auto', bottom:'auto' };
-  if (edge === 1) return { bottom: inset+'vh', left: safeH+'vw', top:'auto', right:'auto' };
-                  return { left: inset+'vw',   top: safeV+'vh', right:'auto', bottom:'auto' };
+  return {
+    top:    (5 + Math.random() * 82) + '%',
+    left:   (5 + Math.random() * 82) + '%',
+    right:  'auto', bottom: 'auto',
+  };
 }
 
 function renderDoodle(d) {
+  const container = document.querySelector('.chart-wrap');
+  if (!container) return;
   const el = document.createElement('div');
   el.className = 'bg-doodle';
   el.style.cssText = `width:${d.size}px;height:${d.size}px;transform:rotate(${d.rot}deg);` +
-    `top:${d.top};right:${d.right};bottom:${d.bottom};left:${d.left};`;
+    `top:${d.top};left:${d.left};right:${d.right||'auto'};bottom:${d.bottom||'auto'};`;
   el.innerHTML = DOODLE_SHAPES[d.shape].replace(/COLOR/g, d.color);
-  document.body.appendChild(el);
+  container.appendChild(el);
 }
 
 function addDoodle() {
@@ -1913,7 +1911,10 @@ function addDoodle() {
 function loadDoodles() {
   try {
     const saved = JSON.parse(localStorage.getItem('ff4-doodles') || '[]');
-    saved.forEach(renderDoodle);
+    // Discard old doodles that used page-edge vw/vh positioning
+    const valid = saved.filter(d => typeof d.top === 'string' && d.top.endsWith('%'));
+    if (valid.length !== saved.length) localStorage.setItem('ff4-doodles', JSON.stringify(valid));
+    valid.forEach(renderDoodle);
   } catch {}
 }
 
