@@ -200,7 +200,7 @@
     .gig-list { display: flex; flex-direction: column; gap: 0.6rem; margin-top: 0.5rem; }
     .gig-row {
       background: var(--paper2); border: 1px solid var(--border); border-radius: 4px;
-      padding: 0.7rem 0.8rem; display: flex; gap: 0.5rem; align-items: flex-end;
+      padding: 0.7rem 0.8rem;
     }
     .gig-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem 0.6rem; flex: 1; }
     .gig-row .field label { font-size: 0.82rem; margin-bottom: 0.18rem; }
@@ -1182,30 +1182,34 @@ function gigRowHTML(pfx, g) {
   const isLump = g.type === 'lump';
   const taxRate = (stored('pl') || DEFAULTS).freelance.taxRate || 32;
   return `<div class="gig-row" data-id="${g.id}" data-type="${g.type||'hourly'}">
-    <div style="min-height:1.6rem;margin-bottom:0.15rem"><span class="gig-runway-badge" id="${pfx}-gig-badge-${g.id}"></span></div>
-    <div style="display:flex;justify-content:flex-start;align-items:center;margin-bottom:0.3rem">
-      <button class="gig-type-btn${isLump?' lump':''}" onclick="toggleGigType(this,'${pfx}')" type="button">${isLump?'💰 Lump Sum':'⏱ Hourly'}</button>
+    <div style="flex:1">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.4rem">
+        <div style="display:flex;flex-direction:column;align-items:flex-start;gap:0.2rem">
+          <button class="gig-type-btn${isLump?' lump':''}" onclick="toggleGigType(this,'${pfx}')" type="button">${isLump?'💰 Lump Sum':'⏱ Hourly'}</button>
+          <span class="gig-runway-badge" id="${pfx}-gig-badge-${g.id}"></span>
+        </div>
+        <button class="gig-remove" onclick="removeGig(this,'${pfx}')">×</button>
+      </div>
+      <div class="gig-fields">
+        <div class="field"><label>Start month</label>
+          <input type="month" class="gig-start" value="${g.startDate||''}" oninput="${on}">
+        </div>
+        <div class="field gig-hourly gig-weeks-field" style="${isLump?'display:none':''}"><label>Weeks</label>
+          <input type="number" class="gig-weeks" value="${g.weeks||''}" min="1" step="1" oninput="${on}">
+        </div>
+        <div class="field gig-hourly" style="${isLump?'display:none':''}"><label>$/hr</label>
+          <input type="number" class="gig-rate" value="${g.rate||''}" min="0" step="5" oninput="${on}">
+        </div>
+        <div class="field gig-hourly" style="${isLump?'display:none':''}"><label>hrs/wk</label>
+          <input type="number" class="gig-hours" value="${g.hoursPerWeek||''}" min="0" step="1" oninput="${on}">
+        </div>
+        <div class="field gig-lump" style="grid-column:span 2${!isLump?';display:none':''}">
+          <label>Total $</label>
+          <input type="number" class="gig-total" value="${g.total||''}" min="0" step="100" oninput="${on}">
+          <div class="locked-note">${taxRate}% set aside for tax — enter gross</div>
+        </div>
+      </div>
     </div>
-    <div class="gig-fields">
-      <div class="field"><label>Start month</label>
-        <input type="month" class="gig-start" value="${g.startDate||''}" oninput="${on}">
-      </div>
-      <div class="field gig-hourly gig-weeks-field" style="${isLump?'display:none':''}"><label>Weeks</label>
-        <input type="number" class="gig-weeks" value="${g.weeks||''}" min="1" step="1" oninput="${on}">
-      </div>
-      <div class="field gig-hourly" style="${isLump?'display:none':''}"><label>$/hr</label>
-        <input type="number" class="gig-rate" value="${g.rate||''}" min="0" step="5" oninput="${on}">
-      </div>
-      <div class="field gig-hourly" style="${isLump?'display:none':''}"><label>hrs/wk</label>
-        <input type="number" class="gig-hours" value="${g.hoursPerWeek||''}" min="0" step="1" oninput="${on}">
-      </div>
-      <div class="field gig-lump" style="grid-column:span 2${!isLump?';display:none':''}">
-        <label>Total $</label>
-        <input type="number" class="gig-total" value="${g.total||''}" min="0" step="100" oninput="${on}">
-        <div class="locked-note">${taxRate}% set aside for tax — enter gross</div>
-      </div>
-    </div>
-    <button class="gig-remove" onclick="removeGig(this,'${pfx}')">×</button>
   </div>`;
 }
 
