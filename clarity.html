@@ -341,6 +341,32 @@
     .sbtn.del:hover { border-color: var(--red); color: var(--red); }
     .empty { text-align: center; color: var(--dim); font-family: var(--hand); font-size: 1rem; padding: 2.5rem 0; }
 
+    /* ── Explainer copy ── */
+    .explainer {
+      font-family: var(--hand); font-size: 1rem; color: var(--muted);
+      font-style: italic; line-height: 1.55; margin-bottom: 1.1rem;
+    }
+
+    /* ── Custom line items ── */
+    .custom-row {
+      display: flex; gap: 0.5rem; align-items: center; padding: 0.25rem 0;
+    }
+    .custom-row input[type=text] {
+      flex: 1; background: var(--paper2); border: none;
+      border-bottom: 1.5px solid var(--border); color: var(--navy);
+      font-size: 0.88rem; font-weight: 600; padding: 0.3rem 0.4rem; outline: none;
+    }
+    .custom-row input[type=text]:focus { border-bottom-color: var(--ocean); }
+    .custom-row .iw { width: 100px; }
+
+    /* ── Gig type toggle ── */
+    .gig-type-btn {
+      background: transparent; border: 1px solid var(--border); border-radius: 10px;
+      padding: 0.18rem 0.55rem; font-family: var(--hand); font-size: 0.78rem;
+      color: var(--dim); cursor: pointer;
+    }
+    .gig-type-btn.lump { border-color: var(--ocean2); color: var(--ocean2); }
+
     /* ── Background doodles ── */
     .bg-doodle {
       position: fixed; pointer-events: none; z-index: 0; opacity: 0.72;
@@ -376,6 +402,7 @@
 
 <!-- ═══ PLAN ═══ -->
 <div id="panel-plan" class="panel active">
+  <p class="explainer">This is your original vision — the scenario you set when you first decided to take the leap. Lock it in and only touch it to correct a genuine mistake. Your real-life decisions live in Updates on the Runway tab.</p>
   <div class="plan-bar">
     <div class="plan-lock-label" id="plan-bar-label">🔒 Locked — your original vision. Unlock only to correct it.</div>
     <button class="lock-btn" id="lock-btn" onclick="toggleLock()">🔒 Unlock to Edit</button>
@@ -385,23 +412,24 @@
 
 <!-- ═══ RUNWAY ═══ -->
 <div id="panel-runway" class="panel">
+  <p class="explainer">Three lines, three stories: <strong style="color:#999">Plan</strong> (your original locked vision), <strong style="color:var(--pink)">Current</strong> (where you actually are), <strong style="color:var(--ocean)">What If</strong> (what could be). Edit the Updates panel on the right to explore freely — nothing sticks until you hit Save.</p>
   <div class="runway-grid">
 
     <!-- Chart column -->
     <div>
       <div class="stat-trio">
         <div class="sbox plan-box">
-          <div class="sl">Plan Runway</div>
+          <div class="sl">Plan Runway from Today</div>
           <div class="sv" id="rs-plan">—</div>
           <div class="ss" id="rs-plan-sub">months</div>
         </div>
         <div class="sbox cur-box">
-          <div class="sl">Current Runway</div>
+          <div class="sl">Current Runway from Today</div>
           <div class="sv" id="rs-cur">—</div>
           <div class="ss" id="rs-cur-sub">vs plan</div>
         </div>
         <div class="sbox wi-box">
-          <div class="sl">What If Runway</div>
+          <div class="sl">What If Runway from Today</div>
           <div class="sv" id="rs-wi">—</div>
           <div class="ss" id="rs-wi-sub">vs current</div>
         </div>
@@ -427,13 +455,14 @@
     <!-- What If panel -->
     <div class="whatif-panel">
       <div class="wi-header">
-        <span class="wi-header-title">Updates</span>
+        <span class="wi-header-title">✏️ Updates</span>
         <div style="display:flex;gap:0.9rem;align-items:center">
           <button class="wi-undo" id="wi-undo-btn" onclick="undoWhatIf()" disabled>&#8617; Undo</button>
           <button class="wi-reset" onclick="resetWhatIf()">Reset to saved</button>
         </div>
       </div>
       <div class="wi-body compact">
+        <p class="explainer" style="font-size:0.88rem;margin-bottom:0.7rem">Tweak freely. Save as Current to lock in where you are, or Save as What If to record a scenario.</p>
 
         <!-- Balance -->
         <div style="margin-bottom:0.9rem">
@@ -485,6 +514,11 @@
               <div class="field"><label>Subscriptions</label><div class="iw p"><span class="px">$</span><input type="number" id="wi-fc-subscriptions" min="0" step="5" oninput="onWhatIf()" /></div></div>
               <div class="field"><label>Misc %</label><div class="iw s"><span class="sx">%</span><input type="number" id="wi-fc-misc-pct" min="0" step="1" oninput="onWhatIf()" /></div></div>
             </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:0.5rem">
+              <span style="font-family:var(--hand);font-size:0.85rem;color:var(--dim);font-style:italic">Anything else?</span>
+              <button class="add-btn" onclick="addCustomItem('wi','fixed')" type="button">+ Add</button>
+            </div>
+            <div id="wi-custom-fixed" style="margin-top:0.2rem"></div>
           </div>
         </div>
 
@@ -519,6 +553,11 @@
               <div class="field"><label>Coaching</label><div class="iw p"><span class="px">$</span><input type="number" id="wi-gf-coaching" min="0" step="50" oninput="onWhatIf()" /></div></div>
               <div class="field" style="grid-column:span 2"><label>Unplanned</label><div class="iw p"><span class="px">$</span><input type="number" id="wi-gf-unplanned" min="0" step="10" oninput="onWhatIf()" /></div></div>
             </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:0.5rem">
+              <span style="font-family:var(--hand);font-size:0.85rem;color:var(--dim);font-style:italic">Anything else?</span>
+              <button class="add-btn" onclick="addCustomItem('wi','gf')" type="button">+ Add</button>
+            </div>
+            <div id="wi-custom-gf" style="margin-top:0.2rem"></div>
           </div>
         </div>
 
@@ -555,6 +594,7 @@
 
 <!-- ═══ HISTORY ═══ -->
 <div id="panel-history" class="panel">
+  <p class="explainer">Every time you hit Save, a snapshot lands here. Load one to revisit a scenario, toggle Compare to see it on the chart, or just scroll through to see how far you've come. 🗂️</p>
   <div class="card">
     <div class="card-title">Saved Snapshots</div>
     <div id="snap-list"></div>
@@ -589,6 +629,8 @@ const DEFAULTS = {
     coworking:0, coaching:650, unplanned:50
   },
   savingsGoals: { vacation:188, gifts:58 },
+  customFixed: [],
+  customGF: [],
   gigs: []
 };
 
@@ -692,13 +734,15 @@ function calc(s) {
   const fcSub = fc.rent+fc.utilities+fc.insurance+fc.transportation+fc.debt+
                 fc.groceries+fc.clothes+fc.phone+fc.subscriptions;
   const misc = fcSub * fc.miscPercent/100;
-  const totalFixed = fcSub + misc;
+  const customFixedTotal = (s.customFixed||[]).reduce((a,x)=>a+(x.amount||0),0);
+  const totalFixed = fcSub + misc + customFixedTotal;
   const gf = s.guiltFree;
   const w2m=(c,f)=>c*f*52/12, y2m=(c,f)=>c*f/12;
+  const customGFTotal = (s.customGF||[]).reduce((a,x)=>a+(x.amount||0),0);
   const gfTotal = w2m(gf.coffee.cost,gf.coffee.freq)+w2m(gf.doordash.cost,gf.doordash.freq)
     +w2m(gf.meals.cost,gf.meals.freq)+w2m(gf.drinks.cost,gf.drinks.freq)
     +y2m(gf.hair.cost,gf.hair.freq)+y2m(gf.beauty.cost,gf.beauty.freq)
-    +gf.coworking+gf.coaching+gf.unplanned;
+    +gf.coworking+gf.coaching+gf.unplanned+customGFTotal;
   const sg = s.savingsGoals;
   const sgTotal = sg.vacation+sg.gifts;
   const monthlyExp = totalFixed+gfTotal+sgTotal;
@@ -708,7 +752,7 @@ function calc(s) {
   const net   = gross-tax;
   const burn  = monthlyExp-net;
   const runway = burn>0 ? balance/burn : Infinity;
-  return { balance, totalW, fcSub, misc, totalFixed, gfTotal, sgTotal,
+  return { balance, totalW, fcSub, misc, customFixedTotal, totalFixed, customGFTotal, gfTotal, sgTotal,
            monthlyExp, annualCost:monthlyExp*12, gross, tax, net,
            annualNet:net*12, burn, runway };
 }
@@ -748,7 +792,11 @@ function buildTimeline(s, c, fromMonth, toMonth, lineStartMonth = 0) {
       const off = gigOffset(g.startDate); // relative to today
       const dur = g.weeks / 4.333;
       if (m >= off && m < off + dur) {
-        inc += g.rate * g.hoursPerWeek * (52/12) * (1 - fl.taxRate/100);
+        if (g.type === 'lump') {
+          inc += ((g.total||0) / dur) * (1 - fl.taxRate/100);
+        } else {
+          inc += (g.rate||0) * (g.hoursPerWeek||0) * (52/12) * (1 - fl.taxRate/100);
+        }
       }
     }
     bal -= (c.monthlyExp - inc);
@@ -769,10 +817,10 @@ function buildForm(pfx, hasGigs) {
     if(type==='%') return `<div class="iw s"><span class="sx">%</span><input type="number" id="${fid}" min="0" max="100" step="${step}" oninput="${on}"/></div>`;
     return `<div class="iw"><input type="number" id="${fid}" min="0" step="${step}" oninput="${on}"/></div>`;
   };
-  const f=(id,lbl,type,step=1,note='')=>
-    `<div class="field"><label>${lbl}</label>${inp(id,type,step)}${note?`<div class="note">${note}</div>`:''}</div>`;
-  const fr=(cid,fid,lbl,unit='week')=>
-    `<div class="field"><label>${lbl}</label><div class="freq">
+  const f=(id,lbl,type,step=1,note='')
+    =>`<div class="field"><label>${lbl}</label>${inp(id,type,step)}${note?`<div class="note">${note}</div>`:''}</div>`;
+  const fr=(cid,fid,lbl,unit='week')
+    =>`<div class="field"><label>${lbl}</label><div class="freq">
       <div><div class="fl">$/each</div>${inp(cid,'$',1)}</div>
       <div><div class="fl">×/${unit}</div><div class="iw"><input type="number" id="${p+fid}" min="0" step="0.5" oninput="${on}"/></div></div>
     </div></div>`;
@@ -809,7 +857,7 @@ function buildForm(pfx, hasGigs) {
       </div>
       <div class="computed">
         <div class="cv"><div class="cl">Monthly Gross</div><div class="vl" id="${p}c-gross">$0</div></div>
-        <div class="cv"><div class="cl">Tax Set-Aside</div><div class="vl r" id="${p}c-tax">$0</div></div>
+        <div class="cv"><div class="cl" id="${p}tax-rate-label">Tax Set-Aside</div><div class="vl r" id="${p}c-tax">$0</div></div>
         <div class="cv"><div class="cl">Monthly Net</div><div class="vl g" id="${p}c-net">$0</div></div>
         <div class="cv"><div class="cl">Annual Net</div><div class="vl" id="${p}c-annual">$0</div></div>
       </div>
@@ -834,6 +882,11 @@ function buildForm(pfx, hasGigs) {
         ${f('fc-subscriptions','Subscriptions','$',5,'Netflix, Spotify, etc.')}
         ${f('fc-misc-pct','Misc. Buffer','%',1,'% added to subtotal')}
       </div>
+      <div class="section-label" style="display:flex;justify-content:space-between;align-items:center;border:none;padding:0;margin-top:0.8rem">
+        <span style="font-size:0.95rem">Anything else fixed monthly?</span>
+        <button class="add-btn" onclick="addCustomItem('${pfx}','fixed')" type="button">+ Add</button>
+      </div>
+      <div id="${p}custom-fixed" style="margin-top:0.3rem"></div>
       <div class="computed">
         <div class="cv"><div class="cl">Misc. Amount</div><div class="vl" id="${p}c-misc">$0</div></div>
         <div class="cv"><div class="cl">Total Fixed</div><div class="vl" id="${p}c-fixed">$0</div></div>
@@ -859,6 +912,11 @@ function buildForm(pfx, hasGigs) {
         ${f('gf-coaching','Coaching','$',50)}
         ${f('gf-unplanned','Unplanned','$',10)}
       </div>
+      <div class="section-label" style="display:flex;justify-content:space-between;align-items:center;border:none;padding:0;margin-top:0.8rem">
+        <span style="font-size:0.95rem">Anything else guilt-free monthly?</span>
+        <button class="add-btn" onclick="addCustomItem('${pfx}','gf')" type="button">+ Add</button>
+      </div>
+      <div id="${p}custom-gf" style="margin-top:0.3rem"></div>
       <div class="computed">
         <div class="cv"><div class="cl">Total Guilt-Free</div><div class="vl" id="${p}c-gf">$0</div></div>
       </div>
@@ -889,6 +947,8 @@ function readState(pfx) {
   const dateEl = document.getElementById(pfx+'-plan-start-date');
   if (dateEl && dateEl.value) base.planStartDate = dateEl.value;
   base.gigs = readGigs(pfx);
+  base.customFixed = readCustomItems(pfx, 'fixed');
+  base.customGF = readCustomItems(pfx, 'gf');
   return base;
 }
 
@@ -907,10 +967,11 @@ function populateFields(pfx, s) {
     if (el) el.value = Math.round(c.balance)||'';
   }
   renderGigList(pfx, s.gigs||[]);
+  renderCustomItems(pfx, 'fixed', s.customFixed||[]);
+  renderCustomItems(pfx, 'gf', s.customGF||[]);
 }
 
 function updateComputed(pfx, c) {
-  const s = id => setText(pfx+'-'+id, f$(c[id]||0));
   setText(pfx+'-c-balance', f$(c.balance));
   setText(pfx+'-c-gross',   f$(c.gross));
   setText(pfx+'-c-tax',     f$(c.tax));
@@ -920,6 +981,12 @@ function updateComputed(pfx, c) {
   setText(pfx+'-c-fixed',   f$(c.totalFixed));
   setText(pfx+'-c-gf',      f$(c.gfTotal));
   setText(pfx+'-c-sg',      f$(c.sgTotal));
+  // Update tax label with current rate
+  const taxRateEl = document.getElementById(pfx+'-tax-rate-label');
+  if (taxRateEl) {
+    const s = pfx==='wi' ? whatIfState : (stored(pfx)||DEFAULTS);
+    taxRateEl.textContent = 'Tax Set-Aside ('+(s?.freelance?.taxRate??32)+'%)';
+  }
 }
 
 // ─── INPUT HANDLERS ──────────────────────────────────────────────────────────────────────────
@@ -953,23 +1020,41 @@ function onWhatIf() {
 // ─── GIGS ────────────────────────────────────────────────────────────────────────────────────
 function gigRowHTML(pfx, g) {
   const on = `onInput('${pfx}')`;
-  return `<div class="gig-row" data-id="${g.id}">
+  const isLump = g.type === 'lump';
+  return `<div class="gig-row" data-id="${g.id}" data-type="${g.type||'hourly'}">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.3rem">
+      <button class="gig-type-btn${isLump?' lump':''}" onclick="toggleGigType(this,'${pfx}')" type="button">${isLump?'💰 Lump Sum':'⏱ Hourly'}</button>
+    </div>
     <div class="gig-fields">
       <div class="field"><label>Start month</label>
-        <input type="month" class="gig-start" value="${g.startDate||''}" oninput="${on}">
+        <input type="month" class="gig-start" value="${g.startDate||\'\'}" oninput="${on}">
       </div>
       <div class="field"><label>Weeks</label>
-        <input type="number" class="gig-weeks" value="${g.weeks||''}" min="1" step="1" oninput="${on}">
+        <input type="number" class="gig-weeks" value="${g.weeks||\'\'}" min="1" step="1" oninput="${on}">
       </div>
-      <div class="field"><label>$/hr</label>
-        <input type="number" class="gig-rate" value="${g.rate||''}" min="0" step="5" oninput="${on}">
+      <div class="field gig-hourly" style="${isLump?'display:none':''}"><label>$/hr</label>
+        <input type="number" class="gig-rate" value="${g.rate||\'\'}" min="0" step="5" oninput="${on}">
       </div>
-      <div class="field"><label>hrs/wk</label>
-        <input type="number" class="gig-hours" value="${g.hoursPerWeek||''}" min="0" step="1" oninput="${on}">
+      <div class="field gig-hourly" style="${isLump?'display:none':''}"><label>hrs/wk</label>
+        <input type="number" class="gig-hours" value="${g.hoursPerWeek||\'\'}" min="0" step="1" oninput="${on}">
+      </div>
+      <div class="field gig-lump" style="grid-column:span 2${!isLump?';display:none':''}"><label>Total $</label>
+        <input type="number" class="gig-total" value="${g.total||\'\'}" min="0" step="100" oninput="${on}">
       </div>
     </div>
     <button class="gig-remove" onclick="removeGig(this,'${pfx}')">×</button>
   </div>`;
+}
+
+function toggleGigType(btn, pfx) {
+  const row = btn.closest('.gig-row');
+  const isLump = row.dataset.type !== 'lump';
+  row.dataset.type = isLump ? 'lump' : 'hourly';
+  btn.textContent = isLump ? '💰 Lump Sum' : '⏱ Hourly';
+  btn.className = 'gig-type-btn' + (isLump ? ' lump' : '');
+  row.querySelectorAll('.gig-hourly').forEach(el => el.style.display = isLump ? 'none' : '');
+  row.querySelectorAll('.gig-lump').forEach(el => el.style.display = isLump ? '' : 'none');
+  onInput(pfx);
 }
 
 function renderGigList(pfx, gigs) {
@@ -983,11 +1068,51 @@ function readGigs(pfx) {
   if (!el) return [];
   return Array.from(el.querySelectorAll('.gig-row')).map(row => ({
     id: row.dataset.id,
+    type: row.dataset.type || 'hourly',
     startDate: row.querySelector('.gig-start').value,
     weeks: parseFloat(row.querySelector('.gig-weeks').value)||0,
-    rate:  parseFloat(row.querySelector('.gig-rate').value)||0,
-    hoursPerWeek: parseFloat(row.querySelector('.gig-hours').value)||0,
+    rate:  parseFloat(row.querySelector('.gig-rate')?.value)||0,
+    hoursPerWeek: parseFloat(row.querySelector('.gig-hours')?.value)||0,
+    total: parseFloat(row.querySelector('.gig-total')?.value)||0,
   }));
+}
+
+// ─── CUSTOM LINE ITEMS ────────────────────────────────────────────────────────────────────────
+function customItemRowHTML(pfx, type, item) {
+  const on = `onInput('${pfx}')`;
+  return `<div class="custom-row" data-id="${item.id}">
+    <input type="text" class="ci-name" placeholder="e.g. gym membership" value="${item.name||\'\'}" oninput="${on}" />
+    <div class="iw p"><span class="px">$</span><input type="number" class="ci-amount" value="${item.amount||\'\'}" min="0" step="10" oninput="${on}" /></div>
+    <button class="gig-remove" onclick="removeCustomItem(this,'${pfx}','${type}')">×</button>
+  </div>`;
+}
+
+function addCustomItem(pfx, type) {
+  const el = document.getElementById(pfx+'-custom-'+type);
+  if (!el) return;
+  el.insertAdjacentHTML('beforeend', customItemRowHTML(pfx, type, {id:'ci_'+Date.now(), name:'', amount:''}));
+  onInput(pfx);
+}
+
+function removeCustomItem(btn, pfx, type) {
+  btn.closest('.custom-row').remove();
+  onInput(pfx);
+}
+
+function readCustomItems(pfx, type) {
+  const el = document.getElementById(pfx+'-custom-'+type);
+  if (!el) return [];
+  return Array.from(el.querySelectorAll('.custom-row')).map(row => ({
+    id: row.dataset.id,
+    name: row.querySelector('.ci-name').value,
+    amount: parseFloat(row.querySelector('.ci-amount').value)||0,
+  }));
+}
+
+function renderCustomItems(pfx, type, items) {
+  const el = document.getElementById(pfx+'-custom-'+type);
+  if (!el) return;
+  el.innerHTML = (items||[]).map(item => customItemRowHTML(pfx, type, item)).join('');
 }
 
 function addGig(pfx) {
@@ -1139,8 +1264,8 @@ function renderChart() {
   const now = new Date();
   const planLineStart = (psy - now.getFullYear())*12 + (psm - 1 - now.getMonth());
 
-  // Runway stats — use timeline zero-crossing so gig income is included
-  const plRunway = runwayMonths(plS, plC, planLineStart);
+  // Runway stats — all from today (month 0)
+  const plRunway = runwayMonths(plS, plC, 0);
   const cuRunway = runwayMonths(cuS, cuC, 0);
   const wiRunway = runwayMonths(wiS, wiC, 0);
 
