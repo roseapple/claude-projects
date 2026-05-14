@@ -817,10 +817,8 @@ function buildForm(pfx, hasGigs) {
     if(type==='%') return `<div class="iw s"><span class="sx">%</span><input type="number" id="${fid}" min="0" max="100" step="${step}" oninput="${on}"/></div>`;
     return `<div class="iw"><input type="number" id="${fid}" min="0" step="${step}" oninput="${on}"/></div>`;
   };
-  const f=(id,lbl,type,step=1,note='')
-    =>`<div class="field"><label>${lbl}</label>${inp(id,type,step)}${note?`<div class="note">${note}</div>`:''}</div>`;
-  const fr=(cid,fid,lbl,unit='week')
-    =>`<div class="field"><label>${lbl}</label><div class="freq">
+  const f=(id,lbl,type,step=1,note='')=>`<div class="field"><label>${lbl}</label>${inp(id,type,step)}${note?`<div class="note">${note}</div>`:''}</div>`;
+  const fr=(cid,fid,lbl,unit='week')=>`<div class="field"><label>${lbl}</label><div class="freq">
       <div><div class="fl">$/each</div>${inp(cid,'$',1)}</div>
       <div><div class="fl">×/${unit}</div><div class="iw"><input type="number" id="${p+fid}" min="0" step="0.5" oninput="${on}"/></div></div>
     </div></div>`;
