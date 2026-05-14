@@ -76,20 +76,20 @@
       position: relative; top: 2px;
       box-shadow: -1px -2px 6px rgba(27,43,80,0.05), 1px -2px 6px rgba(27,43,80,0.04);
     }
-    .tab[data-tab="plan"]    { background: rgba(232,66,122,0.13); border-top: 3px solid var(--pink); }
-    .tab[data-tab="runway"]  { background: rgba(43,191,207,0.13); border-top: 3px solid var(--ocean); }
-    .tab[data-tab="history"] { background: rgba(200,145,10,0.13); border-top: 3px solid var(--amber,#C8910A); }
-    .tab[data-tab="plan"]:hover    { background: rgba(232,66,122,0.22); color: var(--navy); }
-    .tab[data-tab="runway"]:hover  { background: rgba(43,191,207,0.22); color: var(--navy); }
-    .tab[data-tab="history"]:hover { background: rgba(200,145,10,0.22); color: var(--navy); }
+    .tab[data-tab="plan"]    { background: #F4D5DF; border-top: 3px solid var(--pink); color: #8a1a40; }
+    .tab[data-tab="runway"]  { background: #C8ECF2; border-top: 3px solid var(--ocean); color: var(--ocean3); }
+    .tab[data-tab="history"] { background: #F2E4B0; border-top: 3px solid #C8910A; color: #7a5500; }
+    .tab[data-tab="plan"]:hover    { background: #EEC0D0; }
+    .tab[data-tab="runway"]:hover  { background: #B0E2EE; }
+    .tab[data-tab="history"]:hover { background: #EAD890; }
     .tab.active {
       top: 0; padding-bottom: 0.9rem;
-      z-index: 1; color: var(--navy);
+      z-index: 1;
       box-shadow: -2px -4px 10px rgba(0,0,0,0.15), 2px -4px 10px rgba(0,0,0,0.1);
     }
-    .tab[data-tab="plan"].active    { background: rgba(232,66,122,0.18); color: #a02050; }
-    .tab[data-tab="runway"].active  { background: rgba(43,191,207,0.18); color: var(--ocean3); }
-    .tab[data-tab="history"].active { background: rgba(200,145,10,0.18); color: #7a5500; }
+    .tab[data-tab="plan"].active    { background: #F4D5DF; color: #8a1a40; }
+    .tab[data-tab="runway"].active  { background: #C8ECF2; color: var(--ocean3); }
+    .tab[data-tab="history"].active { background: #F2E4B0; color: #7a5500; }
 
     /* ── Panels ── */
     .panel { display: none; padding: 1.75rem 2rem; max-width: 1100px; margin: 0 auto; }
