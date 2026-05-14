@@ -353,6 +353,7 @@
     .ptb-value { font-size: 1.05rem; font-weight: 700; color: var(--navy); }
     .ptb-value.green { color: var(--green); }
     .ptb-value.muted { color: var(--muted); }
+    .ptb-value.red { color: #c0392b; }
     .ptb-sep { font-family: var(--hand); font-size: 1rem; color: var(--dim); padding: 0 0.2rem; margin-top: 1rem; }
     .ptb-plus { font-family: var(--hand); font-size: 1rem; color: var(--border); margin-top: 1rem; }
 
@@ -444,8 +445,13 @@
     </div>
     <div class="ptb-sep">=</div>
     <div class="ptb-item">
-      <div class="ptb-label">Total Monthly Pay</div>
+      <div class="ptb-label">Total Monthly "Pay"</div>
       <div class="ptb-value muted" id="pl-sum-out">—</div>
+    </div>
+    <div class="ptb-sep">→</div>
+    <div class="ptb-item">
+      <div class="ptb-label">Drawdown (net − "pay")</div>
+      <div class="ptb-value" id="pl-sum-drawdown">—</div>
     </div>
   </div>
   <div id="plan-form"></div>
@@ -1031,11 +1037,17 @@ function updateComputed(pfx, c) {
   setText(pfx+'-c-fixed',   f$(c.totalFixed));
   setText(pfx+'-c-gf',      f$(c.gfTotal));
   setText(pfx+'-c-sg',      f$(c.sgTotal));
-  setText(pfx+'-sum-net',   f$(c.net));
-  setText(pfx+'-sum-fixed', f$(c.totalFixed));
-  setText(pfx+'-sum-gf',    f$(c.gfTotal));
-  setText(pfx+'-sum-sg',    f$(c.sgTotal));
-  setText(pfx+'-sum-out',   f$(c.monthlyExp));
+  setText(pfx+'-sum-net',      f$(c.net));
+  setText(pfx+'-sum-fixed',   f$(c.totalFixed));
+  setText(pfx+'-sum-gf',      f$(c.gfTotal));
+  setText(pfx+'-sum-sg',      f$(c.sgTotal));
+  setText(pfx+'-sum-out',     f$(c.monthlyExp));
+  const drawdown = c.net - c.monthlyExp;
+  const ddEl = document.getElementById(pfx+'-sum-drawdown');
+  if (ddEl) {
+    ddEl.textContent = (drawdown >= 0 ? '+' : '') + f$(drawdown);
+    ddEl.className = 'ptb-value ' + (drawdown >= 0 ? 'green' : 'red');
+  }
   // Update tax label with current rate
   const taxRateEl = document.getElementById(pfx+'-tax-rate-label');
   if (taxRateEl) {
