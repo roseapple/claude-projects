@@ -1199,30 +1199,38 @@ function getPlanLineStart() {
   const now = new Date();
   return (psy - now.getFullYear())*12 + (psm - 1 - now.getMonth());
 }
-function gigContributionMonths(s, gigId, lineStartMonth) {
+function gigContributionMonths(s, gigId) {
   const c = calc(s);
-  const base = runwayFromToday(s, c, lineStartMonth);
-  const sWithout = clone(s);
-  sWithout.gigs = (sWithout.gigs||[]).filter(g => g.id !== gigId);
-  const cWithout = calc(sWithout);
-  const without = runwayFromToday(sWithout, cWithout, lineStartMonth);
-  if (base === Infinity && without === Infinity) return 0;
-  if (base === Infinity) return Infinity;
-  if (without === Infinity) return -Infinity;
-  return base - without;
+  const gig = (s.gigs||[]).find(g => g.id === gigId);
+  if (!gig) return 0;
+  const taxMult = 1 - (s.freelance.taxRate || 32) / 100;
+  let netTotal = 0;
+  if (gig.type === 'lump') {
+    netTotal = (gig.total || 0) * taxMult;
+  } else {
+    netTotal = (gig.rate||0) * (gig.hoursPerWeek||0) * (gig.weeks||0) * taxMult;
+  }
+  if (netTotal === 0) return 0;
+  const burn = c.burn;
+  if (!isFinite(burn) || burn <= 0) return netTotal > 0 ? Infinity : 0;
+  return netTotal / burn; // decimal months
 }
 function updateGigRunwayBadges(pfx, s) {
-  const lineStartMonth = pfx === 'pl' ? getPlanLineStart() : 0;
   (s.gigs||[]).forEach(g => {
     const el = document.getElementById(pfx+'-gig-badge-'+g.id);
     if (!el) return;
-    const contrib = gigContributionMonths(s, g.id, lineStartMonth);
+    const contrib = gigContributionMonths(s, g.id);
     if (contrib === 0) { el.textContent = ''; el.className = 'gig-runway-badge'; return; }
     if (!isFinite(contrib)) { el.textContent = '∞ mo'; el.className = 'gig-runway-badge pos'; return; }
     const sign = contrib > 0 ? '+' : '';
-    const label = Math.abs(contrib) <= 1
-      ? sign + Math.round(Math.abs(contrib) * 4.333) + ' wk'
-      : sign + Math.round(Math.abs(contrib)) + ' mo';
+    const abs = Math.abs(contrib);
+    let label;
+    if (abs < 1) {
+      const wks = Math.round(abs * 4.333);
+      label = sign + (wks < 1 ? '<1' : wks) + ' wk';
+    } else {
+      label = sign + Math.round(abs) + ' mo';
+    }
     el.textContent = label;
     el.className = 'gig-runway-badge ' + (contrib > 0 ? 'pos' : 'neg');
   });
