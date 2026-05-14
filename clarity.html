@@ -1197,9 +1197,9 @@ function gigRowHTML(pfx, g) {
         <input type="number" class="gig-hours" value="${g.hoursPerWeek||''}" min="0" step="1" oninput="${on}">
       </div>
       <div class="field gig-lump" style="grid-column:span 2${!isLump?';display:none':''}">
-        <label>Total amount (before tax)</label>
+        <label>Total $</label>
         <input type="number" class="gig-total" value="${g.total||''}" min="0" step="100" oninput="${on}">
-        <div class="field note" style="margin-top:0.3rem">💸 ${taxRate}% tax will be set aside — enter your full pay, not take-home</div>
+        <div class="locked-note">${taxRate}% set aside for tax — enter gross</div>
       </div>
     </div>
     <button class="gig-remove" onclick="removeGig(this,'${pfx}')">×</button>
