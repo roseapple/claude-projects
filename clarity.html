@@ -68,13 +68,14 @@
       padding: 0 2rem; display: flex; align-items: flex-end; gap: 18px;
     }
     .tab {
-      padding: 0.65rem 2.2rem 0.75rem; background: var(--paper2);
+      padding: 0.3rem 1.1rem 0.38rem; background: var(--paper2);
       border: 1.5px solid var(--border); border-bottom: none;
-      border-radius: 12px 12px 0 0;
-      color: var(--dim); font-family: var(--hand); font-size: 1.1rem; font-weight: 600;
-      cursor: pointer; transition: all 0.15s;
-      position: relative; top: 2px;
+      border-radius: 8px 8px 0 0;
+      color: var(--dim); font-family: var(--hand); font-size: 0.78rem; font-weight: 600;
+      cursor: pointer; transition: all 0.2s;
+      position: relative; top: 8px;
       box-shadow: -1px -2px 6px rgba(27,43,80,0.05), 1px -2px 6px rgba(27,43,80,0.04);
+      opacity: 0.75;
     }
     .tab[data-tab="plan"]    { background: #F4D5DF; border-top: 3px solid var(--pink); color: #8a1a40; }
     .tab[data-tab="runway"]  { background: #C8ECF2; border-top: 3px solid var(--ocean); color: var(--ocean3); }
@@ -83,8 +84,9 @@
     .tab[data-tab="runway"]:hover  { background: #B0E2EE; }
     .tab[data-tab="history"]:hover { background: #EAD890; }
     .tab.active {
-      top: 0; padding-bottom: 0.9rem;
-      z-index: 1;
+      top: 0; padding: 0.65rem 2.2rem 0.9rem;
+      font-size: 1.1rem; border-radius: 12px 12px 0 0;
+      opacity: 1; z-index: 1;
       box-shadow: -2px -4px 10px rgba(0,0,0,0.15), 2px -4px 10px rgba(0,0,0,0.1);
     }
     .tab[data-tab="plan"].active    { background: #F4D5DF; color: #8a1a40; }
