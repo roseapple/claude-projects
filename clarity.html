@@ -1177,6 +1177,7 @@ function onWhatIf() {
 function gigRowHTML(pfx, g) {
   const on = `onInput('${pfx}')`;
   const isLump = g.type === 'lump';
+  const taxRate = (stored('pl') || DEFAULTS).freelance.taxRate || 32;
   return `<div class="gig-row" data-id="${g.id}" data-type="${g.type||'hourly'}">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.3rem">
       <button class="gig-type-btn${isLump?' lump':''}" onclick="toggleGigType(this,'${pfx}')" type="button">${isLump?'💰 Lump Sum':'⏱ Hourly'}</button>
@@ -1186,7 +1187,7 @@ function gigRowHTML(pfx, g) {
       <div class="field"><label>Start month</label>
         <input type="month" class="gig-start" value="${g.startDate||''}" oninput="${on}">
       </div>
-      <div class="field"><label>Weeks</label>
+      <div class="field gig-hourly gig-weeks-field" style="${isLump?'display:none':''}"><label>Weeks</label>
         <input type="number" class="gig-weeks" value="${g.weeks||''}" min="1" step="1" oninput="${on}">
       </div>
       <div class="field gig-hourly" style="${isLump?'display:none':''}"><label>$/hr</label>
@@ -1195,8 +1196,10 @@ function gigRowHTML(pfx, g) {
       <div class="field gig-hourly" style="${isLump?'display:none':''}"><label>hrs/wk</label>
         <input type="number" class="gig-hours" value="${g.hoursPerWeek||''}" min="0" step="1" oninput="${on}">
       </div>
-      <div class="field gig-lump" style="grid-column:span 2${!isLump?';display:none':''}"><label>Total $</label>
+      <div class="field gig-lump" style="grid-column:span 2${!isLump?';display:none':''}">
+        <label>Total amount (before tax)</label>
         <input type="number" class="gig-total" value="${g.total||''}" min="0" step="100" oninput="${on}">
+        <div class="field note" style="margin-top:0.3rem">💸 ${taxRate}% tax will be set aside — enter your full pay, not take-home</div>
       </div>
     </div>
     <button class="gig-remove" onclick="removeGig(this,'${pfx}')">×</button>
@@ -1211,6 +1214,7 @@ function toggleGigType(btn, pfx) {
   btn.className = 'gig-type-btn' + (isLump ? ' lump' : '');
   row.querySelectorAll('.gig-hourly').forEach(el => el.style.display = isLump ? 'none' : '');
   row.querySelectorAll('.gig-lump').forEach(el => el.style.display = isLump ? '' : 'none');
+  row.querySelectorAll('.gig-weeks-field').forEach(el => el.style.display = isLump ? 'none' : '');
   onInput(pfx);
 }
 
@@ -1227,7 +1231,7 @@ function readGigs(pfx) {
     id: row.dataset.id,
     type: row.dataset.type || 'hourly',
     startDate: row.querySelector('.gig-start').value,
-    weeks: parseFloat(row.querySelector('.gig-weeks').value)||0,
+    weeks: parseFloat(row.querySelector('.gig-weeks').value)||(row.dataset.type==='lump'?4:0),
     rate:  parseFloat(row.querySelector('.gig-rate')?.value)||0,
     hoursPerWeek: parseFloat(row.querySelector('.gig-hours')?.value)||0,
     total: parseFloat(row.querySelector('.gig-total')?.value)||0,
