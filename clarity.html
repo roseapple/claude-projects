@@ -85,10 +85,8 @@
     }
     .tab[data-tab="plan"]    { background: #F4D5DF; border-top: 3px solid var(--pink); color: #8a1a40; }
     .tab[data-tab="runway"]  { background: #C8ECF2; border-top: 3px solid var(--ocean); color: var(--ocean3); }
-    .tab[data-tab="history"] { background: #F2E4B0; border-top: 3px solid #C8910A; color: #7a5500; }
     .tab[data-tab="plan"]:hover    { background: #EEC0D0; }
     .tab[data-tab="runway"]:hover  { background: #B0E2EE; }
-    .tab[data-tab="history"]:hover { background: #EAD890; }
     .tab.active {
       top: 0; padding: 0.65rem 2.2rem 0.9rem;
       font-size: 1.1rem; border-radius: 12px 12px 0 0;
@@ -98,15 +96,65 @@
     .tab.active::after { display: none; }
     .tab[data-tab="plan"].active    { background: #F4D5DF; color: #8a1a40; }
     .tab[data-tab="runway"].active  { background: #C8ECF2; color: var(--ocean3); }
-    .tab[data-tab="history"].active { background: #F2E4B0; color: #7a5500; }
 
     /* ── Panels ── */
     .panel { display: none; padding: 1.75rem 2rem; max-width: 1100px; margin: 0 auto; }
     .tab-accent-line { height: 4px; width: 100%; }
     .tab-accent-line.plan    { background: rgba(232,66,122,0.5); }
     .tab-accent-line.runway  { background: rgba(43,191,207,0.5); }
-    .tab-accent-line.history { background: rgba(200,145,10,0.5); }
     .panel.active { display: block; }
+
+    /* ── Mode Toggle (top of Updates panel) ── */
+    .wi-mode-toggle {
+      display: flex; margin-bottom: 0.9rem;
+      border: 1.5px solid var(--border); border-radius: 20px; overflow: hidden;
+    }
+    .wi-mode-btn {
+      flex: 1; padding: 0.38rem 0.6rem; background: transparent; border: none;
+      font-family: var(--hand); font-size: 0.88rem; color: var(--dim);
+      cursor: pointer; transition: all 0.15s;
+    }
+    .wi-mode-btn.active { background: var(--pink); color: #fff; }
+    #wm-wi.active { background: var(--ocean2); }
+
+    /* ── Snapshot columns below chart ── */
+    .snap-below {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;
+      margin-top: 1.5rem;
+    }
+    @media (max-width: 700px) { .snap-below { grid-template-columns: 1fr; } }
+    .snap-col-title {
+      font-family: var(--hand); font-size: 1.1rem; font-weight: 700;
+      margin-bottom: 0.7rem; padding-bottom: 0.3rem; border-bottom: 2px solid;
+    }
+    .snap-col-title.cur { color: var(--pink); border-color: rgba(232,66,122,0.3); }
+    .snap-col-title.wi  { color: var(--ocean2); border-color: rgba(43,191,207,0.3); }
+    .snap-card-new {
+      display: flex; align-items: flex-start; gap: 0.6rem;
+      background: var(--paper); border: 1px solid var(--border); border-radius: 3px;
+      padding: 0.65rem 0.8rem; margin-bottom: 0.5rem;
+      box-shadow: 2px 2px 0 rgba(27,43,80,0.05); transition: border-color 0.15s;
+    }
+    .snap-card-new[data-type="cur"].selected { border-color: var(--pink); }
+    .snap-card-new[data-type="wi"].selected  { border-color: var(--ocean); }
+    .snap-sel-btn {
+      background: none; border: 1.5px solid var(--border); border-radius: 50%;
+      width: 22px; height: 22px; font-size: 0.72rem; cursor: pointer; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--dim); transition: all 0.12s; margin-top: 2px;
+    }
+    .snap-card-new[data-type="cur"] .snap-sel-btn.on { background: var(--pink); border-color: var(--pink); color: #fff; }
+    .snap-card-new[data-type="wi"]  .snap-sel-btn.on { background: var(--ocean); border-color: var(--ocean); color: #fff; }
+    .snap-empty { font-family: var(--hand); font-size: 0.9rem; color: var(--dim); font-style: italic; padding: 0.4rem 0; }
+
+    /* ── Export strip ── */
+    .export-strip {
+      display: flex; align-items: center; gap: 0.7rem; flex-wrap: wrap;
+      padding-top: 1.2rem; margin-top: 0.5rem;
+      border-top: 1px dashed var(--border);
+      font-family: var(--hand); font-size: 0.9rem; color: var(--dim);
+    }
+    .export-strip .btn { font-size: 0.85rem; padding: 0.3rem 0.85rem; }
 
     /* ── Cards ── */
     .card {
@@ -451,7 +499,6 @@
   <div class="tabs">
     <button class="tab active" data-tab="runway"  onclick="switchTab('runway')">Runway</button>
     <button class="tab"        data-tab="plan"    onclick="switchTab('plan')">Plan</button>
-    <button class="tab"        data-tab="history" onclick="switchTab('history')">History</button>
   </div>
 </div>
 <div class="tab-accent-line runway" id="tab-accent-line"></div>
@@ -537,6 +584,7 @@
             <span style="color:#AAAAAA">&#8212; plan</span>
             <span style="color:#E8427A">&#8212; current</span>
             <span style="color:#2BBFCF">&#8212; what if</span>
+            <span id="chart-legend-preview" style="color:rgba(43,191,207,0.5);display:none">&#8212;&#8211; preview</span>
           </div>
         </div>
         <div class="chart-wrap"><canvas id="chart"></canvas></div>
@@ -553,7 +601,11 @@
         </div>
       </div>
       <div class="wi-body compact">
-        <p class="explainer" style="font-size:0.88rem;margin-bottom:0.7rem">Tweak freely. Save as Current to lock in where you are, or Save as What If to record a scenario.</p>
+        <div class="wi-mode-toggle">
+          <button class="wi-mode-btn active" id="wm-cu" onclick="setWiMode('cu')">📍 Current</button>
+          <button class="wi-mode-btn" id="wm-wi" onclick="setWiMode('wi')">💭 What If</button>
+        </div>
+        <p class="explainer" style="font-size:0.88rem;margin-bottom:0.7rem">Edit freely — a faded preview appears on the chart as you type. Save to lock it in.</p>
 
         <!-- Balance -->
         <div style="margin-bottom:0.9rem">
@@ -667,8 +719,7 @@
         </div>
 
         <div class="wi-save-row" id="wi-save-btns">
-          <button class="btn btn-pink"    onclick="initiateSave('cu')">Save as Current</button>
-          <button class="btn btn-primary" onclick="initiateSave('wi')">Save as What If</button>
+          <button class="btn btn-pink" id="wi-save-trigger" onclick="initiateSave()">Save as Current</button>
         </div>
         <div class="wi-save-confirm" id="wi-save-confirm">
           <input type="text" id="wi-save-name" placeholder="Name this save…" />
@@ -682,25 +733,29 @@
     </div>
 
   </div>
-</div>
 
-<!-- ═══ HISTORY ═══ -->
-<div id="panel-history" class="panel">
-  <p class="explainer">Every time you hit Save, a snapshot lands here. Load one to revisit a scenario, toggle Compare to see it on the chart, or just scroll through to see how far you've come. 🗂️</p>
-  <div class="card">
-    <div class="card-title">Saved Snapshots</div>
-    <div id="snap-list"></div>
-  </div>
-  <div class="card">
-    <div class="card-title">Backup &amp; Restore</div>
-    <p style="font-family:var(--hand);font-size:1rem;color:var(--muted);margin-bottom:1rem">Export saves everything — your Plan, Current, What If, and all snapshots — to a file you can keep safe. Import restores it all.</p>
-    <div style="display:flex;gap:0.7rem;flex-wrap:wrap">
-      <button class="btn btn-primary" onclick="exportData()">&#8681; Export backup</button>
-      <label class="btn btn-ghost" style="cursor:pointer">
-        &#8679; Import backup
-        <input type="file" accept=".json" onchange="importData(event)" style="display:none" />
-      </label>
+  <!-- Snapshot history below chart -->
+  <div class="snap-below">
+    <div>
+      <div class="snap-col-title cur">📍 Current Snapshots</div>
+      <div id="snap-list-cur"></div>
+      <div class="snap-empty" id="snap-empty-cur">No current snapshots yet — save to get started.</div>
     </div>
+    <div>
+      <div class="snap-col-title wi">💭 What If Snapshots</div>
+      <div id="snap-list-wi"></div>
+      <div class="snap-empty" id="snap-empty-wi">No what-if snapshots yet.</div>
+    </div>
+  </div>
+
+  <!-- Export/Import -->
+  <div class="export-strip">
+    <span>Backup &amp; Restore:</span>
+    <button class="btn btn-ghost" onclick="exportData()">&#8681; Export</button>
+    <label class="btn btn-ghost" style="cursor:pointer">
+      &#8679; Import
+      <input type="file" accept=".json" onchange="importData(event)" style="display:none" />
+    </label>
   </div>
 </div>
 
@@ -794,12 +849,15 @@ const stored = (k,v) => v === undefined
 // ─── STATE ──────────────────────────────────────────────────────────────────────────────
 let planLocked = stored('plan-locked') !== false; // true by default
 let whatIfState = clone(DEFAULTS);
-let cmpSnap = null;
 let chartInst = null;
 let currentTab = 'runway';
 let chartOffset = 0; // years offset from today for chart window
 let undoStack = [];
 let bestWiRunway = -Infinity;
+let wiMode = 'cu'; // 'cu' or 'wi' — which type the Save button targets
+let previewDirty = false; // true when Updates panel has unsaved edits
+let selectedCurSnap = null; // _date of selected current snapshot
+let selectedWiSnap  = null; // _date of selected what-if snapshot
 
 function prevYear() { chartOffset--; renderChart(); }
 function nextYear() { chartOffset++; renderChart(); }
@@ -816,6 +874,17 @@ function undoWhatIf() {
   updateWiTotals(calc(whatIfState));
   updateUndoBtn();
   if (currentTab === 'runway') renderChart();
+}
+
+function setWiMode(mode) {
+  wiMode = mode;
+  document.getElementById('wm-cu').classList.toggle('active', mode === 'cu');
+  document.getElementById('wm-wi').classList.toggle('active', mode === 'wi');
+  const btn = document.getElementById('wi-save-trigger');
+  if (btn) {
+    btn.textContent = mode === 'cu' ? 'Save as Current' : 'Save as What If';
+    btn.className   = 'btn ' + (mode === 'cu' ? 'btn-pink' : 'btn-primary');
+  }
 }
 
 // ─── CALCULATIONS ─────────────────────────────────────────────────────────────────────────────
@@ -1174,6 +1243,7 @@ function onWhatIf() {
   undoStack.push(clone(whatIfState));
   if (undoStack.length > 30) undoStack.shift();
   updateUndoBtn();
+  previewDirty = true;
   onInput('wi');
 }
 
@@ -1342,18 +1412,18 @@ function switchTab(name) {
   const line = document.getElementById('tab-accent-line');
   if (line) line.className = 'tab-accent-line ' + name;
   if (name==='runway') renderChart();
-  if (name==='history') renderSnaps();
 }
 
 // ─── WHAT IF ─────────────────────────────────────────────────────────────────────────────
 function resetWhatIf() {
-  const cu = stored('cu') || clone(DEFAULTS); // always reset to committed Current
+  const cu = stored('cu') || clone(DEFAULTS);
   const c = calc(cu);
   whatIfState = clone(cu);
   whatIfState.savings.balance = Math.round(c.balance);
   whatIfState.savings.withdrawals = {vacay:0,gift:0,coaching:0,writingClass:0};
   undoStack = [];
   updateUndoBtn();
+  previewDirty = false;
   populateFields('wi', whatIfState);
   updateWiTotals(calc(whatIfState));
   renderChart();
@@ -1371,16 +1441,16 @@ function updateWiTotals(c) {
 
 let pendingSaveType = null;
 
-function initiateSave(pfx) {
+function initiateSave() {
+  const pfx = wiMode;
   pendingSaveType = pfx;
   const label = pfx === 'cu' ? 'Current' : 'What If';
   const date = new Date().toLocaleDateString('en-US', {month:'short', day:'numeric'});
   const nameEl = document.getElementById('wi-save-name');
   nameEl.value = label + ' – ' + date;
   document.getElementById('wi-save-btns').style.display = 'none';
-  const confirm = document.getElementById('wi-save-confirm');
-  confirm.style.display = 'flex';
-  // Style confirm button to match save type
+  const confirmEl = document.getElementById('wi-save-confirm');
+  confirmEl.style.display = 'flex';
   const doBtn = document.getElementById('wi-save-do');
   doBtn.className = 'btn ' + (pfx === 'cu' ? 'btn-pink' : 'btn-primary');
   nameEl.focus();
@@ -1401,27 +1471,36 @@ function confirmSave() {
   cancelSave();
 }
 
+function cleanSnap(snap) {
+  const {_name, _date, _notes, _type, ...s} = snap;
+  return s;
+}
+
 function saveWiAs(pfx, name, notes) {
   const s = clone(whatIfState);
   s.savings.withdrawals = {vacay:0,gift:0,coaching:0,writingClass:0};
 
-  // Save to history
   const snap = clone(s);
-  snap._name = name;
-  snap._date = Date.now();
+  snap._name  = name;
+  snap._date  = Date.now();
   snap._notes = notes || '';
+  snap._type  = pfx === 'cu' ? 'current' : 'whatif';
   const snaps = getSnaps();
   snaps.push(snap);
   saveSnaps(snaps);
 
   if (pfx === 'cu') {
     stored('cu', s);
+    selectedCurSnap = snap._date;
     toast('"' + name + '" saved — pink line updated.');
   } else {
     stored('wi', s);
+    selectedWiSnap = snap._date;
     toast('"' + name + '" saved — teal line updated.');
   }
+  previewDirty = false;
   addDoodle();
+  renderSnaps();
   renderChart();
 }
 
@@ -1429,7 +1508,7 @@ function saveWiAs(pfx, name, notes) {
 function renderChart() {
   const plS = stored('pl') || clone(DEFAULTS);
   const cuS = stored('cu') || clone(DEFAULTS);
-  const wiS = whatIfState;
+  const wiS = stored('wi') || clone(DEFAULTS);
   const plC = calc(plS), cuC = calc(cuS), wiC = calc(wiS);
 
   // Plan start offset (months from today)
@@ -1490,6 +1569,18 @@ function renderChart() {
     { label:'What If', data:slice(wiData), borderColor:'#2BBFCF', borderWidth:2,   pointRadius:0, tension:0.3, spanGaps:false },
   ];
 
+  // 4th line: faded live preview while Updates panel has unsaved changes
+  const legendPreview = document.getElementById('chart-legend-preview');
+  if (previewDirty) {
+    const prevC = calc(whatIfState);
+    const prevData = buildTimeline(whatIfState, prevC, FULL_START, FULL_END, 0);
+    datasets.push({ label:'Preview', data:slice(prevData), borderColor:'rgba(43,191,207,0.42)',
+      borderWidth:1.5, borderDash:[4,3], pointRadius:0, tension:0.3, spanGaps:false });
+    if (legendPreview) legendPreview.style.display = '';
+  } else {
+    if (legendPreview) legendPreview.style.display = 'none';
+  }
+
   if (chartInst) chartInst.destroy();
   chartInst = new Chart(document.getElementById('chart').getContext('2d'), {
     type:'line', data:{labels,datasets},
@@ -1512,61 +1603,125 @@ function renderChart() {
   });
 }
 
-// ─── HISTORY ───────────────────────────────────────────────────────────────────────────────
-function getSnaps()    { try { return JSON.parse(localStorage.getItem('ff4-snaps')||'[]'); } catch { return []; } }
-function saveSnaps(s)  { localStorage.setItem('ff4-snaps', JSON.stringify(s)); }
+// ─── SNAPSHOTS ─────────────────────────────────────────────────────────────────────────────
+function getSnaps()   { try { return JSON.parse(localStorage.getItem('ff4-snaps')||'[]'); } catch { return []; } }
+function saveSnaps(s) { localStorage.setItem('ff4-snaps', JSON.stringify(s)); }
 
-
-function toggleCmp(idx) {
-  const snap=getSnaps()[idx];
-  cmpSnap = (cmpSnap&&cmpSnap._date===snap._date) ? null : snap;
-  renderSnaps();
-  if (currentTab==='runway') renderChart();
+function initSelectedSnaps() {
+  const snaps = getSnaps();
+  const curSnaps = snaps.filter(s => (s._type||'current') === 'current');
+  const wiSnaps  = snaps.filter(s => s._type === 'whatif');
+  if (curSnaps.length) {
+    selectedCurSnap = curSnaps[curSnaps.length - 1]._date;
+    stored('cu', cleanSnap(curSnaps[curSnaps.length - 1]));
+  }
+  if (wiSnaps.length) {
+    selectedWiSnap = wiSnaps[wiSnaps.length - 1]._date;
+    stored('wi', cleanSnap(wiSnaps[wiSnaps.length - 1]));
+  }
 }
 
-function loadSnap(idx) {
-  const {_name,_date,...s}=getSnaps()[idx];
-  stored('cu', s);
+function selectSnap(type, date) {
+  const snaps = getSnaps();
+  const snap = snaps.find(s => s._date === date);
+  if (!snap) return;
+  const s = cleanSnap(snap);
+  if (type === 'cur') {
+    selectedCurSnap = date;
+    stored('cu', s);
+    // Sync Updates panel baseline so Reset works correctly
+    const c = calc(s);
+    whatIfState = clone(s);
+    whatIfState.savings.balance = Math.round(c.balance);
+    whatIfState.savings.withdrawals = {vacay:0,gift:0,coaching:0,writingClass:0};
+    previewDirty = false;
+    populateFields('wi', whatIfState);
+    updateWiTotals(calc(whatIfState));
+  } else {
+    selectedWiSnap = date;
+    stored('wi', s);
+  }
+  renderSnaps();
+  renderChart();
+}
+
+function deleteSnap2(date) {
+  const snaps = getSnaps();
+  const idx = snaps.findIndex(s => s._date === date);
+  if (idx === -1) return;
+  const snap = snaps[idx];
+  const type = snap._type === 'whatif' ? 'wi' : 'cur';
+  snaps.splice(idx, 1);
+  saveSnaps(snaps);
+  // If deleted snap was selected, auto-select most recent of same type
+  if (type === 'cur' && selectedCurSnap === date) {
+    const rem = snaps.filter(s => (s._type||'current') === 'current');
+    selectedCurSnap = rem.length ? rem[rem.length-1]._date : null;
+    if (selectedCurSnap) stored('cu', cleanSnap(rem[rem.length-1]));
+  }
+  if (type === 'wi' && selectedWiSnap === date) {
+    const rem = snaps.filter(s => s._type === 'whatif');
+    selectedWiSnap = rem.length ? rem[rem.length-1]._date : null;
+    if (selectedWiSnap) stored('wi', cleanSnap(rem[rem.length-1]));
+  }
+  renderSnaps();
+  renderChart();
+}
+
+function loadSnap(date) {
+  const snap = getSnaps().find(s => s._date === date);
+  if (!snap) return;
+  const s = cleanSnap(snap);
   const c = calc(s);
   whatIfState = clone(s);
   whatIfState.savings.balance = Math.round(c.balance);
   whatIfState.savings.withdrawals = {vacay:0,gift:0,coaching:0,writingClass:0};
+  // Set mode to match snapshot type
+  setWiMode(snap._type === 'whatif' ? 'wi' : 'cu');
+  previewDirty = false;
   populateFields('wi', whatIfState);
   updateWiTotals(calc(whatIfState));
-  switchTab('runway');
-  toast('Loaded "'+_name+'" into Updates panel');
+  renderChart();
+  toast('Loaded "' + (snap._name||'Snapshot') + '" into Updates panel');
 }
 
-function deleteSnap(idx) {
-  const snaps=getSnaps();
-  if(cmpSnap&&cmpSnap._date===snaps[idx]._date) cmpSnap=null;
-  snaps.splice(idx,1); saveSnaps(snaps); renderSnaps();
-}
-
-function renderSnaps() {
-  const snaps=getSnaps(), el=document.getElementById('snap-list');
-  if (!snaps.length) { el.innerHTML='<div class="empty">No snapshots yet. Save your current state to start.</div>'; return; }
-  el.innerHTML='';
-  [...snaps].reverse().forEach((snap,ri) => {
-    const idx=snaps.length-1-ri, c=calc(snap);
-    const isCmp=cmpSnap&&cmpSnap._date===snap._date;
-    const date=new Date(snap._date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
-    const div=document.createElement('div');
-    div.className='snap-card'+(isCmp?' cmp':'');
-    div.innerHTML=`
+function renderSnapCol(listId, emptyId, snaps, type) {
+  const listEl  = document.getElementById(listId);
+  const emptyEl = document.getElementById(emptyId);
+  if (!listEl) return;
+  const selectedDate = type === 'cur' ? selectedCurSnap : selectedWiSnap;
+  if (!snaps.length) {
+    listEl.innerHTML = '';
+    if (emptyEl) emptyEl.style.display = '';
+    return;
+  }
+  if (emptyEl) emptyEl.style.display = 'none';
+  listEl.innerHTML = snaps.map(snap => {
+    const c = calc(snap);
+    const isSelected = snap._date === selectedDate;
+    const date = new Date(snap._date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+    return `<div class="snap-card-new${isSelected?' selected':''}" data-type="${type}">
+      <button class="snap-sel-btn${isSelected?' on':''}" onclick="selectSnap('${type}',${snap._date})" title="${isSelected?'Active on chart':'Show on chart'}">${isSelected?'●':'○'}</button>
       <div style="flex:1;min-width:0">
         <div class="snap-name">${snap._name||'Snapshot'}</div>
         <div class="snap-date">${date}</div>
-        <div class="snap-stats">Monthly: <span>${f$(c.monthlyExp)}</span> &nbsp;·&nbsp; Runway: <span>${fmo(runwayMonths(snap, c))}</span> &nbsp;·&nbsp; Net: <span>${f$(c.net)}/mo</span></div>
-        ${snap._notes ? `<div class="snap-note">${snap._notes}</div>` : ''}
+        <div class="snap-stats">Monthly: <span>${f$(c.monthlyExp)}</span> &nbsp;·&nbsp; Runway: <span>${fmo(runwayMonths(snap,c))}</span> &nbsp;·&nbsp; Net: <span>${f$(c.net)}/mo</span></div>
+        ${snap._notes?`<div class="snap-note">${snap._notes}</div>`:''}
       </div>
       <div class="snap-actions">
-        <button class="sbtn${isCmp?' on':''}" onclick="toggleCmp(${idx})">${isCmp?'On Chart ✓':'Compare'}</button>
-        <button class="sbtn" onclick="loadSnap(${idx})">Load</button>
-        <button class="sbtn del" onclick="deleteSnap(${idx})">Delete</button>
-      </div>`;
-    el.appendChild(div);
-  });
+        <button class="sbtn" onclick="loadSnap(${snap._date})">Load</button>
+        <button class="sbtn del" onclick="deleteSnap2(${snap._date})">×</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderSnaps() {
+  const snaps = getSnaps();
+  const curSnaps = [...snaps].filter(s => (s._type||'current') === 'current').reverse();
+  const wiSnaps  = [...snaps].filter(s => s._type === 'whatif').reverse();
+  renderSnapCol('snap-list-cur', 'snap-empty-cur', curSnaps, 'cur');
+  renderSnapCol('snap-list-wi',  'snap-empty-wi',  wiSnaps,  'wi');
 }
 
 // ─── EXPORT / IMPORT ────────────────────────────────────────────────────────────────────────────
@@ -1741,6 +1896,10 @@ function toast(msg) {
   const intentionsEl = document.getElementById('intentions-input');
   if (intentionsEl) intentionsEl.value = localStorage.getItem('ff4-intentions') || '';
   updateHeaderIntentions();
+
+  // Auto-select most recent snapshots and render list
+  initSelectedSnaps();
+  renderSnaps();
 
   loadDoodles();
 })();
