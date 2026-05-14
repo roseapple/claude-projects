@@ -508,7 +508,7 @@
 <div id="panel-plan" class="panel">
   <p class="explainer">This is your original vision — the scenario you set when you first decided to take the leap. Lock it in and only touch it to correct a genuine mistake. Your real-life decisions live in Updates on the Runway tab.</p>
   <div class="intentions-wrap">
-    <div class="intentions-label">✨ What is this runway for?</div>
+    <div class="intentions-label">✨ What is this runway for? What are you building toward?</div>
     <textarea id="intentions-input" class="intentions-input" placeholder="e.g. Take a year off to write my book, explore consulting, and figure out what's next." oninput="saveIntentions()" rows="2"></textarea>
   </div>
   <div class="plan-bar">
@@ -517,7 +517,7 @@
   </div>
   <div class="plan-totals-bar">
     <div class="ptb-item">
-      <div class="ptb-label">Monthly Net</div>
+      <div class="ptb-label">💸 Monthly Net</div>
       <div class="ptb-value green" id="pl-sum-net">—</div>
     </div>
     <div class="ptb-sep">vs</div>
@@ -542,7 +542,7 @@
     </div>
     <div class="ptb-sep">→</div>
     <div class="ptb-item">
-      <div class="ptb-label">Drawdown (net − "pay")</div>
+      <div class="ptb-label">📉 Drawdown (net − "pay")</div>
       <div class="ptb-value" id="pl-sum-drawdown">—</div>
     </div>
   </div>
@@ -558,24 +558,24 @@
     <div>
       <div class="stat-trio">
         <div class="sbox plan-box">
-          <div class="sl">Plan Runway from Today</div>
+          <div class="sl">📋 Plan Runway from Today</div>
           <div class="sv" id="rs-plan">—</div>
           <div class="ss" id="rs-plan-sub">months</div>
         </div>
         <div class="sbox cur-box">
-          <div class="sl">Current Runway from Today</div>
+          <div class="sl">📍 Current Runway from Today</div>
           <div class="sv" id="rs-cur">—</div>
           <div class="ss" id="rs-cur-sub">vs plan</div>
         </div>
         <div class="sbox wi-box">
-          <div class="sl">What If Runway from Today</div>
+          <div class="sl">💭 What If Runway from Today</div>
           <div class="sv" id="rs-wi">—</div>
           <div class="ss" id="rs-wi-sub">vs current</div>
         </div>
       </div>
       <div class="card chart-card">
         <div class="chart-header">
-          <div class="card-title" style="margin-bottom:0">Money Over Time</div>
+          <div class="card-title" style="margin-bottom:0">📈 Money Over Time</div>
           <div style="display:flex;align-items:center;gap:0.5rem">
             <button class="chart-nav" onclick="prevYear()">&#8592; Prev Year</button>
             <span class="chart-window-label" id="chart-window-label"></span>
@@ -610,7 +610,7 @@
 
         <!-- Balance -->
         <div style="margin-bottom:0.9rem">
-          <div class="section-label" style="margin-top:0">Freedom Fund Balance</div>
+          <div class="section-label" style="margin-top:0">💰 Freedom Fund Balance</div>
           <div class="field">
             <div class="iw p"><span class="px">$</span>
               <input type="number" id="wi-savings-balance" min="0" step="100" oninput="onWhatIf()" />
@@ -621,7 +621,7 @@
         <!-- Base Freelance accordion -->
         <div class="wi-acc" id="wi-acc-fl">
           <div class="wi-acc-hdr" onclick="toggleAcc('fl')">
-            <span>Freelance Income</span>
+            <span>💼 Freelance Income</span>
             <span><span class="wi-acc-total" id="wi-fl-total">$0</span><span class="wi-arr">▾</span></span>
           </div>
           <div class="wi-acc-body">
@@ -637,7 +637,7 @@
         <!-- Gigs -->
         <div style="margin-bottom:0.9rem">
           <div class="section-label" style="display:flex;justify-content:space-between;align-items:center;border:none;padding:0;margin-bottom:0.4rem">
-            <span>Gigs</span>
+            <span>⚡ Gigs</span>
             <button class="add-btn" onclick="addGig('wi')">+ Add</button>
           </div>
           <div id="wi-gig-list" class="gig-list"></div>
@@ -646,7 +646,7 @@
         <!-- Fixed Costs accordion -->
         <div class="wi-acc" id="wi-acc-fixed">
           <div class="wi-acc-hdr" onclick="toggleAcc('fixed')">
-            <span>Fixed Costs</span>
+            <span>🏠 Fixed Costs</span>
             <span><span class="wi-acc-total" id="wi-fixed-total">$0</span><span class="wi-arr">▾</span></span>
           </div>
           <div class="wi-acc-body">
@@ -673,7 +673,7 @@
         <!-- Guilt-Free accordion -->
         <div class="wi-acc" id="wi-acc-gf">
           <div class="wi-acc-hdr" onclick="toggleAcc('gf')">
-            <span>Guilt-Free Spending</span>
+            <span>🧃 Guilt-Free Spending</span>
             <span><span class="wi-acc-total" id="wi-gf-total">$0</span><span class="wi-arr">▾</span></span>
           </div>
           <div class="wi-acc-body">
@@ -712,7 +712,7 @@
         <!-- Savings Goals accordion -->
         <div class="wi-acc" id="wi-acc-sg">
           <div class="wi-acc-hdr" onclick="toggleAcc('sg')">
-            <span>Savings Goals</span>
+            <span>🌴 Savings Goals</span>
             <span><span class="wi-acc-total" id="wi-sg-total">$0</span><span class="wi-arr">▾</span></span>
           </div>
           <div class="wi-acc-body">
@@ -755,10 +755,10 @@
 
   <!-- Export/Import -->
   <div class="export-strip">
-    <span>Backup &amp; Restore:</span>
-    <button class="btn btn-ghost" onclick="exportData()">&#8681; Export</button>
+    <span>🗄️ Backup &amp; Restore:</span>
+    <button class="btn btn-ghost" onclick="exportData()">📥 Export</button>
     <label class="btn btn-ghost" style="cursor:pointer">
-      &#8679; Import
+      📤 Import
       <input type="file" accept=".json" onchange="importData(event)" style="display:none" />
     </label>
   </div>
@@ -1013,7 +1013,7 @@ function buildForm(pfx, hasGigs) {
 
   return `
     <div class="card">
-      <div class="card-title">Savings Balance</div>
+      <div class="card-title">💰 Savings Balance</div>
       <div class="fg">${planDateField}${f('savings-balance','Original Balance','$',100)}</div>
       <div class="section-label">Initial Withdrawals</div>
       <div class="fg">
@@ -1027,7 +1027,7 @@ function buildForm(pfx, hasGigs) {
       </div>
     </div>
     <div class="card">
-      <div class="card-title">Freelance Income</div>
+      <div class="card-title">💼 Freelance Income</div>
       <div class="fg">
         ${f('fl-months-before','Months Before Starting','plain',1)}
         ${f('fl-weeks-off','Weeks Off per Year','plain',1)}
@@ -1052,7 +1052,7 @@ function buildForm(pfx, hasGigs) {
       <div class="note" style="margin-top:0.6rem">Time-boxed contracts. Income stacks on top of base freelance.</div>
     </div>` : ''}
     <div class="card">
-      <div class="card-title">Fixed Costs</div>
+      <div class="card-title">🏠 Fixed Costs</div>
       <div class="fg">
         ${f('fc-rent','Rent','$',50)}${f('fc-utilities','Utilities','$',10)}
         ${f('fc-insurance','Insurance','$',10,'Medical + Renters')}
@@ -1073,7 +1073,7 @@ function buildForm(pfx, hasGigs) {
       </div>
     </div>
     <div class="card">
-      <div class="card-title">Guilt-Free Spending</div>
+      <div class="card-title">🧃 Guilt-Free Spending</div>
       <div class="section-label">Food &amp; Drinks — $ × times/week</div>
       <div class="fg" style="grid-template-columns:repeat(auto-fill,minmax(220px,1fr))">
         ${fr('gf-coffee-cost','gf-coffee-freq','Coffee &amp; Pastries')}
@@ -1102,7 +1102,7 @@ function buildForm(pfx, hasGigs) {
       </div>
     </div>
     <div class="card">
-      <div class="card-title">Savings Goals — monthly</div>
+      <div class="card-title">🌴 Savings Goals — monthly</div>
       <div class="fg">
         ${f('sg-vacation','Vacation / Travel','$',25,'Supplemented by CC points')}
         ${f('sg-gifts','Gifts','$',10)}
@@ -1418,7 +1418,7 @@ function toggleLock() {
     planLocked = true;
     const s = readState('pl');
     stored('pl', s);
-    toast('Plan saved and locked.');
+    toast('🔒 Plan saved and locked.');
   }
   stored('plan-locked', planLocked);
   applyLockState();
@@ -1514,11 +1514,11 @@ function saveWiAs(pfx, name, notes) {
   if (pfx === 'cu') {
     stored('cu', s);
     selectedCurSnap = snap._date;
-    toast('"' + name + '" saved — pink line updated.');
+    toast('📍 "' + name + '" saved!');
   } else {
     stored('wi', s);
     selectedWiSnap = snap._date;
-    toast('"' + name + '" saved — teal line updated.');
+    toast('💭 "' + name + '" saved!');
   }
   previewDirty = false;
   addDoodle();
@@ -1774,7 +1774,7 @@ function loadSnap(date) {
   populateFields('wi', whatIfState);
   updateWiTotals(calc(whatIfState));
   renderChart();
-  toast('Loaded "' + (snap._name||'Snapshot') + '" into Updates panel');
+  toast('✏️ Loaded "' + (snap._name||'Snapshot') + '" into Updates panel');
 }
 
 function renderSnapCol(listId, emptyId, snaps, type) {
@@ -1827,7 +1827,7 @@ function exportData() {
   a.download = 'clarity-backup-' + new Date().toISOString().slice(0,10) + '.json';
   a.click();
   URL.revokeObjectURL(a.href);
-  toast('Backup exported!');
+  toast('📥 Backup exported!');
 }
 
 function importData(e) {
