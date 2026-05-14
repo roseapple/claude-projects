@@ -1610,13 +1610,15 @@ const DOODLE_COLORS = ['#2BBFCF','#E8427A','#1BA878','#F4C94E','#A8D8DE','#C9404
 const DOODLE_KEYS = Object.keys(DOODLE_SHAPES);
 
 function randomEdgePos() {
-  const edge = Math.floor(Math.random() * 4); // 0=top,1=right,2=bottom,3=left
-  const pct = 5 + Math.random() * 90;
-  const inset = 1 + Math.random() * 7; // % from edge, keep near border
-  if (edge === 0) return { top: inset+'vh',  left: pct+'vw',  bottom:'auto', right:'auto' };
-  if (edge === 1) return { right: inset+'vw', top: pct+'vh', left:'auto',   bottom:'auto' };
-  if (edge === 2) return { bottom: inset+'vh', left: pct+'vw', top:'auto',  right:'auto' };
-                  return { left: inset+'vw',  top: pct+'vh',  right:'auto', bottom:'auto' };
+  // 0=right, 1=bottom, 2=left — skip top to avoid the water header
+  const edge   = Math.floor(Math.random() * 3);
+  const inset  = 1 + Math.random() * 8;
+  // For left/right keep vertical position below the header (~22vh) and away from very top
+  const safeV  = 22 + Math.random() * 70; // 22–92vh
+  const safeH  = 5  + Math.random() * 90;
+  if (edge === 0) return { right: inset+'vw', top: safeV+'vh', left:'auto', bottom:'auto' };
+  if (edge === 1) return { bottom: inset+'vh', left: safeH+'vw', top:'auto', right:'auto' };
+                  return { left: inset+'vw',   top: safeV+'vh', right:'auto', bottom:'auto' };
 }
 
 function renderDoodle(d) {
@@ -1631,8 +1633,8 @@ function renderDoodle(d) {
 function addDoodle() {
   const shape = DOODLE_KEYS[Math.floor(Math.random() * DOODLE_KEYS.length)];
   const color = DOODLE_COLORS[Math.floor(Math.random() * DOODLE_COLORS.length)];
-  const rot   = -15 + Math.random() * 30;
-  const size  = 28 + Math.floor(Math.random() * 18);
+  const rot   = -20 + Math.random() * 40;
+  const size  = 18 + Math.floor(Math.pow(Math.random(), 0.7) * 72);
   const pos   = randomEdgePos();
   const d = { shape, color, rot, size, ...pos };
   renderDoodle(d);
