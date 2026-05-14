@@ -809,6 +809,17 @@ function runwayMonths(s, c, lineStartMonth = 0) {
   return Infinity;
 }
 
+// Returns months from TODAY until the balance hits zero, regardless of when the line started.
+function runwayFromToday(s, c, lineStartMonth = 0) {
+  const MAX = 480;
+  const from = Math.min(lineStartMonth, 0);
+  const pts = buildTimeline(s, c, from, from + MAX, lineStartMonth);
+  for (let i = 0; i < pts.length; i++) {
+    if (pts[i] !== null && pts[i] <= 0) return Math.max(0, from + i);
+  }
+  return Infinity;
+}
+
 function gigOffset(dateStr) {
   if (!dateStr) return 9999;
   const [y,m] = dateStr.split('-').map(Number);
@@ -1308,10 +1319,10 @@ function renderChart() {
   const now = new Date();
   const planLineStart = (psy - now.getFullYear())*12 + (psm - 1 - now.getMonth());
 
-  // Runway stats — all from today (month 0)
-  const plRunway = runwayMonths(plS, plC, 0);
-  const cuRunway = runwayMonths(cuS, cuC, 0);
-  const wiRunway = runwayMonths(wiS, wiC, 0);
+  // Runway stats — months from TODAY until zero for each scenario
+  const plRunway = runwayFromToday(plS, plC, planLineStart);
+  const cuRunway = runwayFromToday(cuS, cuC, 0);
+  const wiRunway = runwayFromToday(wiS, wiC, 0);
 
   setText('rs-plan', fmo(plRunway));
   setText('rs-plan-sub', isFinite(plRunway) ? (plRunway/12).toFixed(1)+' yrs' : 'infinite');
