@@ -289,9 +289,11 @@
     .runway-grid {
       display: grid;
       grid-template-columns: minmax(0, 2fr) minmax(300px, 1fr);
-      gap: 1.5rem; align-items: start;
+      gap: 1.5rem; align-items: stretch;
     }
     @media (max-width: 840px) { .runway-grid { grid-template-columns: 1fr; } }
+    .runway-grid > div:first-child { display: flex; flex-direction: column; }
+    .card.chart-card { flex: 1; display: flex; flex-direction: column; min-height: 0; }
 
     /* ── Stat trio ── */
     .stat-trio { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.8rem; margin-bottom: 1rem; }
@@ -316,8 +318,7 @@
     /* ── What If panel ── */
     .whatif-panel {
       background: var(--paper); border: 1.5px solid var(--ocean);
-      border-radius: 4px; position: sticky; top: 1rem;
-      max-height: calc(100vh - 130px); overflow-y: auto;
+      border-radius: 4px; height: 100%; max-height: 540px; overflow-y: auto;
       box-shadow: 3px 3px 0 rgba(43,191,207,0.15);
     }
     .wi-header {
@@ -384,7 +385,7 @@
     .wi-save-confirm .confirm-btns .btn { flex: 1; font-size: 0.85rem; padding: 0.45rem 0.6rem; }
 
     /* ── Chart ── */
-    .chart-wrap { position: relative; height: 420px; }
+    .chart-wrap { position: relative; flex: 1; min-height: 280px; }
     .chart-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.9rem; flex-wrap: wrap; gap: 0.5rem; }
     .chart-legend { display: flex; gap: 1rem; font-family: var(--hand); font-size: 0.9rem; }
     .chart-nav {
@@ -572,7 +573,7 @@
           <div class="ss" id="rs-wi-sub">vs current</div>
         </div>
       </div>
-      <div class="card">
+      <div class="card chart-card">
         <div class="chart-header">
           <div class="card-title" style="margin-bottom:0">Money Over Time</div>
           <div style="display:flex;align-items:center;gap:0.5rem">
@@ -582,9 +583,9 @@
           </div>
           <div class="chart-legend">
             <span style="color:#AAAAAA">&#8212; plan</span>
-            <span style="color:#E8427A">&#8212; current</span>
-            <span style="color:#2BBFCF">&#8212; what if</span>
-            <span id="chart-legend-preview" style="color:rgba(43,191,207,0.5);display:none">&#8212;&#8211; preview</span>
+            <span id="leg-cur" style="color:#E8427A">&#8212; current</span>
+            <span id="leg-wi"  style="color:#2BBFCF">&#8212; what if</span>
+            <span id="leg-prev" style="color:rgba(232,66,122,0.6)">&#8211;&#8211; preview</span>
           </div>
         </div>
         <div class="chart-wrap"><canvas id="chart"></canvas></div>
@@ -617,15 +618,19 @@
           </div>
         </div>
 
-        <!-- Base Freelance -->
-        <div style="margin-bottom:0.9rem">
-          <div class="section-label">Base Freelance Income</div>
-          <div class="fg2">
-            <div class="field"><label>$/hr</label><div class="iw p"><span class="px">$</span><input type="number" id="wi-fl-rate" min="0" step="5" oninput="onWhatIf()" /></div></div>
-            <div class="field"><label>Hrs/week</label><div class="iw"><input type="number" id="wi-fl-hours" min="0" step="1" oninput="onWhatIf()" /></div></div>
-            <div class="field"><label>Weeks off/yr</label><div class="iw"><input type="number" id="wi-fl-weeks-off" min="0" step="1" oninput="onWhatIf()" /></div></div>
-            <div class="field"><label>Tax %</label><div class="iw s"><span class="sx">%</span><input type="number" id="wi-fl-tax" min="0" max="100" step="1" disabled title="Change tax rate on the Plan tab" /></div><div class="locked-note">&#128274; Set on Plan tab</div></div>
-
+        <!-- Base Freelance accordion -->
+        <div class="wi-acc" id="wi-acc-fl">
+          <div class="wi-acc-hdr" onclick="toggleAcc('fl')">
+            <span>Freelance Income</span>
+            <span><span class="wi-acc-total" id="wi-fl-total">$0</span><span class="wi-arr">▾</span></span>
+          </div>
+          <div class="wi-acc-body">
+            <div class="fg2">
+              <div class="field"><label>$/hr</label><div class="iw p"><span class="px">$</span><input type="number" id="wi-fl-rate" min="0" step="5" oninput="onWhatIf()" /></div></div>
+              <div class="field"><label>Hrs/week</label><div class="iw"><input type="number" id="wi-fl-hours" min="0" step="1" oninput="onWhatIf()" /></div></div>
+              <div class="field"><label>Weeks off/yr</label><div class="iw"><input type="number" id="wi-fl-weeks-off" min="0" step="1" oninput="onWhatIf()" /></div></div>
+              <div class="field"><label>Tax %</label><div class="iw s"><span class="sx">%</span><input type="number" id="wi-fl-tax" min="0" max="100" step="1" disabled title="Change tax rate on the Plan tab" /></div><div class="locked-note">&#128274; Set on Plan tab</div></div>
+            </div>
           </div>
         </div>
 
@@ -853,14 +858,13 @@ let chartInst = null;
 let currentTab = 'runway';
 let chartOffset = 0; // years offset from today for chart window
 let undoStack = [];
-let bestWiRunway = -Infinity;
 let wiMode = 'cu'; // 'cu' or 'wi' — which type the Save button targets
 let previewDirty = false; // true when Updates panel has unsaved edits
 let selectedCurSnap = null; // _date of selected current snapshot
 let selectedWiSnap  = null; // _date of selected what-if snapshot
 
-function prevYear() { chartOffset--; renderChart(); }
-function nextYear() { chartOffset++; renderChart(); }
+function prevYear() { chartOffset--; refreshChart(); }
+function nextYear() { chartOffset++; refreshChart(); }
 
 function updateUndoBtn() {
   const btn = document.getElementById('wi-undo-btn');
@@ -885,6 +889,12 @@ function setWiMode(mode) {
     btn.textContent = mode === 'cu' ? 'Save as Current' : 'Save as What If';
     btn.className   = 'btn ' + (mode === 'cu' ? 'btn-pink' : 'btn-primary');
   }
+  // Update preview line color immediately
+  if (chartInst && chartInst.data.datasets[3]) {
+    chartInst.data.datasets[3].borderColor = mode === 'cu' ? 'rgba(232,66,122,0.55)' : 'rgba(43,191,207,0.55)';
+    chartInst.update('none');
+  }
+  updateChartLegend();
 }
 
 // ─── CALCULATIONS ─────────────────────────────────────────────────────────────────────────────
@@ -1236,7 +1246,10 @@ function onInput(pfx) {
     if (el) el.value = rate;
   }
 
-  if (currentTab === 'runway') renderChart();
+  if (currentTab === 'runway') {
+    if (pfx === 'wi') renderChartPreview();
+    else refreshChart();
+  }
 }
 
 function onWhatIf() {
@@ -1411,7 +1424,7 @@ function switchTab(name) {
   document.getElementById('panel-'+name).classList.add('active');
   const line = document.getElementById('tab-accent-line');
   if (line) line.className = 'tab-accent-line ' + name;
-  if (name==='runway') renderChart();
+  if (name==='runway') refreshChart();
 }
 
 // ─── WHAT IF ─────────────────────────────────────────────────────────────────────────────
@@ -1434,6 +1447,7 @@ function toggleAcc(name) {
 }
 
 function updateWiTotals(c) {
+  setText('wi-fl-total',    f$(c.net));
   setText('wi-fixed-total', f$(c.totalFixed));
   setText('wi-gf-total',    f$(c.gfTotal));
   setText('wi-sg-total',    f$(c.sgTotal));
@@ -1501,107 +1515,164 @@ function saveWiAs(pfx, name, notes) {
   previewDirty = false;
   addDoodle();
   renderSnaps();
-  renderChart();
+  refreshChart();
 }
 
 // ─── CHART ──────────────────────────────────────────────────────────────────────────────────
-function renderChart() {
+const CHART_OPTIONS = {
+  responsive: true, maintainAspectRatio: false,
+  interaction: { mode:'index', intersect:false },
+  plugins: {
+    legend: { display: false }, // using HTML legend instead
+    tooltip: {
+      backgroundColor:'#FDFAF3', borderColor:'#D0C8B4', borderWidth:1,
+      titleColor:'#1B2B50', bodyColor:'#4A6070',
+      callbacks: { label: ctx => ctx.parsed.y != null ? ` ${ctx.dataset.label}: ${f$(ctx.parsed.y)}` : '' }
+    }
+  },
+  scales: {
+    x: { ticks:{color:'#556070',maxTicksLimit:13,font:{size:11}}, grid:{color:'rgba(208,200,180,0.4)'} },
+    y: { ticks:{color:'#556070',font:{size:11},callback:v=>'$'+(v>=1000?(v/1000).toFixed(0)+'k':v)}, grid:{color:'rgba(208,200,180,0.4)'} }
+  }
+};
+
+function chartWindow() {
+  const winStart  = Math.round(chartOffset * 12);
+  const winEnd    = winStart + 24;
+  const plLS      = getPlanLineStart();
+  const FULL_END  = Math.max(winEnd + 12, 120);
+  const FULL_START = Math.min(winStart - 6, plLS - 2, -6);
+  const slice = arr => arr.slice(winStart - FULL_START, winStart - FULL_START + 25);
+  return { winStart, FULL_START, FULL_END, plLS, slice };
+}
+
+function updateStats() {
   const plS = stored('pl') || clone(DEFAULTS);
-  const cuS = stored('cu') || clone(DEFAULTS);
-  const wiS = stored('wi') || clone(DEFAULTS);
-  const plC = calc(plS), cuC = calc(cuS), wiC = calc(wiS);
-
-  // Plan start offset (months from today)
-  const planStartStr = plS.planStartDate || '2026-01';
-  const [psy, psm] = planStartStr.split('-').map(Number);
-  const now = new Date();
-  const planLineStart = (psy - now.getFullYear())*12 + (psm - 1 - now.getMonth());
-
-  // Runway stats — months from TODAY until zero for each scenario
-  const plRunway = runwayFromToday(plS, plC, planLineStart);
-  const cuRunway = runwayFromToday(cuS, cuC, 0);
-  const wiRunway = runwayFromToday(wiS, wiC, 0);
-
+  const plC = calc(plS);
+  const plLS = getPlanLineStart();
+  const plRunway = runwayFromToday(plS, plC, plLS);
   setText('rs-plan', fmo(plRunway));
   setText('rs-plan-sub', isFinite(plRunway) ? (plRunway/12).toFixed(1)+' yrs' : 'infinite');
-  setText('rs-cur',  fmo(cuRunway));
-  const curDelta = isFinite(cuRunway)&&isFinite(plRunway) ? Math.floor(cuRunway-plRunway) : null;
-  setText('rs-cur-sub', curDelta!==null ? (curDelta>=0?'+':'')+curDelta+' mo vs plan' : 'vs plan');
-  setText('rs-wi',   fmo(wiRunway));
-  const delta = isFinite(wiRunway)&&isFinite(cuRunway) ? Math.floor(wiRunway-cuRunway) : null;
-  setText('rs-wi-sub', delta!==null ? (delta>=0?'+':'')+delta+' mo vs current' : 'vs current');
 
-  if (isFinite(wiRunway) && wiRunway > bestWiRunway) {
-    const isNewBest = bestWiRunway > -Infinity;
-    bestWiRunway = wiRunway;
-    if (isNewBest) celebrate('runway');
+  if (selectedCurSnap) {
+    const cuS = stored('cu') || clone(DEFAULTS);
+    const cuC = calc(cuS);
+    const cuRunway = runwayFromToday(cuS, cuC, 0);
+    setText('rs-cur', fmo(cuRunway));
+    const d = isFinite(cuRunway)&&isFinite(plRunway) ? Math.floor(cuRunway-plRunway) : null;
+    setText('rs-cur-sub', d!==null?(d>=0?'+':'')+d+' mo vs plan':'vs plan');
+  } else {
+    setText('rs-cur', '—'); setText('rs-cur-sub', 'no snapshot yet');
   }
 
-  // Window: 2 years (24 months), shifted by chartOffset years
-  const winStart = Math.round(chartOffset * 12);
-  const winEnd   = winStart + 24;
+  if (selectedWiSnap) {
+    const wiS = stored('wi') || clone(DEFAULTS);
+    const wiC = calc(wiS);
+    const wiRunway = runwayFromToday(wiS, wiC, 0);
+    const cuS = stored('cu') || clone(DEFAULTS);
+    const cuRunway = selectedCurSnap ? runwayFromToday(cuS, calc(cuS), 0) : plRunway;
+    setText('rs-wi', fmo(wiRunway));
+    const d = isFinite(wiRunway)&&isFinite(cuRunway) ? Math.floor(wiRunway-cuRunway) : null;
+    setText('rs-wi-sub', d!==null?(d>=0?'+':'')+d+' mo vs current':'vs current');
+  } else {
+    setText('rs-wi', '—'); setText('rs-wi-sub', 'no snapshot yet');
+  }
+}
 
-  // Build full timelines (enough to cover any window)
-  const FULL_END = Math.max(winEnd + 12, 120);
-  const FULL_START = Math.min(winStart - 6, planLineStart - 2, -6);
+function buildChartDatasets(win) {
+  const { FULL_START, FULL_END, plLS, slice } = win;
+  const now = new Date();
 
-  const plData = buildTimeline(plS, plC, FULL_START, FULL_END, planLineStart);
+  const plS = stored('pl') || clone(DEFAULTS);
+  const plC = calc(plS);
+  const plData = buildTimeline(plS, plC, FULL_START, FULL_END, plLS);
+
+  const cuS = stored('cu') || clone(DEFAULTS);
+  const cuC = calc(cuS);
   const cuData = buildTimeline(cuS, cuC, FULL_START, FULL_END, 0);
+
+  const wiS = stored('wi') || clone(DEFAULTS);
+  const wiC = calc(wiS);
   const wiData = buildTimeline(wiS, wiC, FULL_START, FULL_END, 0);
 
-  // Slice to window
-  const slice = arr => {
-    const offset = winStart - FULL_START;
-    return arr.slice(offset, offset + 25);
-  };
+  const prevC = calc(whatIfState);
+  const prevData = buildTimeline(whatIfState, prevC, FULL_START, FULL_END, 0);
+  const prevColor = wiMode === 'cu' ? 'rgba(232,66,122,0.55)' : 'rgba(43,191,207,0.55)';
 
+  return [
+    { label:'Plan',    data:slice(plData), borderColor:'#BBBBBB', borderWidth:1.5, borderDash:[4,3], pointRadius:0, tension:0.3, spanGaps:false },
+    { label:'Current', data:slice(cuData), borderColor:'#E8427A', borderWidth:2.5, pointRadius:0, tension:0.3, spanGaps:false, hidden:!selectedCurSnap },
+    { label:'What If', data:slice(wiData), borderColor:'#2BBFCF', borderWidth:2.5, pointRadius:0, tension:0.3, spanGaps:false, hidden:!selectedWiSnap },
+    { label:'Preview', data:slice(prevData), borderColor:prevColor, borderWidth:1.5, borderDash:[4,3], pointRadius:0, tension:0.3, spanGaps:false },
+  ];
+}
+
+// Full rebuild — called on snap select/save/window nav/plan change
+function refreshChart() {
+  const win = chartWindow();
+  const { winStart, FULL_START } = win;
+  const now = new Date();
   const labels = Array.from({length:25}, (_,i) => {
     const d = new Date(now.getFullYear(), now.getMonth() + winStart + i, 1);
     return d.toLocaleDateString('en-US',{month:'short',year:'numeric'});
   });
-
-  // Update nav label
   setText('chart-window-label', labels[0]+' – '+labels[24]);
 
-  const datasets = [
-    { label:'Plan',    data:slice(plData), borderColor:'#BBBBBB', borderWidth:1.5, borderDash:[4,3], pointRadius:0, tension:0.3, spanGaps:false },
-    { label:'Current', data:slice(cuData), borderColor:'#E8427A', borderWidth:2.5, pointRadius:0, tension:0.3, spanGaps:false },
-    { label:'What If', data:slice(wiData), borderColor:'#2BBFCF', borderWidth:2,   pointRadius:0, tension:0.3, spanGaps:false },
-  ];
-
-  // 4th line: faded live preview while Updates panel has unsaved changes
-  const legendPreview = document.getElementById('chart-legend-preview');
-  if (previewDirty) {
-    const prevC = calc(whatIfState);
-    const prevData = buildTimeline(whatIfState, prevC, FULL_START, FULL_END, 0);
-    datasets.push({ label:'Preview', data:slice(prevData), borderColor:'rgba(43,191,207,0.42)',
-      borderWidth:1.5, borderDash:[4,3], pointRadius:0, tension:0.3, spanGaps:false });
-    if (legendPreview) legendPreview.style.display = '';
+  const datasets = buildChartDatasets(win);
+  if (!chartInst) {
+    chartInst = new Chart(document.getElementById('chart').getContext('2d'),
+      { type:'line', data:{labels, datasets}, options:CHART_OPTIONS });
   } else {
-    if (legendPreview) legendPreview.style.display = 'none';
+    chartInst.data.labels   = labels;
+    chartInst.data.datasets = datasets;
+    chartInst.update();
   }
-
-  if (chartInst) chartInst.destroy();
-  chartInst = new Chart(document.getElementById('chart').getContext('2d'), {
-    type:'line', data:{labels,datasets},
-    options:{
-      responsive:true, maintainAspectRatio:false,
-      interaction:{mode:'index',intersect:false},
-      plugins:{
-        legend:{labels:{color:'#4A6070',font:{size:12,family:"'Caveat',sans-serif"},boxWidth:18,padding:12}},
-        tooltip:{
-          backgroundColor:'#FDFAF3',borderColor:'#D0C8B4',borderWidth:1,
-          titleColor:'#1B2B50',bodyColor:'#4A6070',
-          callbacks:{label:ctx=>ctx.parsed.y!=null?` ${ctx.dataset.label}: ${f$(ctx.parsed.y)}`:''}
-        }
-      },
-      scales:{
-        x:{ticks:{color:'#556070',maxTicksLimit:13,font:{size:11}},grid:{color:'rgba(208,200,180,0.4)'}},
-        y:{ticks:{color:'#556070',font:{size:11},callback:v=>'$'+(v>=1000?(v/1000).toFixed(0)+'k':v)},grid:{color:'rgba(208,200,180,0.4)'}}
-      }
-    }
-  });
+  updateStats();
+  updateChartLegend();
 }
+
+// Preview-only update — called on every keypress in Updates panel
+function renderChartPreview() {
+  if (!chartInst) { refreshChart(); return; }
+  const win = chartWindow();
+  const { FULL_START, FULL_END, slice } = win;
+
+  const prevC    = calc(whatIfState);
+  const prevData = buildTimeline(whatIfState, prevC, FULL_START, FULL_END, 0);
+  const prevColor = wiMode === 'cu' ? 'rgba(232,66,122,0.55)' : 'rgba(43,191,207,0.55)';
+
+  const ds = chartInst.data.datasets;
+  if (ds[3]) { ds[3].data = slice(prevData); ds[3].borderColor = prevColor; }
+  chartInst.update('none');
+
+  // Update only the stat matching the current editing mode
+  const prevRunway = runwayFromToday(whatIfState, prevC, 0);
+  if (wiMode === 'cu') {
+    setText('rs-cur', fmo(prevRunway));
+    const plS = stored('pl') || clone(DEFAULTS);
+    const plRunway = runwayFromToday(plS, calc(plS), getPlanLineStart());
+    const d = isFinite(prevRunway)&&isFinite(plRunway) ? Math.floor(prevRunway-plRunway) : null;
+    setText('rs-cur-sub', d!==null?(d>=0?'+':'')+d+' mo vs plan':'vs plan');
+  } else {
+    setText('rs-wi', fmo(prevRunway));
+    const cuS = stored('cu') || clone(DEFAULTS);
+    const cuRunway = selectedCurSnap ? runwayFromToday(cuS, calc(cuS), 0) : Infinity;
+    const d = isFinite(prevRunway)&&isFinite(cuRunway) ? Math.floor(prevRunway-cuRunway) : null;
+    setText('rs-wi-sub', d!==null?(d>=0?'+':'')+d+' mo vs current':'vs current');
+  }
+}
+
+function updateChartLegend() {
+  const legCur  = document.getElementById('leg-cur');
+  const legWi   = document.getElementById('leg-wi');
+  const legPrev = document.getElementById('leg-prev');
+  if (legCur)  legCur.style.opacity  = selectedCurSnap ? '1' : '0.3';
+  if (legWi)   legWi.style.opacity   = selectedWiSnap  ? '1' : '0.3';
+  if (legPrev) legPrev.style.color   = wiMode === 'cu' ? 'rgba(232,66,122,0.6)' : 'rgba(43,191,207,0.6)';
+}
+
+// Legacy alias used by a few call sites
+function renderChart() { refreshChart(); }
 
 // ─── SNAPSHOTS ─────────────────────────────────────────────────────────────────────────────
 function getSnaps()   { try { return JSON.parse(localStorage.getItem('ff4-snaps')||'[]'); } catch { return []; } }
@@ -1642,7 +1713,7 @@ function selectSnap(type, date) {
     stored('wi', s);
   }
   renderSnaps();
-  renderChart();
+  refreshChart();
 }
 
 function deleteSnap2(date) {
@@ -1665,7 +1736,7 @@ function deleteSnap2(date) {
     if (selectedWiSnap) stored('wi', cleanSnap(rem[rem.length-1]));
   }
   renderSnaps();
-  renderChart();
+  refreshChart();
 }
 
 function loadSnap(date) {
@@ -1880,11 +1951,11 @@ function toast(msg) {
   cu.freelance.taxRate = planTaxRate;
   stored('cu', cu);
 
-  const wiSeed = stored('wi') || cu;
-  wiSeed.freelance = wiSeed.freelance || {};
-  wiSeed.freelance.taxRate = planTaxRate;
-  const wiC = calc(wiSeed);
-  whatIfState = clone(wiSeed);
+  // Always seed Updates panel from current baseline
+  cu.freelance = cu.freelance || {};
+  cu.freelance.taxRate = planTaxRate;
+  const wiC = calc(cu);
+  whatIfState = clone(cu);
   whatIfState.savings.balance = Math.round(wiC.balance);
   whatIfState.savings.withdrawals = {vacay:0,gift:0,coaching:0,writingClass:0};
   populateFields('wi', whatIfState);
