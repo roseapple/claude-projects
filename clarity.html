@@ -52,7 +52,7 @@
       font-family: var(--hand); font-size: 2.2rem; font-weight: 700; color: #fff;
       text-shadow: 0 2px 12px rgba(0,0,0,0.35); line-height: 1.1;
     }
-    .header p { font-size: 0.88rem; color: rgba(255,255,255,0.8); margin-top: 0.2rem; text-shadow: 0 1px 4px rgba(0,0,0,0.3); }
+    .header p { font-size: 0.88rem; color: rgba(255,255,255,0.8); margin-top: 0.2rem; text-shadow: 0 1px 4px rgba(0,0,0,0.3); max-width: 540px; }
     .hbtn {
       padding: 0.5rem 1.1rem; background: rgba(255,255,255,0.2);
       border: 1px solid rgba(255,255,255,0.45); border-radius: 20px;
@@ -190,6 +190,16 @@
       align-self: flex-end; padding-bottom: 0.35rem;
     }
     .gig-remove:hover { color: var(--red); }
+    .gig-runway-badge { font-family: var(--hand); font-size: 0.8rem; font-weight: 700; padding: 0.1rem 0.45rem; border-radius: 20px; }
+    .gig-runway-badge.pos { color: var(--green); background: rgba(87,175,90,0.12); }
+    .gig-runway-badge.neg { color: #c0392b; background: rgba(192,57,43,0.1); }
+    .intentions-wrap { margin: 0.8rem 0 0.2rem; }
+    .intentions-label { font-family: var(--hand); font-size: 0.9rem; color: var(--dim); margin-bottom: 0.25rem; }
+    .intentions-input { width: 100%; box-sizing: border-box; font-family: var(--hand); font-size: 1rem; color: var(--navy); border: none; border-bottom: 1.5px dashed var(--border); background: transparent; resize: none; outline: none; padding: 0.2rem 0; line-height: 1.5; }
+    .intentions-input:focus { border-bottom-color: var(--ocean); }
+    .snap-notes-input { width: 100%; box-sizing: border-box; font-family: var(--hand); font-size: 0.88rem; color: var(--navy); border: 1px solid var(--border); border-radius: 6px; background: #fff; resize: none; outline: none; padding: 0.3rem 0.5rem; margin-top: 0.3rem; }
+    .snap-notes-input:focus { border-color: var(--ocean); }
+    .snap-note { font-family: var(--hand); font-size: 0.85rem; color: var(--dim); margin-top: 0.2rem; font-style: italic; }
     .add-btn {
       padding: 0.3rem 0.85rem; background: transparent;
       border: 1px dashed var(--ocean2); border-radius: 12px;
@@ -406,7 +416,7 @@
 <div class="header">
   <div>
     <h1>Jessica's Creative Freedom Fund Tracker</h1>
-    <p>your financial runway, visualized</p>
+    <p id="header-intentions">your financial runway, visualized</p>
   </div>
 </div>
 
@@ -419,6 +429,10 @@
 <!-- ═══ PLAN ═══ -->
 <div id="panel-plan" class="panel active">
   <p class="explainer">This is your original vision — the scenario you set when you first decided to take the leap. Lock it in and only touch it to correct a genuine mistake. Your real-life decisions live in Updates on the Runway tab.</p>
+  <div class="intentions-wrap">
+    <div class="intentions-label">✨ What is this runway for?</div>
+    <textarea id="intentions-input" class="intentions-input" placeholder="e.g. Take a year off to write my book, explore consulting, and figure out what's next." oninput="saveIntentions()" rows="2"></textarea>
+  </div>
   <div class="plan-bar">
     <div class="plan-lock-label" id="plan-bar-label">🔒 Locked — your original vision. Unlock only to correct it.</div>
     <button class="lock-btn" id="lock-btn" onclick="toggleLock()">🔒 Unlock to Edit</button>
@@ -628,6 +642,7 @@
         </div>
         <div class="wi-save-confirm" id="wi-save-confirm">
           <input type="text" id="wi-save-name" placeholder="Name this save…" />
+          <textarea id="wi-save-notes" class="snap-notes-input" placeholder="What's happening right now? (optional)" rows="2"></textarea>
           <div class="confirm-btns">
             <button class="btn btn-primary" id="wi-save-do" onclick="confirmSave()">Save</button>
             <button class="btn btn-ghost"   onclick="cancelSave()">Cancel</button>
@@ -1057,11 +1072,56 @@ function updateComputed(pfx, c) {
 }
 
 // ─── INPUT HANDLERS ──────────────────────────────────────────────────────────────────────────
+function saveIntentions() {
+  const v = document.getElementById('intentions-input').value;
+  localStorage.setItem('ff4-intentions', v);
+  updateHeaderIntentions();
+}
+function updateHeaderIntentions() {
+  const v = localStorage.getItem('ff4-intentions') || '';
+  const el = document.getElementById('header-intentions');
+  if (el) el.textContent = v || 'your financial runway, visualized';
+}
+
+function getPlanLineStart() {
+  const plS = stored('pl') || DEFAULTS;
+  const planStartStr = plS.planStartDate || '2026-01';
+  const [psy, psm] = planStartStr.split('-').map(Number);
+  const now = new Date();
+  return (psy - now.getFullYear())*12 + (psm - 1 - now.getMonth());
+}
+function gigContributionMonths(s, gigId, lineStartMonth) {
+  const c = calc(s);
+  const base = runwayFromToday(s, c, lineStartMonth);
+  const sWithout = clone(s);
+  sWithout.gigs = (sWithout.gigs||[]).filter(g => g.id !== gigId);
+  const cWithout = calc(sWithout);
+  const without = runwayFromToday(sWithout, cWithout, lineStartMonth);
+  if (base === Infinity && without === Infinity) return 0;
+  if (base === Infinity) return Infinity;
+  if (without === Infinity) return -Infinity;
+  return base - without;
+}
+function updateGigRunwayBadges(pfx, s) {
+  const lineStartMonth = pfx === 'pl' ? getPlanLineStart() : 0;
+  (s.gigs||[]).forEach(g => {
+    const el = document.getElementById(pfx+'-gig-badge-'+g.id);
+    if (!el) return;
+    const contrib = gigContributionMonths(s, g.id, lineStartMonth);
+    if (contrib === 0) { el.textContent = ''; el.className = 'gig-runway-badge'; return; }
+    if (!isFinite(contrib)) { el.textContent = '∞ mo'; el.className = 'gig-runway-badge pos'; return; }
+    const sign = contrib > 0 ? '+' : '';
+    el.textContent = sign + (Math.round(contrib * 10) / 10) + ' mo';
+    el.className = 'gig-runway-badge ' + (contrib > 0 ? 'pos' : 'neg');
+  });
+}
+
 function onInput(pfx) {
   const s = readState(pfx);
   if (pfx !== 'wi') stored(pfx, s);
   else whatIfState = s;
   updateComputed(pfx, calc(s));
+  updateGigRunwayBadges(pfx, s);
 
   // Propagate tax rate change from Plan to Current and Updates panel
   if (pfx === 'pl') {
@@ -1091,6 +1151,7 @@ function gigRowHTML(pfx, g) {
   return `<div class="gig-row" data-id="${g.id}" data-type="${g.type||'hourly'}">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.3rem">
       <button class="gig-type-btn${isLump?' lump':''}" onclick="toggleGigType(this,'${pfx}')" type="button">${isLump?'💰 Lump Sum':'⏱ Hourly'}</button>
+      <span class="gig-runway-badge" id="${pfx}-gig-badge-${g.id}"></span>
     </div>
     <div class="gig-fields">
       <div class="field"><label>Start month</label>
@@ -1287,15 +1348,17 @@ function cancelSave() {
   pendingSaveType = null;
   document.getElementById('wi-save-confirm').style.display = 'none';
   document.getElementById('wi-save-btns').style.display = 'flex';
+  document.getElementById('wi-save-notes').value = '';
 }
 
 function confirmSave() {
   const name = document.getElementById('wi-save-name').value.trim() || document.getElementById('wi-save-name').placeholder;
-  saveWiAs(pendingSaveType, name);
+  const notes = document.getElementById('wi-save-notes').value.trim();
+  saveWiAs(pendingSaveType, name, notes);
   cancelSave();
 }
 
-function saveWiAs(pfx, name) {
+function saveWiAs(pfx, name, notes) {
   const s = clone(whatIfState);
   s.savings.withdrawals = {vacay:0,gift:0,coaching:0,writingClass:0};
 
@@ -1303,6 +1366,7 @@ function saveWiAs(pfx, name) {
   const snap = clone(s);
   snap._name = name;
   snap._date = Date.now();
+  snap._notes = notes || '';
   const snaps = getSnaps();
   snaps.push(snap);
   saveSnaps(snaps);
@@ -1451,6 +1515,7 @@ function renderSnaps() {
         <div class="snap-name">${snap._name||'Snapshot'}</div>
         <div class="snap-date">${date}</div>
         <div class="snap-stats">Monthly: <span>${f$(c.monthlyExp)}</span> &nbsp;·&nbsp; Runway: <span>${fmo(runwayMonths(snap, c))}</span> &nbsp;·&nbsp; Net: <span>${f$(c.net)}/mo</span></div>
+        ${snap._notes ? `<div class="snap-note">${snap._notes}</div>` : ''}
       </div>
       <div class="snap-actions">
         <button class="sbtn${isCmp?' on':''}" onclick="toggleCmp(${idx})">${isCmp?'On Chart ✓':'Compare'}</button>
@@ -1598,6 +1663,14 @@ function toast(msg) {
   whatIfState.savings.withdrawals = {vacay:0,gift:0,coaching:0,writingClass:0};
   populateFields('wi', whatIfState);
   updateWiTotals(calc(whatIfState));
+  updateGigRunwayBadges('pl', pl);
+  updateGigRunwayBadges('wi', whatIfState);
+
+  // Intentions
+  const intentionsEl = document.getElementById('intentions-input');
+  if (intentionsEl) intentionsEl.value = localStorage.getItem('ff4-intentions') || '';
+  updateHeaderIntentions();
+
   loadDoodles();
 })();
 </script>
