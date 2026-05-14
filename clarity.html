@@ -217,8 +217,8 @@
       align-self: flex-end; padding-bottom: 0.35rem;
     }
     .gig-remove:hover { color: var(--red); }
-    .gig-runway-badge { font-family: var(--hand); font-size: 0.8rem; font-weight: 700; padding: 0.1rem 0.45rem; border-radius: 20px; }
-    .gig-runway-badge.pos { color: var(--green); background: rgba(87,175,90,0.12); }
+    .gig-runway-badge { font-family: var(--hand); font-size: 1rem; font-weight: 700; padding: 0.15rem 0.6rem; border-radius: 20px; display: inline-block; margin-bottom: 0.3rem; }
+    .gig-runway-badge.pos { color: var(--green); background: rgba(87,175,90,0.15); }
     .gig-runway-badge.neg { color: #c0392b; background: rgba(192,57,43,0.1); }
     .intentions-wrap { margin: 0.8rem 0 0.2rem; }
     .intentions-label { font-family: var(--hand); font-size: 0.9rem; color: var(--dim); margin-bottom: 0.25rem; }
@@ -1140,7 +1140,10 @@ function updateGigRunwayBadges(pfx, s) {
     if (contrib === 0) { el.textContent = ''; el.className = 'gig-runway-badge'; return; }
     if (!isFinite(contrib)) { el.textContent = '∞ mo'; el.className = 'gig-runway-badge pos'; return; }
     const sign = contrib > 0 ? '+' : '';
-    el.textContent = sign + (Math.round(contrib * 10) / 10) + ' mo';
+    const label = Math.abs(contrib) < 1
+      ? sign + Math.round(Math.abs(contrib) * 4.333) + ' wk'
+      : sign + (Math.round(contrib * 10) / 10) + ' mo';
+    el.textContent = label;
     el.className = 'gig-runway-badge ' + (contrib > 0 ? 'pos' : 'neg');
   });
 }
@@ -1179,9 +1182,9 @@ function gigRowHTML(pfx, g) {
   const isLump = g.type === 'lump';
   const taxRate = (stored('pl') || DEFAULTS).freelance.taxRate || 32;
   return `<div class="gig-row" data-id="${g.id}" data-type="${g.type||'hourly'}">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.3rem">
+    <div style="min-height:1.6rem;margin-bottom:0.15rem"><span class="gig-runway-badge" id="${pfx}-gig-badge-${g.id}"></span></div>
+    <div style="display:flex;justify-content:flex-start;align-items:center;margin-bottom:0.3rem">
       <button class="gig-type-btn${isLump?' lump':''}" onclick="toggleGigType(this,'${pfx}')" type="button">${isLump?'💰 Lump Sum':'⏱ Hourly'}</button>
-      <span class="gig-runway-badge" id="${pfx}-gig-badge-${g.id}"></span>
     </div>
     <div class="gig-fields">
       <div class="field"><label>Start month</label>
