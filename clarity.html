@@ -63,18 +63,26 @@
 
     /* ── Tabs ── */
     .tabs {
-      background: var(--paper); border-bottom: 2px solid var(--border);
-      padding: 0 2rem; display: flex;
-      box-shadow: 0 2px 8px rgba(27,43,80,0.06);
+      background: var(--bg); border-bottom: 2px solid var(--border);
+      padding: 0 1.5rem; display: flex; align-items: flex-end; gap: 4px;
     }
     .tab {
-      padding: 0.8rem 1.4rem; background: transparent; border: none;
-      border-bottom: 3px solid transparent; color: var(--dim);
-      font-family: var(--hand); font-size: 1.1rem; font-weight: 600;
-      cursor: pointer; transition: all 0.15s; margin-bottom: -2px;
+      padding: 0.6rem 1.5rem 0.7rem; background: var(--paper2);
+      border: 1.5px solid var(--border); border-bottom: none;
+      border-radius: 5px 5px 0 0;
+      color: var(--dim); font-family: var(--hand); font-size: 1.05rem; font-weight: 600;
+      cursor: pointer; transition: all 0.12s;
+      position: relative; top: 2px;
+      box-shadow: 0 -2px 6px rgba(27,43,80,0.05);
     }
-    .tab:hover { color: var(--muted); }
-    .tab.active { color: var(--ocean3); border-bottom-color: var(--ocean); }
+    .tab:hover { background: var(--paper); color: var(--muted); }
+    .tab.active {
+      background: var(--paper); color: var(--ocean3);
+      border-color: var(--border); border-bottom-color: var(--paper);
+      top: 0px; padding-bottom: 0.85rem;
+      box-shadow: -2px -3px 8px rgba(27,43,80,0.07), 2px -3px 8px rgba(27,43,80,0.04);
+      z-index: 1;
+    }
 
     /* ── Panels ── */
     .panel { display: none; padding: 1.75rem 2rem; max-width: 1100px; margin: 0 auto; }
