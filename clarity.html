@@ -53,7 +53,7 @@
       font-family: var(--hand); font-size: 2.2rem; font-weight: 700; color: #fff;
       text-shadow: 0 2px 12px rgba(0,0,0,0.35); line-height: 1.1;
     }
-    .header p { font-size: 0.88rem; color: rgba(255,255,255,0.8); margin-top: 0.2rem; text-shadow: 0 1px 4px rgba(0,0,0,0.3); max-width: 540px; }
+    .header-int { font-size: 0.88rem; color: rgba(255,255,255,0.82); text-shadow: 0 1px 4px rgba(0,0,0,0.3); max-width: 180px; text-align: right; line-height: 1.45; font-style: italic; align-self: flex-end; flex-shrink: 0; }
     .hbtn {
       padding: 0.5rem 1.1rem; background: rgba(255,255,255,0.2);
       border: 1px solid rgba(255,255,255,0.45); border-radius: 20px;
@@ -68,14 +68,18 @@
       padding: 0 2rem; display: flex; align-items: flex-end; gap: 18px;
     }
     .tab {
-      padding: 0.3rem 1.1rem 0.38rem; background: var(--paper2);
+      padding: 0.45rem 1.6rem 0.55rem; background: var(--paper2);
       border: 1.5px solid var(--border); border-bottom: none;
-      border-radius: 8px 8px 0 0;
-      color: var(--dim); font-family: var(--hand); font-size: 0.78rem; font-weight: 600;
+      border-radius: 10px 10px 0 0;
+      color: var(--dim); font-family: var(--hand); font-size: 0.92rem; font-weight: 600;
       cursor: pointer; transition: all 0.2s;
-      position: relative; top: 8px;
+      position: relative; top: 5px; overflow: hidden;
       box-shadow: -1px -2px 6px rgba(27,43,80,0.05), 1px -2px 6px rgba(27,43,80,0.04);
-      opacity: 0.75;
+    }
+    .tab::after {
+      content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 45%;
+      background: linear-gradient(to top, rgba(0,0,0,0.10), transparent);
+      pointer-events: none; border-radius: 0 0 10px 10px;
     }
     .tab[data-tab="plan"]    { background: #F4D5DF; border-top: 3px solid var(--pink); color: #8a1a40; }
     .tab[data-tab="runway"]  { background: #C8ECF2; border-top: 3px solid var(--ocean); color: var(--ocean3); }
@@ -86,9 +90,10 @@
     .tab.active {
       top: 0; padding: 0.65rem 2.2rem 0.9rem;
       font-size: 1.1rem; border-radius: 12px 12px 0 0;
-      opacity: 1; z-index: 1;
+      z-index: 1;
       box-shadow: -2px -4px 10px rgba(0,0,0,0.15), 2px -4px 10px rgba(0,0,0,0.1);
     }
+    .tab.active::after { display: none; }
     .tab[data-tab="plan"].active    { background: #F4D5DF; color: #8a1a40; }
     .tab[data-tab="runway"].active  { background: #C8ECF2; color: var(--ocean3); }
     .tab[data-tab="history"].active { background: #F2E4B0; color: #7a5500; }
@@ -214,10 +219,9 @@
     .gig-runway-badge { font-family: var(--hand); font-size: 0.8rem; font-weight: 700; padding: 0.1rem 0.45rem; border-radius: 20px; }
     .gig-runway-badge.pos { color: var(--green); background: rgba(87,175,90,0.12); }
     .gig-runway-badge.neg { color: #c0392b; background: rgba(192,57,43,0.1); }
-    .intentions-wrap { margin: 0.8rem 0 0.2rem; display: flex; justify-content: flex-end; }
-    .intentions-inner { width: 220px; text-align: right; }
+    .intentions-wrap { margin: 0.8rem 0 0.2rem; }
     .intentions-label { font-family: var(--hand); font-size: 0.9rem; color: var(--dim); margin-bottom: 0.25rem; }
-    .intentions-input { width: 100%; box-sizing: border-box; font-family: var(--hand); font-size: 1rem; color: var(--navy); border: none; border-bottom: 1.5px dashed var(--border); background: transparent; resize: none; outline: none; padding: 0.2rem 0; line-height: 1.5; text-align: right; }
+    .intentions-input { width: 100%; box-sizing: border-box; font-family: var(--hand); font-size: 1rem; color: var(--navy); border: none; border-bottom: 1.5px dashed var(--border); background: transparent; resize: none; outline: none; padding: 0.2rem 0; line-height: 1.5; }
     .intentions-input:focus { border-bottom-color: var(--ocean); }
     .snap-notes-input { width: 100%; box-sizing: border-box; font-family: var(--hand); font-size: 0.88rem; color: var(--navy); border: 1px solid var(--border); border-radius: 6px; background: #fff; resize: none; outline: none; padding: 0.3rem 0.5rem; margin-top: 0.3rem; }
     .snap-notes-input:focus { border-color: var(--ocean); }
@@ -439,8 +443,8 @@
   <div class="header">
     <div>
       <h1>Jessica's Creative Freedom Fund Tracker</h1>
-      <p id="header-intentions">your financial runway, visualized</p>
     </div>
+    <p id="header-intentions" class="header-int">your financial runway, visualized</p>
   </div>
   <div class="tabs">
     <button class="tab active" data-tab="plan"    onclick="switchTab('plan')">Plan</button>
@@ -454,10 +458,8 @@
 <div id="panel-plan" class="panel active">
   <p class="explainer">This is your original vision — the scenario you set when you first decided to take the leap. Lock it in and only touch it to correct a genuine mistake. Your real-life decisions live in Updates on the Runway tab.</p>
   <div class="intentions-wrap">
-    <div class="intentions-inner">
-      <div class="intentions-label">✨ What is this runway for?</div>
-      <textarea id="intentions-input" class="intentions-input" placeholder="write, rest, explore…" oninput="saveIntentions()" rows="2"></textarea>
-    </div>
+    <div class="intentions-label">✨ What is this runway for?</div>
+    <textarea id="intentions-input" class="intentions-input" placeholder="e.g. Take a year off to write my book, explore consulting, and figure out what's next." oninput="saveIntentions()" rows="2"></textarea>
   </div>
   <div class="plan-bar">
     <div class="plan-lock-label" id="plan-bar-label">🔒 Locked — your original vision. Unlock only to correct it.</div>
