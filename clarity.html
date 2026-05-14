@@ -1535,7 +1535,19 @@ const CHART_OPTIONS = {
     tooltip: {
       backgroundColor:'#FDFAF3', borderColor:'#D0C8B4', borderWidth:1,
       titleColor:'#1B2B50', bodyColor:'#4A6070',
-      callbacks: { label: ctx => ctx.parsed.y != null ? ` ${ctx.dataset.label}: ${f$(ctx.parsed.y)}` : '' }
+      footerColor:'#4A6070', footerFont:{ family:"'Caveat',cursive", size:13 }, footerMarginTop:6,
+      callbacks: {
+        label: ctx => ctx.parsed.y != null ? ` ${ctx.dataset.label}: ${f$(ctx.parsed.y)}` : '',
+        footer: items => {
+          if (!selectedCurSnap) return '';
+          const plan = items.find(i => i.dataset.label === 'Plan');
+          const cur  = items.find(i => i.dataset.label === 'Current');
+          if (!plan || !cur || plan.parsed.y == null || cur.parsed.y == null) return '';
+          const diff = cur.parsed.y - plan.parsed.y;
+          const sign = diff >= 0 ? '+' : '';
+          return sign + f$(Math.round(diff)) + ' vs plan';
+        }
+      }
     }
   },
   scales: {
