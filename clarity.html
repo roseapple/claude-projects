@@ -1231,10 +1231,10 @@ function closeIntentionModal(save) {
   if (save) {
     const v = (document.getElementById('int-modal-input').value || '').trim();
     localStorage.setItem('ff4-intentions', v);
-    // sync to the plan tab textarea too
     const ta = document.getElementById('intentions-input');
     if (ta) ta.value = v;
     updateHeaderIntentions();
+    celebrate('intention');
   }
   localStorage.setItem('ff4-intention-date', new Date().toDateString());
   document.getElementById('int-overlay').classList.remove('open');
@@ -1956,6 +1956,13 @@ function celebrate(type) {
     confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 }, colors });
     setTimeout(() => confetti({ particleCount: 60, angle: 60,  spread: 50, origin: { x: 0, y: 0.6 }, colors }), 200);
     setTimeout(() => confetti({ particleCount: 60, angle: 120, spread: 50, origin: { x: 1, y: 0.6 }, colors }), 400);
+  } else if (type === 'intention') {
+    const intentionColors = ['#2BBFCF','#A8D8DE','#E8427A','#F4A8C4','#C084FC','#E0AAFF'];
+    const opts = { colors: intentionColors, gravity: 0.4, decay: 0.96, scalar: 0.85, drift: 0.4, ticks: 300 };
+    // three gentle trickles across the top
+    confetti({ ...opts, particleCount: 35, angle: 270, spread: 60, origin: { x: 0.25, y: 0 } });
+    setTimeout(() => confetti({ ...opts, particleCount: 40, angle: 270, spread: 70, origin: { x: 0.55, y: 0 } }), 180);
+    setTimeout(() => confetti({ ...opts, particleCount: 30, angle: 270, spread: 55, origin: { x: 0.80, y: 0 } }), 360);
   }
 }
 
