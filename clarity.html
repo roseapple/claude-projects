@@ -1200,7 +1200,6 @@ function getPlanLineStart() {
   return (psy - now.getFullYear())*12 + (psm - 1 - now.getMonth());
 }
 function gigContributionMonths(s, gigId) {
-  const c = calc(s);
   const gig = (s.gigs||[]).find(g => g.id === gigId);
   if (!gig) return 0;
   const taxMult = 1 - (s.freelance.taxRate || 32) / 100;
@@ -1211,9 +1210,11 @@ function gigContributionMonths(s, gigId) {
     netTotal = (gig.rate||0) * (gig.hoursPerWeek||0) * (gig.weeks||0) * taxMult;
   }
   if (netTotal === 0) return 0;
-  const burn = c.burn;
-  if (!isFinite(burn) || burn <= 0) return netTotal > 0 ? Infinity : 0;
-  return netTotal / burn; // decimal months
+  // Use plan burn rate as stable reference so the badge only changes
+  // when the gig's own numbers change, not when freelance income is tweaked
+  const planBurn = calc(stored('pl') || clone(DEFAULTS)).burn;
+  if (!isFinite(planBurn) || planBurn <= 0) return netTotal > 0 ? Infinity : 0;
+  return netTotal / planBurn;
 }
 function updateGigRunwayBadges(pfx, s) {
   (s.gigs||[]).forEach(g => {
