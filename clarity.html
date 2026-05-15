@@ -385,7 +385,7 @@
     .wi-save-confirm .confirm-btns .btn { flex: 1; font-size: 0.85rem; padding: 0.45rem 0.6rem; }
 
     /* ── Chart ── */
-    .chart-wrap { position: relative; flex: 1; min-height: 0; }
+    .chart-wrap { position: relative; flex: 1; min-height: 0; overflow: hidden; }
     .chart-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.9rem; flex-wrap: wrap; gap: 0.5rem; }
     .chart-legend { display: flex; gap: 1rem; font-family: var(--hand); font-size: 0.9rem; }
     .chart-nav {
@@ -1922,8 +1922,8 @@ const DOODLE_KEYS = Object.keys(DOODLE_SHAPES);
 
 function randomEdgePos() {
   return {
-    top:    (5 + Math.random() * 82) + '%',
-    left:   (5 + Math.random() * 82) + '%',
+    top:    (-15 + Math.random() * 120) + '%',
+    left:   (-15 + Math.random() * 120) + '%',
     right:  'auto', bottom: 'auto',
   };
 }
