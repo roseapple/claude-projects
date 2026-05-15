@@ -1959,12 +1959,7 @@ function loadDoodles() {
     // Discard old doodles that used page-edge vw/vh positioning
     const valid = saved.filter(d => typeof d.top === 'string' && d.top.endsWith('%'));
     if (valid.length !== saved.length) localStorage.setItem('ff4-doodles', JSON.stringify(valid));
-    if (valid.length === 0) {
-      // Seed a few starter doodles so the chart isn't bare on first load
-      for (let i = 0; i < 4; i++) addDoodle();
-    } else {
-      valid.forEach(renderDoodle);
-    }
+    valid.forEach(renderDoodle);
   } catch {}
 }
 
