@@ -1958,11 +1958,23 @@ function celebrate(type) {
     setTimeout(() => confetti({ particleCount: 60, angle: 120, spread: 50, origin: { x: 1, y: 0.6 }, colors }), 400);
   } else if (type === 'intention') {
     const intentionColors = ['#2BBFCF','#A8D8DE','#E8427A','#F4A8C4','#C084FC','#E0AAFF'];
-    const opts = { colors: intentionColors, gravity: 0.12, decay: 0.97, scalar: 0.75, drift: 0.6, ticks: 500 };
-    // three gentle trickles across the top
-    confetti({ ...opts, particleCount: 35, angle: 270, spread: 60, origin: { x: 0.25, y: 0 } });
-    setTimeout(() => confetti({ ...opts, particleCount: 40, angle: 270, spread: 70, origin: { x: 0.55, y: 0 } }), 180);
-    setTimeout(() => confetti({ ...opts, particleCount: 30, angle: 270, spread: 55, origin: { x: 0.80, y: 0 } }), 360);
+    const end = Date.now() + 2800;
+    (function drizzle() {
+      confetti({
+        particleCount: 4,
+        angle: 270,
+        spread: 120,
+        startVelocity: 6,
+        origin: { x: Math.random(), y: 0 },
+        colors: intentionColors,
+        gravity: 0.25,
+        decay: 0.96,
+        scalar: 0.8,
+        drift: (Math.random() - 0.5) * 1.2,
+        ticks: 400,
+      });
+      if (Date.now() < end) requestAnimationFrame(drizzle);
+    })();
   }
 }
 
