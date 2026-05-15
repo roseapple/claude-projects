@@ -485,6 +485,32 @@
       white-space: nowrap; box-shadow: 0 4px 16px rgba(27,43,80,0.25);
     }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* ── Intention modal ── */
+    .int-overlay {
+      position: fixed; inset: 0; background: rgba(27,43,80,0.45); z-index: 200;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; transition: opacity 0.25s; pointer-events: none;
+    }
+    .int-overlay.open { opacity: 1; pointer-events: all; }
+    .int-modal {
+      background: var(--paper); border-radius: 8px; padding: 2rem 2rem 1.5rem;
+      max-width: 480px; width: 90%; box-shadow: 0 8px 40px rgba(27,43,80,0.22);
+      transform: translateY(16px); transition: transform 0.25s;
+      border: 1.5px solid var(--border); position: relative;
+    }
+    .int-overlay.open .int-modal { transform: translateY(0); }
+    .int-modal-title { font-family: var(--hand); font-size: 1.5rem; color: var(--navy); margin-bottom: 0.3rem; }
+    .int-modal-sub { font-family: var(--hand); font-size: 0.95rem; color: var(--dim); margin-bottom: 1.2rem; }
+    .int-modal textarea {
+      width: 100%; box-sizing: border-box; font-family: var(--hand); font-size: 1.1rem;
+      color: var(--navy); border: 1.5px solid var(--border); border-radius: 6px;
+      background: #fff; padding: 0.7rem 0.9rem; resize: none; outline: none;
+      line-height: 1.6; transition: border-color 0.15s;
+    }
+    .int-modal textarea:focus { border-color: var(--ocean); }
+    .int-modal-footer { display: flex; justify-content: flex-end; gap: 0.7rem; margin-top: 1rem; }
+
     @media (max-width: 600px) { html { font-size: 16px; } }
   </style>
 </head>
@@ -764,6 +790,17 @@
   </div>
 </div>
 
+<div class="int-overlay" id="int-overlay">
+  <div class="int-modal">
+    <div class="int-modal-title">✨ What's your intention today?</div>
+    <div class="int-modal-sub">What are you building toward? This shows at the top of your runway.</div>
+    <textarea id="int-modal-input" rows="3" placeholder="e.g. Take a year off to write my book, explore consulting, and figure out what's next."></textarea>
+    <div class="int-modal-footer">
+      <button class="btn btn-ghost" onclick="closeIntentionModal(false)">Skip</button>
+      <button class="btn btn-pink" onclick="closeIntentionModal(true)">Set intention ✨</button>
+    </div>
+  </div>
+</div>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -1184,6 +1221,29 @@ function updateComputed(pfx, c) {
 }
 
 // ─── INPUT HANDLERS ──────────────────────────────────────────────────────────────────────────
+function openIntentionModal() {
+  const el = document.getElementById('int-modal-input');
+  if (el) el.value = localStorage.getItem('ff4-intentions') || '';
+  document.getElementById('int-overlay').classList.add('open');
+  setTimeout(() => el && el.focus(), 50);
+}
+function closeIntentionModal(save) {
+  if (save) {
+    const v = (document.getElementById('int-modal-input').value || '').trim();
+    localStorage.setItem('ff4-intentions', v);
+    // sync to the plan tab textarea too
+    const ta = document.getElementById('intentions-input');
+    if (ta) ta.value = v;
+    updateHeaderIntentions();
+  }
+  localStorage.setItem('ff4-intention-date', new Date().toDateString());
+  document.getElementById('int-overlay').classList.remove('open');
+}
+function maybeShowIntentionModal() {
+  const last = localStorage.getItem('ff4-intention-date');
+  if (last !== new Date().toDateString()) openIntentionModal();
+}
+
 function saveIntentions() {
   const v = document.getElementById('intentions-input').value;
   localStorage.setItem('ff4-intentions', v);
@@ -2042,6 +2102,17 @@ function toast(msg) {
 
   loadDoodles();
   refreshChart();
+  maybeShowIntentionModal();
+
+  // Close intention modal when clicking the backdrop
+  document.getElementById('int-overlay').addEventListener('click', e => {
+    if (e.target === e.currentTarget) closeIntentionModal(false);
+  });
+
+  // Submit on Cmd/Ctrl+Enter inside the modal textarea
+  document.getElementById('int-modal-input').addEventListener('keydown', e => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') closeIntentionModal(true);
+  });
 })();
 </script>
 </body>
