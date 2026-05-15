@@ -1223,11 +1223,11 @@ function freelanceContributionMonths(s) {
   const fl = s.freelance || {};
   const taxMult = 1 - (fl.taxRate || 32) / 100;
   const weeksWorked = 52 - (fl.weeksOffPerYear || 0);
-  const netMonthly = (fl.hourlyRate || 0) * (fl.hoursPerWeek || 0) * (weeksWorked / 52) * 4.333 * taxMult;
-  if (netMonthly === 0) return 0;
+  const netAnnual = (fl.hourlyRate || 0) * (fl.hoursPerWeek || 0) * weeksWorked * taxMult;
+  if (netAnnual === 0) return 0;
   const planBurn = calc(stored('pl') || clone(DEFAULTS)).burn;
-  if (!isFinite(planBurn) || planBurn <= 0) return netMonthly > 0 ? Infinity : 0;
-  return netMonthly / planBurn;
+  if (!isFinite(planBurn) || planBurn <= 0) return netAnnual > 0 ? Infinity : 0;
+  return netAnnual / planBurn;
 }
 function updateFreelanceBadge(pfx, s) {
   const el = document.getElementById(pfx + '-fl-badge');
