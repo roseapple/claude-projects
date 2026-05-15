@@ -472,7 +472,7 @@
 
     /* ── Background doodles ── */
     .bg-doodle {
-      position: absolute; pointer-events: none; z-index: 2; opacity: 0.45;
+      position: absolute; pointer-events: none; z-index: 2; opacity: 0.28;
       transform-origin: center;
     }
 
@@ -1932,7 +1932,7 @@ function addDoodle() {
   const shape = DOODLE_KEYS[Math.floor(Math.random() * DOODLE_KEYS.length)];
   const color = DOODLE_COLORS[Math.floor(Math.random() * DOODLE_COLORS.length)];
   const rot   = -20 + Math.random() * 40;
-  const size  = 18 + Math.floor(Math.pow(Math.random(), 0.7) * 72);
+  const size  = 12 + Math.floor(Math.pow(Math.random(), 0.7) * 44);
   const pos   = randomEdgePos();
   const d = { shape, color, rot, size, ...pos };
   renderDoodle(d);
