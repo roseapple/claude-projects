@@ -622,7 +622,7 @@
         <div class="wi-acc" id="wi-acc-fl">
           <div class="wi-acc-hdr" onclick="toggleAcc('fl')">
             <span>💼 Freelance Income</span>
-            <span><span class="wi-acc-total" id="wi-fl-total">$0</span><span class="wi-arr">▾</span></span>
+            <span><span class="gig-runway-badge" id="wi-fl-badge"></span><span class="wi-acc-total" id="wi-fl-total">$0</span><span class="wi-arr">▾</span></span>
           </div>
           <div class="wi-acc-body">
             <div class="fg2">
@@ -1027,7 +1027,10 @@ function buildForm(pfx, hasGigs) {
       </div>
     </div>
     <div class="card">
-      <div class="card-title">💼 Freelance Income</div>
+      <div class="card-title" style="display:flex;justify-content:space-between;align-items:center">
+        <span>💼 Freelance Income</span>
+        <span class="gig-runway-badge" id="${p}fl-badge"></span>
+      </div>
       <div class="fg">
         ${f('fl-months-before','Months Before Starting','plain',1)}
         ${f('fl-weeks-off','Weeks Off per Year','plain',1)}
@@ -1216,6 +1219,34 @@ function gigContributionMonths(s, gigId) {
   if (!isFinite(planBurn) || planBurn <= 0) return netTotal > 0 ? Infinity : 0;
   return netTotal / planBurn;
 }
+function freelanceContributionMonths(s) {
+  const fl = s.freelance || {};
+  const taxMult = 1 - (fl.taxRate || 32) / 100;
+  const weeksWorked = 52 - (fl.weeksOffPerYear || 0);
+  const netMonthly = (fl.hourlyRate || 0) * (fl.hoursPerWeek || 0) * (weeksWorked / 52) * 4.333 * taxMult;
+  if (netMonthly === 0) return 0;
+  const planBurn = calc(stored('pl') || clone(DEFAULTS)).burn;
+  if (!isFinite(planBurn) || planBurn <= 0) return netMonthly > 0 ? Infinity : 0;
+  return netMonthly / planBurn;
+}
+function updateFreelanceBadge(pfx, s) {
+  const el = document.getElementById(pfx + '-fl-badge');
+  if (!el) return;
+  const contrib = freelanceContributionMonths(s);
+  if (contrib === 0) { el.textContent = ''; el.className = 'gig-runway-badge'; return; }
+  if (!isFinite(contrib)) { el.textContent = '∞ mo'; el.className = 'gig-runway-badge pos'; return; }
+  const sign = contrib > 0 ? '+' : '';
+  const abs = Math.abs(contrib);
+  let label;
+  if (abs < 1) {
+    const wks = Math.round(abs * 4.333);
+    label = sign + (wks < 1 ? '<1' : wks) + ' wk';
+  } else {
+    label = sign + Math.round(abs) + ' mo';
+  }
+  el.textContent = label;
+  el.className = 'gig-runway-badge ' + (contrib > 0 ? 'pos' : 'neg');
+}
 function updateGigRunwayBadges(pfx, s) {
   (s.gigs||[]).forEach(g => {
     const el = document.getElementById(pfx+'-gig-badge-'+g.id);
@@ -1243,6 +1274,7 @@ function onInput(pfx) {
   else whatIfState = s;
   updateComputed(pfx, calc(s));
   updateGigRunwayBadges(pfx, s);
+  updateFreelanceBadge(pfx, s);
 
   // Propagate tax rate change from Plan to Current and Updates panel
   if (pfx === 'pl') {
@@ -1985,6 +2017,8 @@ function toast(msg) {
   updateWiTotals(calc(whatIfState));
   updateGigRunwayBadges('pl', pl);
   updateGigRunwayBadges('wi', whatIfState);
+  updateFreelanceBadge('pl', pl);
+  updateFreelanceBadge('wi', whatIfState);
 
   // Intentions
   const intentionsEl = document.getElementById('intentions-input');
