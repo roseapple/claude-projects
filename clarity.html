@@ -1958,7 +1958,7 @@ function celebrate(type) {
     setTimeout(() => confetti({ particleCount: 60, angle: 120, spread: 50, origin: { x: 1, y: 0.6 }, colors }), 400);
   } else if (type === 'intention') {
     const intentionColors = ['#2BBFCF','#A8D8DE','#E8427A','#F4A8C4','#C084FC','#E0AAFF'];
-    const opts = { colors: intentionColors, gravity: 0.4, decay: 0.96, scalar: 0.85, drift: 0.4, ticks: 300 };
+    const opts = { colors: intentionColors, gravity: 0.12, decay: 0.97, scalar: 0.75, drift: 0.6, ticks: 500 };
     // three gentle trickles across the top
     confetti({ ...opts, particleCount: 35, angle: 270, spread: 60, origin: { x: 0.25, y: 0 } });
     setTimeout(() => confetti({ ...opts, particleCount: 40, angle: 270, spread: 70, origin: { x: 0.55, y: 0 } }), 180);
